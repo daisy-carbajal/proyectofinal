@@ -1,0 +1,14 @@
+{
+  "name": "human_resources_management_system",
+  "version": "1.0.0",
+  "description": "Proyecto de Graduación - Sistema de Gestión de Recursos Humanos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daisy Y. Carbajal",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
