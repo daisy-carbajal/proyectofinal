@@ -35,6 +35,7 @@ const createUser = async (req, res) => {
       DepartmentID,
       CreatedBy,
     } = req.body;
+    const RequesterID = req.userId;
 
     const tempPassword = generateRandomPassword();
     const hashedTempPassword = await bcrypt.hash(tempPassword, 10);
@@ -56,6 +57,7 @@ const createUser = async (req, res) => {
       .input("PostalCode", sql.NVarChar, PostalCode)
       .input("Country", sql.NVarChar, Country)
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddUser");
 
     const userId = result.recordset[0].UserID;
@@ -66,6 +68,7 @@ const createUser = async (req, res) => {
       .input("JobTitleID", sql.Int, JobTitleID)
       .input("StartDate", sql.Date, new Date())
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleChange");
 
     await pool
@@ -74,11 +77,13 @@ const createUser = async (req, res) => {
       .input("DepartmentID", sql.Int, DepartmentID)
       .input("StartDate", sql.Date, new Date())
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddDepartmentChange");
 
     const roleResult = await pool
       .request()
       .input("JobTitleID", sql.Int, JobTitleID)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetRoleByJobTitle");
 
     const roleId = roleResult.recordset[0].RoleID;
@@ -87,6 +92,7 @@ const createUser = async (req, res) => {
       .request()
       .input("UserID", sql.Int, userId)
       .input("RoleID", sql.Int, roleId)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddUserRole");
 
     await pool
@@ -168,7 +174,11 @@ const completeRegistration = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const result = await pool.request().execute("GetAllUsers");
+    const RequesterID = req.userId;
+
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllUsers");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron usuarios" });
@@ -183,7 +193,11 @@ const getAllUsers = async (req, res) => {
 
 const getAllUserDetails = async (req, res) => {
   try {
-    const result = await pool.request().execute("GetUserDetails");
+    const RequesterID = req.userId;
+
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetUserDetails");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron usuarios" });
@@ -207,6 +221,7 @@ const updateUser = async (req, res) => {
       PhoneNumber,
       UpdatedBy,
     } = req.body;
+    const RequesterID = req.userId;
 
     const pool = await poolPromise;
 
@@ -219,6 +234,7 @@ const updateUser = async (req, res) => {
       .input("BirthDate", sql.Date, BirthDate)
       .input("PhoneNumber", sql.NVarChar, PhoneNumber)
       .input("UpdatedBy", sql.Int, UpdatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateUser");
 
     res.status(200).json({ message: "Usuario actualizado exitosamente" });
@@ -231,8 +247,11 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const RequesterID = req.userId;
 
-    await pool.request().input("UserID", sql.Int, id).execute("DeleteUser");
+    await pool.request().input("UserID", sql.Int, id)
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("DeleteUser");
 
     res.json({ message: "Usuario eliminado exitosamente" });
   } catch (err) {
@@ -245,11 +264,13 @@ const deactivateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { DeletedBy } = req.body;
+    const RequesterID = req.userId;
 
     await pool
       .request()
       .input("UserID", sql.Int, id)
       .input("DeletedBy", sql.Int, DeletedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateUser");
 
     res.json({ message: "Usuario borrado exitosamente" });
@@ -282,6 +303,7 @@ const importUsersFromCSV = async (req, res) => {
   }
 
   const createdBy = req.body.createdBy;
+  const RequesterID = req.userId;
 
   try {
     const users = [];
@@ -348,6 +370,7 @@ const importUsersFromCSV = async (req, res) => {
           .input("PostalCode", sql.NVarChar, user.PostalCode)
           .input("Country", sql.NVarChar, user.Country)
           .input("CreatedBy", sql.Int, user.CreatedBy)
+          .input("RequesterID", sql.Int, RequesterID)
           .execute("AddUser");
 
         const userId = result.recordset[0].UserID;
@@ -359,6 +382,7 @@ const importUsersFromCSV = async (req, res) => {
           .input("StartDate", sql.Date, new Date())
           .input("EndDate", sql.Date, null)
           .input("CreatedBy", sql.Int, user.CreatedBy)
+          .input("RequesterID", sql.Int, RequesterID)
           .execute("AddJobTitleChange");
 
         await transaction
@@ -368,11 +392,13 @@ const importUsersFromCSV = async (req, res) => {
           .input("StartDate", sql.Date, new Date())
           .input("EndDate", sql.Date, null)
           .input("CreatedBy", sql.Int, user.CreatedBy)
+          .input("RequesterID", sql.Int, RequesterID)
           .execute("AddDepartmentChange");
 
         const roleResult = await transaction
           .request()
           .input("JobTitleID", sql.Int, user.JobTitleID)
+          .input("RequesterID", sql.Int, RequesterID)
           .execute("GetRoleByJobTitle");
 
         const roleId = roleResult.recordset[0]?.RoleID;
@@ -382,6 +408,7 @@ const importUsersFromCSV = async (req, res) => {
             .request()
             .input("UserID", sql.Int, userId)
             .input("RoleID", sql.Int, roleId)
+            .input("RequesterID", sql.Int, RequesterID)
             .execute("AddUserRole");
         }
 
@@ -419,6 +446,7 @@ const importUsersFromCSV = async (req, res) => {
 const updateUserField = async function (req, res) {
   const { id } = req.params;
   const { fieldName, newValue } = req.body;
+  const RequesterID = req.userId;
 
   try {
     const pool = await poolPromise;
@@ -428,6 +456,7 @@ const updateUserField = async function (req, res) {
       .input("FieldName", sql.NVarChar, fieldName)
       .input("NewValue", sql.NVarChar, newValue)
       .input("UserID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateUserField");
 
     if (result.rowsAffected[0] > 0) {
@@ -451,9 +480,12 @@ const getUserDetailsById = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
+
     const result = await pool
       .request()
       .input("UserID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetUserDetailsById");
 
     if (result.recordset.length === 0) {

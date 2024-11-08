@@ -3,11 +3,13 @@ const { poolPromise, sql } = require("../database/db");
 const createUserRole = async (req, res) => {
   try {
     const { UserID, RoleID } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("UserID", sql.Int, UserID)
       .input("RoleID", sql.Int, RoleID)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddUserRole"); 
 
     res.status(201).json({ message: "Relación de usuario y rol creada exitosamente" });
@@ -20,7 +22,10 @@ const createUserRole = async (req, res) => {
 const getAllUserRoles = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllUserRoles"); 
+    const RequesterID = req.userId;
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllUserRoles"); 
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -33,8 +38,11 @@ const getUserRoleById = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
+
     const result = await pool.request()
       .input("UserRoleID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetUserRoleById");
 
     if (result.recordset.length === 0) {
@@ -52,11 +60,13 @@ const updateStartDateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { StartDate } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("UserRoleID", sql.Int, id)
       .input("StartDate", sql.Int, StartDate)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateStartDateUserRole");
 
     res.status(200).json({ message: "Relación de usuario y rol actualizada exitosamente" });

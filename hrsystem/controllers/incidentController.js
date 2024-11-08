@@ -4,6 +4,7 @@ const createIncident = async (req, res) => {
   try {
     const { IncidentTypeID, UserID, Reason, Date, Duration, Comments, CreatedBy } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("IncidentTypeID", sql.Int, IncidentTypeID)
@@ -13,6 +14,7 @@ const createIncident = async (req, res) => {
       .input("Duration", sql.Int, Duration)
       .input("Comments", sql.Text, Comments)
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddIncident");
 
     res.status(201).json({ message: "Incidente creado exitosamente" });
@@ -25,7 +27,10 @@ const createIncident = async (req, res) => {
 const getAllIncidents = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllIncidents");
+    const RequesterID = req.userId;
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllIncidents");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -38,8 +43,11 @@ const getIncidentByUserId = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
+
     const result = await pool.request()
       .input("UserID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetIncidentByUserId");
 
     if (result.recordset.length === 0) {
@@ -56,7 +64,9 @@ const getIncidentByUserId = async (req, res) => {
 const updateIncident = async (req, res) => {
   try {
     const { id } = req.params;
-    const { IncidentTypeID, Reason, Date, Duration, Comments, Status, UpdatedBy } = req.body;
+    const { IncidentTypeID, Reason, Date, Duration, Comments, UpdatedBy } = req.body;
+    const RequesterID = req.userId;
+
     const pool = await poolPromise;
 
     await pool.request()
@@ -67,6 +77,7 @@ const updateIncident = async (req, res) => {
       .input("Duration", sql.Int, Duration)
       .input("Comments", sql.Text, Comments)
       .input("UpdatedBy", sql.Int, UpdatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateIncident");
 
     res.status(200).json({ message: "Incidente actualizado exitosamente" });
@@ -80,9 +91,11 @@ const deleteIncident = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("IncidentID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteIncident");
 
     res.status(200).json({ message: "Incidente eliminado exitosamente" });
@@ -96,12 +109,14 @@ const deactivateIncident = async (req, res) => {
   try {
     const { id } = req.params;
     const { DeletedBy } = req.body;
+    const RequesterID = req.userId;
 
     const pool = await poolPromise;
 
     await pool.request()
       .input("IncidentID", sql.Int, id)
       .input("DeletedBy", sql.Int, DeletedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateIncident");
 
     res.status(200).json({ message: "Incidente desactivado exitosamente" });

@@ -4,6 +4,7 @@ const createFeedback = async (req, res) => {
   try {
     const { UserID, TypeID, Subject, Comment, Acknowledged, CreatedBy } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("UserID", sql.Int, UserID)
@@ -12,6 +13,7 @@ const createFeedback = async (req, res) => {
       .input("Comment", sql.Text, Comment)
       .input("Acknowledged", sql.Bit, Acknowledged)
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddFeedback"); 
 
     res.status(201).json({ message: "Feedback creado exitosamente" });
@@ -24,7 +26,10 @@ const createFeedback = async (req, res) => {
 const getAllFeedbacks = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllFeedbacks");
+    const RequesterID = req.userId;
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllFeedbacks");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -37,8 +42,10 @@ const getFeedbackById = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
     const result = await pool.request()
       .input("FeedbackID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetFeedbackById");
 
     if (result.recordset.length === 0) {
@@ -56,6 +63,8 @@ const updateFeedback = async (req, res) => {
   try {
     const { id } = req.params;
     const { TypeID, Subject, Comment, UpdatedBy } = req.body;
+    const RequesterID = req.userId;
+
     const pool = await poolPromise;
 
     await pool.request()
@@ -64,6 +73,7 @@ const updateFeedback = async (req, res) => {
       .input("Subject", sql.NVarChar, Subject)
       .input("Comment", sql.Text, Comment)
       .input("UpdatedBy", sql.Int, UpdatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateFeedback");
 
     res.status(200).json({ message: "Feedback actualizado exitosamente" });
@@ -76,12 +86,14 @@ const updateFeedback = async (req, res) => {
 const deleteFeedback = async (req, res) => {
   try {
     const { id } = req.params;
-    const { DeletedBy } = req.body; 
+    const { DeletedBy } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("FeedbackID", sql.Int, id)
       .input("DeletedBy", sql.Int, DeletedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteFeedback");
 
     res.status(200).json({ message: "Feedback eliminado exitosamente" });
@@ -95,9 +107,11 @@ const deactivateFeedback = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("FeedbackID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateFeedback");
 
     res.status(200).json({ message: "Feedback desactivado exitosamente" });

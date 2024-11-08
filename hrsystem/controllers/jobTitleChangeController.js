@@ -4,12 +4,14 @@ const createJobTitleChange = async (req, res) => {
   try {
     const { UserID, JobTitleID, StartDate, CreatedBy } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("UserID", sql.Int, UserID)
       .input("JobTitleID", sql.Int, JobTitleID)
       .input("StartDate", sql.Date, StartDate)
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleChange");
 
     res.status(201).json({ message: "Cambio de título de trabajo creado exitosamente" });
@@ -22,7 +24,11 @@ const createJobTitleChange = async (req, res) => {
 const getAllJobTitleChanges = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllJobTitleChanges");
+    const RequesterID = req.userId;
+
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllJobTitleChanges");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -35,8 +41,11 @@ const getJobTitleChangeById = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
+
     const result = await pool.request()
       .input("JobTitleChangeID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetJobTitleChangesByUserID");
 
     if (result.recordset.length === 0) {
@@ -54,6 +63,8 @@ const updateJobTitleChange = async (req, res) => {
   try {
     const { id } = req.params;
     const { JobTitleID, StartDate, EndDate, Status, UpdatedBy } = req.body;
+    const RequesterID = req.userId;
+
     const pool = await poolPromise;
 
     await pool.request()
@@ -63,6 +74,7 @@ const updateJobTitleChange = async (req, res) => {
       .input("EndDate", sql.Date, EndDate)
       .input("Status", sql.Bit, Status)
       .input("UpdatedBy", sql.Int, UpdatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateJobTitleChange");
 
     res.status(200).json({ message: "Cambio de título de trabajo actualizado exitosamente" });
@@ -76,11 +88,14 @@ const deactivateJobTitleChange = async (req, res) => {
   try {
     const { id } = req.params;
     const { DeletedBy } = req.body;
+    const RequesterID = req.userId;
+
     const pool = await poolPromise;
 
     await pool.request()
       .input("JobTitleChangeID", sql.Int, id)
       .input("DeletedBy", sql.Int, DeletedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateJobTitleChange");
 
     res.status(200).json({ message: "Cambio de título de trabajo desactivado exitosamente" });

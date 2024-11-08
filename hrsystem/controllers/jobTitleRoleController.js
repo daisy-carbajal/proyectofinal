@@ -4,11 +4,13 @@ const createJobTitleRole = async (req, res) => {
   try {
     const { JobTitleID, RoleID, Status } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("JobTitleID", sql.Int, JobTitleID)
       .input("RoleID", sql.Int, RoleID)
       .input("Status", sql.Bit, Status)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleRole");
 
     res.status(201).json({ message: "Relación de título de trabajo y rol creada exitosamente" });
@@ -21,7 +23,10 @@ const createJobTitleRole = async (req, res) => {
 const getAllJobTitleRoles = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllJobTitleRoles"); // Nombre del stored procedure para obtener todos
+    const RequesterID = req.userId;
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllJobTitleRoles");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -34,8 +39,11 @@ const getJobTitleRoleById = async (req, res) => {
     try {
       const { id } = req.params;
       const pool = await poolPromise;
+      const RequesterID = req.userId;
+
       const result = await pool.request()
         .input("JobTitleRoleID", sql.Int, id)
+        .input("RequesterID", sql.Int, RequesterID)
         .execute("GetJobTitleRoleById");
   
       if (result.recordset.length === 0) {
@@ -53,6 +61,8 @@ const getJobTitleRoleById = async (req, res) => {
     try {
       const { id } = req.params;
       const { JobTitleID, RoleID, Status } = req.body;
+      const RequesterID = req.userId;
+
       const pool = await poolPromise;
   
       await pool.request()
@@ -60,6 +70,7 @@ const getJobTitleRoleById = async (req, res) => {
         .input("JobTitleID", sql.Int, JobTitleID)
         .input("RoleID", sql.Int, RoleID)
         .input("Status", sql.Bit, Status)
+        .input("RequesterID", sql.Int, RequesterID)
         .execute("UpdateJobTitleRole"); 
   
       res.status(200).json({ message: "Relación de título de trabajo y rol actualizada exitosamente" });
@@ -73,9 +84,11 @@ const getJobTitleRoleById = async (req, res) => {
     try {
       const { id } = req.params;
       const pool = await poolPromise;
+      const RequesterID = req.userId;
   
       await pool.request()
         .input("JobTitleRoleID", sql.Int, id)
+        .input("RequesterID", sql.Int, RequesterID)
         .execute("DeactivateJobTitleRole");
   
       res.status(200).json({ message: "Relación de título de trabajo y rol desactivada exitosamente" });

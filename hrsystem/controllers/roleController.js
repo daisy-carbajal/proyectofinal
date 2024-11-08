@@ -3,6 +3,7 @@ const { poolPromise, sql } = require("../database/db");
 const createRole = async (req, res) => {
   try {
     const { Name, Description, CreatedBy } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
@@ -10,6 +11,7 @@ const createRole = async (req, res) => {
       .input("Name", sql.NVarChar, Name)
       .input("Description", sql.NVarChar, Description)
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddRole");
 
     res.status(201).json({ message: "Role creado exitosamente" });
@@ -22,8 +24,11 @@ const createRole = async (req, res) => {
 const getAllRoles = async (req, res) => {
   try {
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
-    const result = await pool.request().execute("GetAllRoles");
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllRoles");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron Roles" });
@@ -39,11 +44,13 @@ const getAllRoles = async (req, res) => {
 const getRoleById = async (req, res) => {
   try {
     const { id } = req.params;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     const result = await pool
       .request()
       .input("RoleID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetRoleById");
 
     if (result.recordset.length === 0) {
@@ -61,6 +68,7 @@ const updateRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { Name, Description, LoggedUserId } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
@@ -69,6 +77,7 @@ const updateRole = async (req, res) => {
       .input("Name", sql.NVarChar, Name)
       .input("Description", sql.NVarChar, Description)
       .input("UpdatedBy", sql.Int, LoggedUserId)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateRole");
 
     res.status(200).json({ message: "Role actualizado exitosamente" });
@@ -81,11 +90,13 @@ const updateRole = async (req, res) => {
 const deleteRole = async (req, res) => {
   try {
     const { id } = req.params;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("RoleID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteRole");
 
     res.status(200).json({ message: "Role eliminado exitosamente" });
@@ -99,12 +110,14 @@ const deactivateRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { DeletedBy } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("RoleID", sql.Int, id)
       .input("DeletedBy", sql.Int, DeletedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateRole");
 
     res.status(200).json({ message: "Rol borrado exitosamente" });

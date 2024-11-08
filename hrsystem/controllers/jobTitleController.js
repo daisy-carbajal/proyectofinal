@@ -4,11 +4,13 @@ const createJobTitle = async (req, res) => {
   try {
     const { Title, Description, DepartmentID, RoleID } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     const result = await pool
       .request()
       .input("Title", sql.NVarChar, Title)
       .input("Description", sql.NVarChar, Description)
+      .input("RequesterID", sql.Int, RequesterID)
       .output("JobTitleID", sql.Int)
       .execute("AddJobTitle");
 
@@ -18,12 +20,14 @@ const createJobTitle = async (req, res) => {
       .request()
       .input("JobTitleID", sql.Int, jobTitleId)
       .input("DepartmentID", sql.Int, DepartmentID)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleDepartment");
 
     await pool
       .request()
       .input("JobTitleID", sql.Int, jobTitleId)
       .input("RoleID", sql.Int, RoleID)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleRole");
 
     res.status(201).json({
@@ -38,8 +42,11 @@ const createJobTitle = async (req, res) => {
 const getAllJobTitles = async (req, res) => {
   try {
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
-    const result = await pool.request().execute("GetAllJobTitles");
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllJobTitles");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron JobTitles" });
@@ -55,8 +62,11 @@ const getAllJobTitles = async (req, res) => {
 const getAllJobTitleDetails = async (req, res) => {
   try {
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
-    const result = await pool.request().execute("GetJobTitleDetails");
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetJobTitleDetails");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron JobTitles" });
@@ -72,11 +82,13 @@ const getAllJobTitleDetails = async (req, res) => {
 const getJobTitleById = async (req, res) => {
   try {
     const { id } = req.params;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     const result = await pool
       .request()
       .input("JobTitleID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetJobTitleById");
 
     if (result.recordset.length === 0) {
@@ -94,6 +106,7 @@ const updateJobTitle = async (req, res) => {
   try {
     const { id } = req.params;
     const { Title, Description } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
@@ -101,6 +114,7 @@ const updateJobTitle = async (req, res) => {
       .input("JobTitleID", sql.Int, id)
       .input("Title", sql.NVarChar, Title)
       .input("Description", sql.NVarChar, Description)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateJobTitle");
 
     res.status(200).json({ message: "JobTitle actualizado exitosamente" });
@@ -114,10 +128,12 @@ const deleteJobTitle = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool
       .request()
       .input("JobTitleID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteJobTitle");
 
     res.status(200).json({ message: "JobTitle eliminado exitosamente" });
@@ -130,11 +146,13 @@ const deleteJobTitle = async (req, res) => {
 const deactivateJobTitle = async (req, res) => {
   try {
     const { id } = req.params;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("JobTitleID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateJobTitle");
 
     res.status(200).json({ message: "Puesto de Trabajo borrado exitosamente" });

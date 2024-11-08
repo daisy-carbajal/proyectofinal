@@ -15,6 +15,7 @@ const createDisciplinaryAction = async (req, res) => {
       CreatedBy,
     } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool
       .request()
@@ -28,6 +29,7 @@ const createDisciplinaryAction = async (req, res) => {
       .input("EsignatureUser", sql.VarBinary, EsignatureUser)
       .input("EsignatureManager", sql.VarBinary, EsignatureManager)
       .input("CreatedBy", sql.Int, CreatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddDisciplinaryAction");
 
     res
@@ -42,7 +44,10 @@ const createDisciplinaryAction = async (req, res) => {
 const getAllDisciplinaryActions = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllDisciplinaryActions");
+    const RequesterID = req.userId;
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllDisciplinaryActions");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -57,9 +62,11 @@ const getDisciplinaryActionByUserId = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
     const result = await pool
       .request()
       .input("UserID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("[GetDisciplinaryActionsByUserID]");
 
     if (result.recordset.length === 0) {
@@ -93,6 +100,7 @@ const updateDisciplinaryAction = async (req, res) => {
       UpdatedBy,
     } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool
       .request()
@@ -107,6 +115,7 @@ const updateDisciplinaryAction = async (req, res) => {
       .input("EsignatureUser", sql.VarBinary, EsignatureUser)
       .input("EsignatureManager", sql.VarBinary, EsignatureManager)
       .input("UpdatedBy", sql.Int, UpdatedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateDisciplinaryAction");
 
     res
@@ -124,12 +133,14 @@ const deactivateDisciplinaryAction = async (req, res) => {
   try {
     const { id } = req.params;
     const { DeletedBy } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("DisciplinaryActionID", sql.Int, id)
       .input("DeletedBy", sql.Int, DeletedBy)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateDisciplinaryAction");
 
     res
@@ -147,10 +158,12 @@ const deleteDisciplinaryAction = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool
       .request()
       .input("DisciplinaryActionID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteDisciplinaryAction");
 
     res

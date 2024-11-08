@@ -2,11 +2,13 @@ const { poolPromise, sql } = require("../database/db");
 
 const createIncidentType = async (req, res) => {
   try {
-    const { Description, Status } = req.body;
+    const { Description } = req.body;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("Description", sql.NVarChar, Description)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddIncidentType");
 
     res.status(201).json({ message: "Tipo de incidente creado exitosamente" });
@@ -19,7 +21,11 @@ const createIncidentType = async (req, res) => {
 const getAllIncidentTypes = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllIncidentTypes"); 
+    const RequesterID = req.userId;
+
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllIncidentTypes"); 
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -32,8 +38,11 @@ const getIncidentTypeById = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
+
     const result = await pool.request()
       .input("IncidentTypeID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetIncidentTypeById"); 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "Tipo de incidente no encontrado" });
@@ -50,12 +59,15 @@ const updateIncidentType = async (req, res) => {
   try {
     const { id } = req.params;
     const { Description, Status } = req.body;
+    const RequesterID = req.userId;
+
     const pool = await poolPromise;
 
     await pool.request()
       .input("IncidentTypeID", sql.Int, id)
       .input("Description", sql.NVarChar, Description)
       .input("Status", sql.Bit, Status)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateIncidentType");
 
     res.status(200).json({ message: "Tipo de incidente actualizado exitosamente" });
@@ -69,9 +81,11 @@ const deleteIncidentType = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
 
     await pool.request()
       .input("IncidentTypeID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteIncidentType");
 
     res.status(200).json({ message: "Tipo de incidente eliminado exitosamente" });

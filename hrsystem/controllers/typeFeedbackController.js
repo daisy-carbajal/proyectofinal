@@ -3,11 +3,13 @@ const { poolPromise, sql } = require("../database/db");
 const createTypeFeedback = async (req, res) => {
   try {
     const { Description, Status } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("Description", sql.NVarChar, Description)
       .input("Status", sql.Bit, Status)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("AddTypeFeedback");
 
     res.status(201).json({ message: "Tipo de feedback creado exitosamente" });
@@ -20,7 +22,10 @@ const createTypeFeedback = async (req, res) => {
 const getAllTypeFeedbacks = async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().execute("GetAllTypeFeedbacks");
+    const RequesterID = req.userId;
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllTypeFeedbacks");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -33,8 +38,10 @@ const getTypeFeedbackById = async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await poolPromise;
+    const RequesterID = req.userId;
     const result = await pool.request()
       .input("TypeFeedbackID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetTypeFeedbackById");
 
     if (result.recordset.length === 0) {
@@ -52,12 +59,14 @@ const updateTypeFeedback = async (req, res) => {
   try {
     const { id } = req.params;
     const { Description, Status } = req.body;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("TypeFeedbackID", sql.Int, id)
       .input("Description", sql.NVarChar, Description)
       .input("Status", sql.Bit, Status)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateTypeFeedback"); 
 
     res.status(200).json({ message: "Tipo de feedback actualizado exitosamente" });
@@ -70,10 +79,12 @@ const updateTypeFeedback = async (req, res) => {
 const deleteTypeFeedback = async (req, res) => {
   try {
     const { id } = req.params;
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("TypeFeedbackID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteTypeFeedback"); 
 
     res.status(200).json({ message: "Tipo de feedback eliminado exitosamente" });
