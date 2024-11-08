@@ -1,57 +1,113 @@
 <div class="surface-card p-4 shadow-2 border-round mt-3">
-    <div class="card flex content-left gap-3 mb-3">
-      <p-button label="Regresar" icon="pi pi-arrow-circle-left" />
+  <div class="card flex content-left gap-3 mb-3">
+    <p-button label="Regresar" icon="pi pi-arrow-circle-left"></p-button>
+  </div>
+  <div class="font-medium text-3xl text-700 mb-3">Nueva Acción Disciplinaria</div>
+  <div class="text-500 mb-5">
+    Acción de ...
+  </div>
+  <form >
+    <ul class="list-none p-0 m-0">
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Campo</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            name="campo"
+            placeholder="campo"
+          />
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Campo</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            name="campo"
+            placeholder="campo"
+          />
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Campo</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            name="campo"
+            placeholder="campo"
+          />
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Campo</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            name="campo"
+            placeholder="campo"
+          />
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Campo</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            name="campo"
+            placeholder="campo"
+          />
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Campo</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            name="campo"
+            placeholder="campo"
+          />
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Campo</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            name="campo"
+            placeholder="campo"
+          />
+        </div>
+      </li>
+    </ul>
+    <div class="flex justify-content-end mt-3">
+      <button
+        type="submit"
+        pButton
+        label="Guardar"
+        icon="pi pi-check"
+        class="p-button-success"
+      ></button>
     </div>
-    <div class="font-medium text-3xl text-700 mb-3">Nueva Acción Disciplinaria</div>
-    
-    <form>
-      <div class="field mb-3">
-        <label for="disciplinaryActionReasonID" class="text-500">Disciplinary Action Reason ID</label>
-        <input type="number" pInputText id="disciplinaryActionReasonID" name="disciplinaryActionReasonID" required />
-      </div>
-  
-      <div class="field mb-3">
-        <label for="userID" class="text-500">User ID</label>
-        <input type="number" pInputText id="userID" name="userID" required />
-      </div>
-  
-      <div class="field mb-3">
-        <label for="reportedByUserID" class="text-500">Reported By User ID</label>
-        <input type="number" pInputText id="reportedByUserID" name="reportedByUserID" required />
-      </div>
-  
-      <div class="field mb-3">
-        <label for="departmentID" class="text-500">Department ID</label>
-        <input type="number" pInputText id="departmentID" name="departmentID" required />
-      </div>
-  
-      <div class="field mb-3">
-        <label for="jobTitleID" class="text-500">Job Title ID</label>
-        <input type="number" pInputText id="jobTitleID" name="jobTitleID" required />
-      </div>
-  
-      <div class="field mb-3">
-        <label for="warningID" class="text-500">Warning ID</label>
-        <input type="number" pInputText id="warningID" name="warningID" required />
-      </div>
-  
-      <div class="field mb-3">
-        <label for="description" class="text-500">Description</label>
-        <textarea pInputTextarea id="description" name="description" rows="3" required></textarea>
-      </div>
-  
-      <div class="field mb-3">
-        <label for="esignatureUser" class="text-500">Esignature User</label>
-        <input type="file" pInputText id="esignatureUser" name="esignatureUser" required />
-      </div>
-  
-      <div class="field mb-3">
-        <label for="esignatureManager" class="text-500">Esignature Manager</label>
-        <input type="file" pInputText id="esignatureManager" name="esignatureManager" required />
-      </div>
-  
-      <div class="flex justify-content-end">
-        <p-button label="Guardar Evaluación" icon="pi pi-save" type="submit"></p-button>
-      </div>
-    </form>
-  </div>  
+  </form>
+</div>

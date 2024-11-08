@@ -24,7 +24,7 @@ import { RouterModule } from '@angular/router';
     DividerModule,
     InputTextModule,
     FormsModule,
-    RouterModule
+    RouterModule,
   ],
   providers: [MessageService, AuthService],
   templateUrl: './login.component.html',
@@ -45,19 +45,19 @@ export class LoginComponent {
   ) {}
 
   ngOnInit(): void {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
   }
 
   login() {
     const credentials = {
       workEmail: this.workEmail,
       password: this.password,
-      rememberMe: this.rememberMe
+      rememberMe: this.rememberMe,
     };
-    
+
     this.authService.login(credentials).subscribe({
       next: (response) => {
-        console.log("credentials:", credentials);
+        console.log('credentials:', credentials);
         this.messageService.add({
           severity: 'success',
           summary: 'Login exitoso',
