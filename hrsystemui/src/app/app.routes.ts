@@ -15,6 +15,11 @@ import { CompleteRegistrationComponent } from './components/complete-registratio
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
 import { NewDAComponent } from './components/new-da/new-da.component';
+import { DisciplinaryActionViewComponent } from './components/disciplinary-action-view/disciplinary-action-view.component';
+import { NewIncidentComponent } from './components/new-incident/new-incident.component';
+import { IncidentViewComponent } from './components/incident-view/incident-view.component';
+import { NewEvaluationComponent } from './components/new-evaluation/new-evaluation.component';
+import { EvaluationViewComponent } from './components/evaluation-view/evaluation-view.component';
 
 export const routes: Routes = [
   {
@@ -38,6 +43,22 @@ export const routes: Routes = [
     component: NewDAComponent,
   },
   {
+    path: 'new-incident',
+    component: NewIncidentComponent,
+  },
+  {
+    path: 'new-evaluation',
+    component: NewEvaluationComponent,
+  },
+  {
+    path: 'da',
+    component: DisciplinaryActionViewComponent,
+  },
+  {
+    path: 'evaluation',
+    component: EvaluationViewComponent,
+  },
+  {
     path: 'home',
     component: HomeComponent,
     canActivate: [AuthGuard],
@@ -51,6 +72,7 @@ export const routes: Routes = [
       { path: 'jobtitle', component: JobTitleViewComponent },
       { path: 'department', component: DepartmentViewComponent },
       { path: 'roles', component: RolesViewComponent },
+      { path: 'incident', component: IncidentViewComponent }
     ],
   },
   {

@@ -25,8 +25,9 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
+
 @Component({
-  selector: 'app-evaluation-view',
+  selector: 'app-disciplinary-action-view',
   standalone: true,
   imports: [TableModule,
     DialogModule,
@@ -66,10 +67,10 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
       }
     `,
   ],
-  templateUrl: './evaluation-view.component.html',
-  styleUrl: './evaluation-view.component.css'
+  templateUrl: './disciplinary-action-view.component.html',
+  styleUrl: './disciplinary-action-view.component.css'
 })
-export class EvaluationViewComponent {
+export class DisciplinaryActionViewComponent {
   filterGlobal(arg0: EventTarget | null) {
     throw new Error('Method not implemented.');
   }

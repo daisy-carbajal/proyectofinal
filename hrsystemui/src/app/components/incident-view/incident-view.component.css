@@ -1,0 +1,19 @@
+.flex-container {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Asegura que ocupe todo el ancho del contenedor */
+}
+
+.input-field {
+    flex: 1;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    width: 50%; /* Ajusta el ancho al 50% */
+}
+
+.dropdown-field {
+    flex: 1;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    width: 50%; /* Ajusta el ancho al 50% */
+}

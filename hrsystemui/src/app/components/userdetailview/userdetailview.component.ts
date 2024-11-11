@@ -145,11 +145,11 @@ export class UserDetailViewComponent implements OnInit {
       .subscribe(
         (response) => {
           console.log('Campo actualizado correctamente', response);
-          field.isEditing = false; // Salir del modo de edición
+          field.isEditing = false;
         },
         (error) => {
           console.error('Error al actualizar el campo', error);
-          this.cancelEdit(field); // Revertir cambios si la actualización falla
+          this.cancelEdit(field);
         }
       );
   }

@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 })
 export class IncidentTypeService {
 
-  private apiUrl = 'http://localhost:3000/incident-type';
+  private apiUrl = 'http://localhost:3000/incident-types';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
