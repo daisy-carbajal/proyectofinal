@@ -6,12 +6,12 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post('/', checkPermission("CREATE_OPTIONS"), rolePermissionController.addRolePermission);
+router.post('/', checkPermission("CREATE_SETTINGS"), rolePermissionController.addRolePermission);
 
-router.get('/', checkPermission("VIEW_OPTIONS"), rolePermissionController.getAllRolePermissions);
+router.get('/', checkPermission("VIEW_SETTINGS"), rolePermissionController.getAllRolePermissions);
 
-router.put('/d/:id', checkPermission("EDIT_OPTIONS"), rolePermissionController.deactivateRolePermission);
+router.put('/d/:id', checkPermission("EDIT_SETTINGS"), rolePermissionController.deactivateRolePermission);
 
-router.delete('/:id', checkPermission("DELETE_OPTIONS"), rolePermissionController.deleteRolePermission);
+router.delete('/:id', checkPermission("DELETE_SETTINGS"), rolePermissionController.deleteRolePermission);
 
 module.exports = router;

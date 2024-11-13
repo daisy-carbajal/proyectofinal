@@ -6,14 +6,14 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post("/", checkPermission("CREATE_OPTIONS"), jobTitleDepartmentController.createJobTitleDepartment);
+router.post("/", checkPermission("CREATE_SETTINGS"), jobTitleDepartmentController.createJobTitleDepartment);
 
-router.get("/", checkPermission("VIEW_OPTIONS"), jobTitleDepartmentController.getAllJobTitleDepartments);
+router.get("/", checkPermission("VIEW_SETTINGS"), jobTitleDepartmentController.getAllJobTitleDepartments);
 
-router.get("/:id", checkPermission("VIEW_OPTIONS"), jobTitleDepartmentController.getJobTitlesByDepartmentId);
+router.get("/:id", checkPermission("VIEW_SETTINGS"), jobTitleDepartmentController.getJobTitlesByDepartmentId);
 
-router.put("/:id", checkPermission("EDIT_OPTIONS"), jobTitleDepartmentController.updateJobTitleDepartment);
+router.put("/u/:id", checkPermission("EDIT_SETTINGS"), jobTitleDepartmentController.updateJobTitleDepartment);
 
-router.put("/d/:id", checkPermission("DELETE_OPTIONS"), jobTitleDepartmentController.deactivateJobTitleDepartment);
+router.put("/d/:id", checkPermission("DELETE_SETTINGS"), jobTitleDepartmentController.deactivateJobTitleDepartment);
 
 module.exports = router;

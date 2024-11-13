@@ -25,7 +25,7 @@ router.get(
 );
 
 router.put(
-  "/:id",
+  "/u/:id",
   checkPermission("EDIT_FEEDBACK"),
   feedbackController.updateFeedback
 );

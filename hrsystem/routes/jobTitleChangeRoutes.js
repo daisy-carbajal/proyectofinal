@@ -6,14 +6,14 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post("/", checkPermission("CREATE_OPTIONS"), jobTitleChangeController.createJobTitleChange);
+router.post("/", checkPermission("CREATE_USER"), jobTitleChangeController.createJobTitleChange);
 
-router.get("/", checkPermission("VIEW_OPTIONS"), jobTitleChangeController.getAllJobTitleChanges);
+router.get("/", checkPermission("VIEW_USER"), jobTitleChangeController.getAllJobTitleChanges);
 
-router.get("/:id", checkPermission("VIEW_OPTIONS"), jobTitleChangeController.getJobTitleChangeById);
+router.get("/:id", checkPermission("VIEW_USER"), jobTitleChangeController.getJobTitleChangeById);
 
-router.put("/:id", checkPermission("EDIT_OPTIONS"), jobTitleChangeController.updateJobTitleChange);
+router.put("/u/:id", checkPermission("EDIT_USER"), jobTitleChangeController.updateJobTitleChange);
 
-router.put("/d/:id", checkPermission("DELETE_OPTIONS"), jobTitleChangeController.deactivateJobTitleChange);
+router.put("/d/:id", checkPermission("DELETE_USER"), jobTitleChangeController.deactivateJobTitleChange);
 
 module.exports = router;

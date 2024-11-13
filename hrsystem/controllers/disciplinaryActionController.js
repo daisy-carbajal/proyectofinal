@@ -1,6 +1,7 @@
 const { poolPromise, sql } = require("../database/db");
 
 const createDisciplinaryAction = async (req, res) => {
+  const transaction = new sql.Transaction(await poolPromise);
   try {
     const {
       DisciplinaryActionReasonID,
@@ -13,12 +14,15 @@ const createDisciplinaryAction = async (req, res) => {
       EsignatureUser,
       EsignatureManager,
       CreatedBy,
+      Tasks // Lista de tareas
     } = req.body;
-    const pool = await poolPromise;
     const RequesterID = req.userId;
 
-    await pool
-      .request()
+    // Iniciar una transacción
+    await transaction.begin();
+
+    // Insertar la acción disciplinaria
+    const result = await transaction.request()
       .input("DisciplinaryActionReasonID", sql.Int, DisciplinaryActionReasonID)
       .input("UserID", sql.Int, UserID)
       .input("ReportedByUserID", sql.Int, ReportedByUserID)
@@ -32,12 +36,30 @@ const createDisciplinaryAction = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddDisciplinaryAction");
 
-    res
-      .status(201)
-      .json({ message: "Acción disciplinaria creada exitosamente" });
+    // Obtener el ID de la acción disciplinaria recién creada
+    const DisciplinaryActionID = result.recordset[0].DisciplinaryActionID;
+
+    // Insertar cada tarea asociada
+    for (const task of Tasks) {
+      await transaction.request()
+        .input("DisciplinaryActionID", sql.Int, DisciplinaryActionID)
+        .input("Task", sql.VarChar(255), task.Task)
+        .input("FollowUpDate", sql.Date, task.FollowUpDate)
+        .input("TaskStatus", sql.VarChar(255), task.TaskStatus)
+        .input("CreatedBy", sql.Int, CreatedBy)
+        .input("RequesterID", sql.Int, RequesterID)
+        .execute("AddDisciplinaryActionTask");
+    }
+
+    // Confirmar la transacción
+    await transaction.commit();
+
+    res.status(201).json({ message: "Acción disciplinaria y tareas creadas exitosamente" });
   } catch (err) {
-    console.error("Error al crear la acción disciplinaria:", err);
-    res.status(500).json({ message: "Error al crear la acción disciplinaria" });
+    // Revertir la transacción en caso de error
+    await transaction.rollback();
+    console.error("Error al crear la acción disciplinaria y sus tareas:", err);
+    res.status(500).json({ message: "Error al crear la acción disciplinaria y sus tareas" });
   }
 };
 

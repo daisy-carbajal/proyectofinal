@@ -6,12 +6,12 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post('/', checkPermission("CREATE_OPTIONS"), permissionController.addPermission);
+router.post('/', checkPermission("CREATE_SETTINGS"), permissionController.addPermission);
 
-router.get('/', checkPermission("VIEW_OPTIONS"), permissionController.getAllPermissions);
+router.get('/', checkPermission("VIEW_SETTINGS"), permissionController.getAllPermissions);
 
-router.put('/d/:id', checkPermission("VIEW_OPTIONS"), permissionController.deactivatePermission);
+router.put('/d/:id', checkPermission("VIEW_SETTINGS"), permissionController.deactivatePermission);
 
-router.delete('/:id', checkPermission("DELETE_OPTIONS"), permissionController.deletePermission);
+router.delete('/:id', checkPermission("DELETE_SETTINGS"), permissionController.deletePermission);
 
 module.exports = router;

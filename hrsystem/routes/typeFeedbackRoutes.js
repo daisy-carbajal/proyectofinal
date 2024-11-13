@@ -12,7 +12,7 @@ router.get("/", checkPermission("VIEW_OPTIONS"), typeFeedbackController.getAllTy
 
 router.get("/:id", checkPermission("VIEW_OPTIONS"), typeFeedbackController.getTypeFeedbackById);
 
-router.put("/:id", checkPermission("EDIT_OPTIONS"), typeFeedbackController.updateTypeFeedback);
+router.put("/u/:id", checkPermission("EDIT_OPTIONS"), typeFeedbackController.updateTypeFeedback);
 
 router.delete("/:id", checkPermission("DELETE_OPTIONS"), typeFeedbackController.deleteTypeFeedback);
 

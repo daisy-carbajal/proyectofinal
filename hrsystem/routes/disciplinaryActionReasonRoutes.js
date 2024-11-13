@@ -6,14 +6,14 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post("/", checkPermission("CREATE_DISCIPLINARY_ACTION"), disciplinaryActionReasonController.createDisciplinaryActionReason);
+router.post("/", checkPermission("CREATE_OPTIONS"), disciplinaryActionReasonController.createDisciplinaryActionReason);
 
-router.get("/", checkPermission("VIEW_DISCIPLINARY_ACTION"), disciplinaryActionReasonController.getAllDisciplinaryActionReasons);
+router.get("/", checkPermission("VIEW_OPTIONS"), disciplinaryActionReasonController.getAllDisciplinaryActionReasons);
 
-router.get("/:id", checkPermission("VIEW_DISCIPLINARY_ACTION"), disciplinaryActionReasonController.getDisciplinaryActionReasonById);
+router.get("/:id", checkPermission("VIEW_OPTIONS"), disciplinaryActionReasonController.getDisciplinaryActionReasonById);
 
-router.put("/u/:id", checkPermission("EDIT_DISCIPLINARY_ACTION"), disciplinaryActionReasonController.updateDisciplinaryActionReason);
+router.put("/u/:id", checkPermission("EDIT_OPTIONS"), disciplinaryActionReasonController.updateDisciplinaryActionReason);
 
-router.delete("/:id", checkPermission("DELETE_DISCIPLINARY_ACTION"), disciplinaryActionReasonController.deleteDisciplinaryActionReason);
+router.delete("/:id", checkPermission("DELETE_OPTIONS"), disciplinaryActionReasonController.deleteDisciplinaryActionReason);
 
 module.exports = router;

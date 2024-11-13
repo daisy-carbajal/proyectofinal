@@ -30,14 +30,12 @@ import { EditorModule } from 'primeng/editor';
     InputIconModule,
     DropdownModule,
     CalendarModule,
-    EditorModule
+    EditorModule,
   ],
   templateUrl: './new-incident.component.html',
-  styleUrl: './new-incident.component.css'
+  styleUrl: './new-incident.component.css',
 })
-
 export class NewIncidentComponent implements OnInit {
-
   incidentTypes: any[] = [];
   incidentTypeSelected: number | null = null;
   users: any[] = [];
@@ -45,7 +43,7 @@ export class NewIncidentComponent implements OnInit {
   timeValue: number | null = null;
   selectedTimeUnit: string = 'mins';
 
-  loggedUserId: number | null = null; 
+  loggedUserId: number | null = null;
 
   incident = {
     IncidentTypeID: null,
@@ -54,7 +52,7 @@ export class NewIncidentComponent implements OnInit {
     Date: '',
     Duration: null,
     Comments: '',
-    CreatedBy: null
+    CreatedBy: null,
   };
 
   constructor(
@@ -67,10 +65,15 @@ export class NewIncidentComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
     this.loggedUserId = this.authService.getUserId();
     console.log('Logged User ID - :', this.loggedUserId);
   }
+
+  timeOptions = [
+    { label: 'Minutos', value: 'mins' },
+    { label: 'Horas', value: 'hours' },
+    { label: 'Días', value: 'days' },
+  ];
 
   loadIncidentTypes(): void {
     this.incidentTypeService.getAllIncidentTypes().subscribe(
@@ -112,7 +115,7 @@ export class NewIncidentComponent implements OnInit {
     this.userSelected = event.value;
     console.log('ID del Usuario seleccionado:', this.userSelected);
   }
-  
+
   saveIncident(): void {
     const incidentData = {
       IncidentTypeName: this.incident.IncidentTypeID,
@@ -121,39 +124,17 @@ export class NewIncidentComponent implements OnInit {
       Date: new Date(this.incident.Date).toISOString(),
       Duration: this.incident.Duration,
       Comments: this.incident.Comments,
-      CreatedBy: this.loggedUserId
+      CreatedBy: this.loggedUserId,
     };
-  
+
     console.log('Datos del incidente a enviar:', incidentData);
     this.incidentService.postIncident(incidentData).subscribe(
-      response => {
+      (response) => {
         console.log('Incidente registrado con éxito', response);
       },
-      error => {
+      (error) => {
         console.error('Error al registrar el incidente', error);
       }
     );
-  }
-
-  timeOptions = [
-    { label: 'Minutos', value: 'mins' },
-    { label: 'Horas', value: 'hours' },
-    { label: 'Días', value: 'days' },
-  ];
-
-  convertAndSend() {
-    if (this.timeValue !== null && this.selectedTimeUnit) {
-      let timeInMinutes = this.timeValue;
-
-      if (this.selectedTimeUnit === 'hours') {
-        timeInMinutes = this.timeValue * 60;
-      } else if (this.selectedTimeUnit === 'days') {
-        timeInMinutes = this.timeValue * 60 * 24;
-      }
-
-      console.log('Tiempo en minutos:', timeInMinutes);
-    } else {
-      console.error('Por favor ingresa una cantidad y selecciona una unidad.');
-    }
   }
 }

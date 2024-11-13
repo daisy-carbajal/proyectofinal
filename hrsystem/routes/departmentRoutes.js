@@ -8,16 +8,16 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post("/", checkPermission("CREATE_OPTIONs"), departmentValidations, validateFields, departmentController.createDepartment);
+router.post("/", checkPermission("CREATE_SETTINGS"), departmentValidations, validateFields, departmentController.createDepartment);
 
-router.get("/", checkPermission("VIEW_OPTIONS"), departmentController.getAllDepartments);
+router.get("/", checkPermission("VIEW_SETTINGS"), departmentController.getAllDepartments);
 
-router.get("/:id", checkPermission("VIEW_OPTIONS"), departmentController.getDepartmentById);
+router.get("/:id", checkPermission("VIEW_SETTINGS"), departmentController.getDepartmentById);
 
-router.put("/u/:id", checkPermission("EDIT_OPTIONS"), departmentValidations, validateFields, departmentController.updateDepartment);
+router.put("/u/:id", checkPermission("EDIT_SETTINGS"), departmentValidations, validateFields, departmentController.updateDepartment);
 
-router.put("/d/:id", checkPermission("EDIT_OPTIONS"), departmentController.deactivateDepartment);
+router.put("/d/:id", checkPermission("EDIT_SETTINGS"), departmentController.deactivateDepartment);
 
-router.delete("/:id", checkPermission("DELETE_OPTIONS"), departmentController.deleteDepartment);
+router.delete("/:id", checkPermission("DELETE_SETTINGS"), departmentController.deleteDepartment);
 
 module.exports = router;

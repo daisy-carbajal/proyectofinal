@@ -10,28 +10,28 @@ router.use(verifyToken);
 
 router.post(
   "/",
-  checkPermission("CREATE_OPTIONS"),
+  checkPermission("CREATE_SETTINGS"),
   roleValidations,
   validateFields,
   roleController.createRole
 );
-router.get("/", checkPermission("VIEW_OPTIONS"), roleController.getAllRoles);
-router.get("/:id", checkPermission("VIEW_OPTIONS"), roleController.getRoleById);
+router.get("/", checkPermission("VIEW_SETTINGS"), roleController.getAllRoles);
+router.get("/:id", checkPermission("VIEW_SETTINGS"), roleController.getRoleById);
 router.put(
   "/u/:id",
-  checkPermission("EDIT_OPTIONS"),
+  checkPermission("EDIT_SETTINGS"),
   roleValidations,
   validateFields,
   roleController.updateRole
 );
 router.put(
   "/d/:id",
-  checkPermission("EDIT_OPTIONS"),
+  checkPermission("EDIT_SETTINGS"),
   roleController.deactivateRole
 );
 router.delete(
   "/:id",
-  checkPermission("DELETE_OPTIONS"),
+  checkPermission("DELETE_SETTINGS"),
   roleController.deleteRole
 );
 
