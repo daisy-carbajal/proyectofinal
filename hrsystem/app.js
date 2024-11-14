@@ -21,7 +21,18 @@ const jobTitleRoleRoutes = require("./routes/jobTitleRoleRoutes");
 const userRoleRoutes = require("./routes/userRoleRoutes");
 const rolePermissionRoutes = require("./routes/rolePermissionRoutes");
 const permissionRoutes = require("./routes/permissionRoutes");
-
+const disciplinaryActionTaskRoutes = require("./routes/disciplinaryActionTaskRoutes");
+const commentFeedbackRoutes = require("./routes/commentFeedbackRoutes");
+const evaluationSavedRoutes = require("./routes/evaluationSavedRoutes");
+const evaluationTypeRoutes = require("./routes/evaluationTypeRoutes");
+const evaluationParameterRoutes = require("./routes/evaluationParameterRoutes");
+const EvaluationParameterWeightRoutes = require("./routes/EvaluationParameterWeightRoutes");
+const evaluationCalificationRoutes = require("./routes/evaluationCalificationRoutes");
+const evaluationMasterRoutes = require("./routes/evaluationMasterRoutes");
+const evaluationDetailRoutes = require("./routes/evaluationDetailRoutes");
+const actionPlanRoutes = require("./routes/actionPlanRoutes");
+const actionPlanTaskRoutes = require("./routes/actionPlanTaskRoutes");
+const actionPlanParameterRoutes = require("./routes/actionPlanParameterRoutes");
 
 const cors = require("cors");
 app.use(
@@ -52,6 +63,18 @@ app.use("/job-title-roles", jobTitleRoleRoutes);
 app.use("/user-roles", userRoleRoutes);
 app.use("/role-permissions", rolePermissionRoutes);
 app.use("/permissions", permissionRoutes);
+app.use("/da-tasks", disciplinaryActionTaskRoutes);
+app.use("/comment-feedback", commentFeedbackRoutes);
+app.use("/eval-saved", evaluationSavedRoutes);
+app.use("/eval-type", evaluationTypeRoutes);
+app.use("/eval-params", evaluationParameterRoutes);
+app.use("/eval-params-weight", EvaluationParameterWeightRoutes);
+app.use("/eval-calification", evaluationCalificationRoutes);
+app.use("/eval-master", evaluationMasterRoutes);
+app.use("/eval-detail", evaluationDetailRoutes);
+app.use("/action-plan", actionPlanRoutes);
+app.use("/action-plan-task", actionPlanTaskRoutes);
+app.use("/action-plan-param", actionPlanParameterRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

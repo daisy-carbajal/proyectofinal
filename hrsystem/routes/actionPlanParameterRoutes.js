@@ -6,7 +6,7 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post('/', checkPermission("CREATE_ACTION_PLAN_PARAMETER"), actionPlanParameterController.addActionPlanParameter);
+router.post('/', checkPermission("CREATE_ACTION_PLAN_PARAMETER"), actionPlanParameterController.createActionPlanParameter);
 
 router.get('/:ActionPlanID', checkPermission("VIEW_ACTION_PLAN_PARAMETER"), actionPlanParameterController.getActionPlanParametersByActionPlanID);
 

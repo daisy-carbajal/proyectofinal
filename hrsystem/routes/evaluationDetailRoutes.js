@@ -8,7 +8,7 @@ router.use(verifyToken);
 
 router.post('/', checkPermission("CREATE_EVALUATION"), evaluationDetailController.createEvaluationDetail);
 
-router.get('/:EvaluationMasterID', checkPermission("VIEW_EVALUATION"), evaluationDetailController.getEvaluationDetailsByEvaluationMasterID);
+router.get('/:id', checkPermission("VIEW_EVALUATION"), evaluationDetailController.getEvaluationDetailsByEvaluationMasterID);
 
 router.put('/:id', checkPermission("EDIT_EVALUATION"), evaluationDetailController.updateEvaluationDetail);
 
