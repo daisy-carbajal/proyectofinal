@@ -1,18 +1,29 @@
+<div class="align-items-center justify-content-center" style="background-image: url('../../../assets/magicpattern-saRKnTHBEhU-unsplash.jpg')">
 <div class="flex align-items-center justify-content-center min-h-screen">
-    <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
-      <div class="flex align-items-center justify-content-center mb-4">
-        <img src="../../../assets/icon.svg" alt="Icono HR" width="48" height="48" />
-        <span class="font-bold text-4xl text-primary ml-2">
-          Sistema de Gestión de Recursos Humanos
-        </span>
-      </div>
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="flex align-items-center justify-content-center mb-4">
+      <img
+        src="../../../assets/icon.svg"
+        alt="Icono HR"
+        width="48"
+        height="48"
+      />
+      <span class="font-bold text-4xl text-primary ml-2">
+        Sistema de Gestión de Recursos Humanos
+      </span>
+    </div>
     <div class="text-center mb-5">
-      <div class="text-purple-600 text-3xl font-semibold mb-3">¡Bienvenido!</div>
+      <div class="text-600 text-3xl font-semibold mb-3">¡Bienvenido!</div>
     </div>
     <div class="formgrid grid">
       <div class="field col-12 md:col-6">
         <p-floatLabel>
-          <input class="w-full" pInputText id="workemail" [(ngModel)]="workEmail" />
+          <input
+            class="w-full"
+            pInputText
+            id="workemail"
+            [(ngModel)]="workEmail"
+          />
           <label for="workemail">Correo Electrónico</label>
         </p-floatLabel>
       </div>
@@ -39,7 +50,7 @@
           ></p-checkbox>
           <label for="rememberme" class="text-900">Recordarme</label>
         </div>
-      </div>      
+      </div>
       <p-toast></p-toast>
       <button
         pButton
@@ -50,10 +61,11 @@
         (click)="login()"
       ></button>
       <a
-      [routerLink]="['/confirm-email']"
+        [routerLink]="['/confirm-email']"
         class="font-medium no-underline ml-2 text-blue-500 text-left cursor-pointer mt-3"
         >Cambiar Contraseña</a
       >
     </div>
   </div>
+</div>
 </div>

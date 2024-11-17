@@ -1,0 +1,186 @@
+<div class="surface-card p-4 shadow-2 border-round">
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        severity="success"
+        label="Nueva Evaluación"
+        icon="pi pi-plus"
+        class="mr-2"
+        (onClick)="openNew()"
+      ></p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="evaluations"
+    [rows]="10"
+    [paginator]="true"
+    [(selection)]="selectedEvaluations"
+    [rowHover]="true"
+    dataKey="evaluationID"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+    [showCurrentPageReport]="true"
+  >
+
+  <ng-template pTemplate="caption">
+    <div class="flex align-items-center justify-content-between">
+      <h2 class="text-700 m-0">Evaluaciones Existentes</h2>
+      <!--<span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+          placeholder=" Search"
+        />
+      </span>-->
+    </div>
+  </ng-template>
+
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="Name">
+          Nombre <p-sortIcon field="Name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="Type">
+          Tipo <p-sortIcon field="Type"></p-sortIcon>
+        </th>
+        <th pSortableColumn="Department">
+          Departamento <p-sortIcon field="Department"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-evaluation>
+      <tr>
+        <td>{{ evaluation.Name }}</td>
+        <td>{{ evaluation.Type }}</td>
+        <td>{{ evaluation.Department }}</td>
+        <td>
+          <div class="flex flex-shrink-0">
+            <p-button
+              icon="pi pi-pencil"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="success"
+              (onClick)="editEvaluation(evaluation)"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+              (onClick)="deleteEvaluation(evaluation.evaluationID)"
+            ></p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        Hay un total de {{ evaluations ? evaluations.length : 0 }} evaluaciones existentes.
+      </div>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="evaluationDialog"
+    [style]="{ width: '600px' }"
+    header="Detalles de Evaluación"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="name">Nombre de Evaluación</label>
+        <input
+          type="text"
+          pInputText
+          id="name"
+          [(ngModel)]="evaluation.Name"
+          required
+        />
+      </div>
+      <div class="field">
+        <label for="type">Tipo de Evaluación</label>
+        <p-dropdown
+          [options]="evaluationTypes"
+          optionLabel="Description"
+          [(ngModel)]="evaluation.TypeID"
+          placeholder="Selecciona un tipo"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+      <div class="field">
+        <label for="department">Departamento</label>
+        <p-dropdown
+          [options]="departments"
+          optionLabel="Name"
+          [(ngModel)]="evaluation.DepartmentID"
+          placeholder="Selecciona un departamento"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+      <h4>Parámetros de Evaluación</h4>
+      <div
+        *ngFor="let parameter of evaluation.Parameters; let i = index"
+        class="grid mb-3"
+      >
+        <div class="flex align-items-center flex-wrap">
+          <div class="col-8">
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="parameter.Name"
+              placeholder="Nombre del parámetro"
+            />
+          </div>
+          <div class="col-3">
+            <input
+              type="number"
+              pInputText
+              [(ngModel)]="parameter.Weight"
+              placeholder="Peso"
+            />
+          </div>
+          <div class="col-1">
+            <p-button
+              (onClick)="removeParameter(i)"
+              [text]="true"
+              icon="pi pi-times"
+              severity="danger"
+              size="small"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="addParameter()"
+        pButton
+        label="Agregar Parámetro"
+      ></button>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="hideDialog()"
+      />
+      <p-button
+        label="Guardar"
+        icon="pi pi-check"
+        [text]="true"
+        (onClick)="saveEvaluation()"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{ width: '450px' }" />
+</div>

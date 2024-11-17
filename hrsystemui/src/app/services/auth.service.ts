@@ -110,7 +110,10 @@ export class AuthService {
   isLoggedIn(): boolean {
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('token');
-      return !!token;
+      const tokenExpiry = localStorage.getItem('tokenExpiry');
+      if (token && tokenExpiry) {
+        return Date.now() < Number(tokenExpiry);
+      }
     }
     return false;
   }

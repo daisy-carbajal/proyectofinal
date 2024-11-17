@@ -36,7 +36,7 @@
   >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
-        <h2 class="text-purple-700 m-0">Incidentes</h2>
+        <h2 class="text-700 m-0">Incidentes</h2>
         <!--<span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input
@@ -55,22 +55,34 @@
           <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         </th>
         <th pSortableColumn="IncidentTypeName">
-          Tipo de Incidente <p-sortIcon field="IncidentTypeName"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Tipo<p-sortIcon field="IncidentTypeName"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="Reason">
-          Razón <p-sortIcon field="Reason"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Razón <p-sortIcon field="Reason"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="FullName">
-          Empleado <p-sortIcon field="FullName"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Empleado <p-sortIcon field="FullName"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="Date">
-          Fecha <p-sortIcon field="Date"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Fecha <p-sortIcon field="Date"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="Duration">
-          Duración <p-sortIcon field="Duration"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Duración <p-sortIcon field="Duration"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="Status">
-          Estado <p-sortIcon field="Status"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Estado <p-sortIcon field="Status"></p-sortIcon>
+          </div>
         </th>
         <th></th>
       </tr>
@@ -85,7 +97,7 @@
         <td>{{ incident.Reason }}</td>
         <td>{{ incident.FullName }}</td>
         <td>{{ incident.Date | date : "yyyy-MM-dd" }}</td>
-        <td>{{ incident.Duration }}</td>
+        <td>{{ incident.Duration }} {{ incident.Unit }}</td>
         <td>
           <p-tag
             [rounded]="true"
@@ -94,30 +106,32 @@
           ></p-tag>
         </td>
         <td>
-          <p-button
-            icon="pi pi-pencil"
-            class="mr-2"
-            [rounded]="true"
-            [outlined]="true"
-            severity="success"
-            (onClick)="editIncident(incident)"
-          ></p-button>
-          <p-button
-            icon="pi pi-eye-slash"
-            class="mr-2"
-            [rounded]="true"
-            [outlined]="true"
-            severity="warning"
-            (onClick)="deactivateIncident(incident)"
-          >
-          </p-button>
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="deleteIncident(incident.incidentID)"
-          ></p-button>
+          <div class="flex flex-shrink-0">
+            <p-button
+              icon="pi pi-pencil"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="success"
+              (onClick)="editIncident(incident)"
+            ></p-button>
+            <p-button
+              icon="pi pi-eye-slash"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="warning"
+              (onClick)="deactivateIncident(incident)"
+            >
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+              (onClick)="deleteIncident(incident.incidentID)"
+            ></p-button>
+          </div>
         </td>
       </tr>
     </ng-template>
@@ -188,21 +202,25 @@
       </div>
       <div class="field">
         <label for="date">Fecha</label>
-        <p-calendar [(ngModel)]="incident.Date"
-        appendTo="body"
-         />
+        <p-calendar [(ngModel)]="incident.Date" appendTo="body" />
       </div>
       <div class="field">
         <label for="name">Duración</label>
         <div class="flex-container">
-          <input type="number" pInputText [(ngModel)]="incident.Duration" placeholder="Cantidad" />
-          <p-dropdown 
-              [options]="timeOptions" 
-              [(ngModel)]="selectedTimeUnit" 
-              optionLabel="label" 
-              placeholder="Unidad"
-              appendTo="body"
-          ></p-dropdown></div>
+          <input
+            type="number"
+            pInputText
+            [(ngModel)]="incident.Duration"
+            placeholder="Cantidad"
+          />
+          <p-dropdown
+            [options]="timeOptions"
+            [(ngModel)]="selectedTimeUnit"
+            optionLabel="label"
+            placeholder="Unidad"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
       </div>
       <div class="field">
         <label for="name">Comentarios</label>

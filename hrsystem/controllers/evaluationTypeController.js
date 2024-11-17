@@ -2,11 +2,12 @@ const { poolPromise, sql } = require("../database/db");
 
 const createEvaluationType = async (req, res) => {
     try {
-        const { Description, CreatedBy } = req.body;
+        const { Name, Description, CreatedBy } = req.body;
         const RequesterID = req.userId;
         const pool = await poolPromise;
 
         await pool.request()
+            .input('Name', sql.NVarChar, Name)
             .input('Description', sql.VarChar(50), Description)
             .input('CreatedBy', sql.Int, CreatedBy)
             .input('RequesterID', sql.Int, RequesterID)

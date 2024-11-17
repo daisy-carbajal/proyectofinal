@@ -11,16 +11,12 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CommonModule } from '@angular/common';
-import { FileUploadModule } from 'primeng/fileupload';
-import { DropdownModule } from 'primeng/dropdown';
-import { TagModule } from 'primeng/tag';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { DepartmentService } from '../../services/department.service';
 import { RoleService } from '../../services/role.service';
 import { AuthService } from '../../services/auth.service';
+import { TagModule } from 'primeng/tag';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-job-title-view',
@@ -36,14 +32,11 @@ import { AuthService } from '../../services/auth.service';
     InputTextModule,
     InputTextareaModule,
     CommonModule,
-    FileUploadModule,
-    DropdownModule,
     TagModule,
-    RadioButtonModule,
-    RatingModule,
     InputTextModule,
     FormsModule,
-    InputNumberModule,
+    InputTextareaModule,
+    DropdownModule
   ],
   providers: [MessageService, ConfirmationService, JobtitleService],
   styles: [
@@ -66,6 +59,7 @@ export class JobTitleViewComponent implements OnInit {
   jobtitles: any[] = [];
   selectedJobTitles: any[] = [];
   jobTitleDialog: boolean = false;
+  jobTitleEditDialog: boolean = false;
   jobTitle!: any;
   submitted: boolean = false;
   departments: any[] = [];
@@ -215,7 +209,7 @@ export class JobTitleViewComponent implements OnInit {
 
   editJobTitle(jobTitle: any) {
     this.jobTitle = { ...jobTitle };
-    this.jobTitleDialog = true;
+    this.jobTitleEditDialog = true;
   }
 
   deleteJobTitle(JobTitleID: number) {
@@ -287,6 +281,11 @@ export class JobTitleViewComponent implements OnInit {
 
   hideDialog() {
     this.jobTitleDialog = false;
+    this.submitted = false;
+  }
+
+  hideEditDialog() {
+    this.jobTitleEditDialog = false;
     this.submitted = false;
   }
 

@@ -1,38 +1,41 @@
 const express = require("express");
 const app = express();
-//const authenticateToken = require("./middlewares/authenticateToken");
 
-const userRoutes = require("./routes/userRoutes");
-const jobTitleRoutes = require("./routes/jobTitleRoutes");
-const departmentRoutes = require("./routes/departmentRoutes");
-const roleRoutes = require("./routes/roleRoutes");
-const authRoutes = require("./routes/authRoutes");
-const disciplinaryActionReasonRoutes = require("./routes/disciplinaryActionReasonRoutes");
-const warningLevelRoutes = require("./routes/disciplinaryActionWarningLevelRoutes");
-const incidentTypeRoutes = require("./routes/incidentTypeRoutes");
-const typeFeedbackRoutes = require("./routes/typeFeedbackRoutes");
-const feedbackRoutes = require("./routes/feedbackRoutes");
-const incidentRoutes = require("./routes/incidentRoutes");
-const disciplinaryActionRoutes = require("./routes/disciplinaryActionRoutes");
-const jobTitleChangeRoutes = require("./routes/jobTitleChangeRoutes");
-const departmentChangeRoutes = require("./routes/departmentChangeRoutes");
-const jobTitleDepartmentRoutes = require("./routes/jobTitleDepartmentRoutes");
-const jobTitleRoleRoutes = require("./routes/jobTitleRoleRoutes");
-const userRoleRoutes = require("./routes/userRoleRoutes");
-const rolePermissionRoutes = require("./routes/rolePermissionRoutes");
-const permissionRoutes = require("./routes/permissionRoutes");
-const disciplinaryActionTaskRoutes = require("./routes/disciplinaryActionTaskRoutes");
-const commentFeedbackRoutes = require("./routes/commentFeedbackRoutes");
-const evaluationSavedRoutes = require("./routes/evaluationSavedRoutes");
-const evaluationTypeRoutes = require("./routes/evaluationTypeRoutes");
-const evaluationParameterRoutes = require("./routes/evaluationParameterRoutes");
-const EvaluationParameterWeightRoutes = require("./routes/EvaluationParameterWeightRoutes");
-const evaluationCalificationRoutes = require("./routes/evaluationCalificationRoutes");
-const evaluationMasterRoutes = require("./routes/evaluationMasterRoutes");
-const evaluationDetailRoutes = require("./routes/evaluationDetailRoutes");
-const actionPlanRoutes = require("./routes/actionPlanRoutes");
-const actionPlanTaskRoutes = require("./routes/actionPlanTaskRoutes");
-const actionPlanParameterRoutes = require("./routes/actionPlanParameterRoutes");
+const routes = [
+  { path: "/users", route: require("./routes/userRoutes") },
+  { path: "/jobtitle", route: require("./routes/jobTitleRoutes") },
+  { path: "/department", route: require("./routes/departmentRoutes") },
+  { path: "/role", route: require("./routes/roleRoutes") },
+  { path: "/auth", route: require("./routes/authRoutes") },
+  { path: "/da-reason", route: require("./routes/disciplinaryActionReasonRoutes") },
+  { path: "/warning-levels", route: require("./routes/disciplinaryActionWarningLevelRoutes") },
+  { path: "/incident-types", route: require("./routes/incidentTypeRoutes") },
+  { path: "/type-feedback", route: require("./routes/typeFeedbackRoutes") },
+  { path: "/feedback", route: require("./routes/feedbackRoutes") },
+  { path: "/incident", route: require("./routes/incidentRoutes") },
+  { path: "/da", route: require("./routes/disciplinaryActionRoutes") },
+  { path: "/job-title-change", route: require("./routes/jobTitleChangeRoutes") },
+  { path: "/department-change", route: require("./routes/departmentChangeRoutes") },
+  { path: "/job-title-dept", route: require("./routes/jobTitleDepartmentRoutes") },
+  { path: "/job-title-roles", route: require("./routes/jobTitleRoleRoutes") },
+  { path: "/user-roles", route: require("./routes/userRoleRoutes") },
+  { path: "/role-permissions", route: require("./routes/rolePermissionRoutes") },
+  { path: "/permissions", route: require("./routes/permissionRoutes") },
+  { path: "/da-tasks", route: require("./routes/disciplinaryActionTaskRoutes") },
+  { path: "/comment-feedback", route: require("./routes/commentFeedbackRoutes") },
+  { path: "/eval-saved", route: require("./routes/evaluationSavedRoutes") },
+  { path: "/eval-type", route: require("./routes/evaluationTypeRoutes") },
+  { path: "/eval-params", route: require("./routes/evaluationParameterRoutes") },
+  { path: "/eval-params-weight", route: require("./routes/EvaluationParameterWeightRoutes") },
+  { path: "/eval-calification", route: require("./routes/evaluationCalificationRoutes") },
+  { path: "/eval-master", route: require("./routes/evaluationMasterRoutes") },
+  { path: "/eval-detail", route: require("./routes/evaluationDetailRoutes") },
+  { path: "/action-plan", route: require("./routes/actionPlanRoutes") },
+  { path: "/action-plan-task", route: require("./routes/actionPlanTaskRoutes") },
+  { path: "/action-plan-param", route: require("./routes/actionPlanParameterRoutes") },
+  { path: "/permission-category", route: require("./routes/permissionCategoryRoutes") },
+  { path: "/change-reason", route: require("./routes/changeReasonRoutes")}
+];
 
 const cors = require("cors");
 app.use(
@@ -44,37 +47,9 @@ app.use(
 
 app.use(express.json());
 
-app.use("/users", userRoutes);
-app.use("/jobtitle", jobTitleRoutes);
-app.use("/department", departmentRoutes);
-app.use("/role", roleRoutes);
-app.use("/auth", authRoutes);
-app.use("/da-reason", disciplinaryActionReasonRoutes);
-app.use("/warning-levels", warningLevelRoutes);
-app.use("/incident-types", incidentTypeRoutes);
-app.use("/type-feedback", typeFeedbackRoutes);
-app.use("/feedback", feedbackRoutes);
-app.use("/incident", incidentRoutes);
-app.use("/da", disciplinaryActionRoutes);
-app.use("/job-title-change", jobTitleChangeRoutes);
-app.use("/department-change", departmentChangeRoutes);
-app.use("/job-title-dept", jobTitleDepartmentRoutes);
-app.use("/job-title-roles", jobTitleRoleRoutes);
-app.use("/user-roles", userRoleRoutes);
-app.use("/role-permissions", rolePermissionRoutes);
-app.use("/permissions", permissionRoutes);
-app.use("/da-tasks", disciplinaryActionTaskRoutes);
-app.use("/comment-feedback", commentFeedbackRoutes);
-app.use("/eval-saved", evaluationSavedRoutes);
-app.use("/eval-type", evaluationTypeRoutes);
-app.use("/eval-params", evaluationParameterRoutes);
-app.use("/eval-params-weight", EvaluationParameterWeightRoutes);
-app.use("/eval-calification", evaluationCalificationRoutes);
-app.use("/eval-master", evaluationMasterRoutes);
-app.use("/eval-detail", evaluationDetailRoutes);
-app.use("/action-plan", actionPlanRoutes);
-app.use("/action-plan-task", actionPlanTaskRoutes);
-app.use("/action-plan-param", actionPlanParameterRoutes);
+routes.forEach((route) => {
+  app.use(route.path, route.route);
+});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -54,7 +54,7 @@
   >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
-        <h2 class="text-purple-700 m-0">Usuarios</h2>
+        <h2 class="text-700 m-0">Usuarios</h2>
         <!--<span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input
@@ -73,22 +73,29 @@
           <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         </th>
         <th pSortableColumn="FirstName">
-          Nombre <p-sortIcon field="FirstName"></p-sortIcon>
-        </th>
-        <th pSortableColumn="LastName">
-          Apellido <p-sortIcon field="LastName"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Nombre <p-sortIcon field="FirstName"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="WorkEmail">
+          <div class="flex flex-shrink-0"> 
           Correo Laboral <p-sortIcon field="WorkEmail"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="PhoneNumber">
-          # Télefono <p-sortIcon field="PhoneNumber"></p-sortIcon>
+          <div class="flex flex-shrink-0"> 
+          Télefono <p-sortIcon field="PhoneNumber"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="Status">
+          <div class="flex flex-shrink-0"> 
           Estado <p-sortIcon field="Status"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="IsPasswordSet">
-          Registro Completo <p-sortIcon field="Status"></p-sortIcon>
+          <div class="flex flex-shrink-0"> 
+          Registro <p-sortIcon field="IsPasswordSet"></p-sortIcon>
+          </div>
         </th>
         <th></th>
       </tr>
@@ -99,8 +106,7 @@
         <td>
           <p-tableCheckbox [value]="user"></p-tableCheckbox>
         </td>
-        <td>{{ user.FirstName }}</td>
-        <td>{{ user.LastName }}</td>
+        <td>{{ user.FirstName }} {{ user.LastName }}</td>
         <td>{{ user.WorkEmail }}</td>
         <td>{{ user.PhoneNumber }}</td>
         <td>
@@ -108,6 +114,7 @@
             severity="info"
             [rounded]="true"
             [value]="user.Status ? 'Activo' : 'Inactivo'"
+            [severity]="user.Status ? 'success' : 'warning'"
           ></p-tag>
         </td>
         <td>
@@ -115,6 +122,7 @@
             severity="warning"
             [rounded]="true"
             [value]="user.IsPasswordSet ? 'Completo' : 'Pendiente'"
+            [severity]="user.IsPasswordSet ? 'info' : 'danger'"
           ></p-tag>
         </td>
         <td>
@@ -207,7 +215,7 @@
         >
         </p-dropdown>
       </div>
-      
+
       <div *ngIf="jobTitles.length > 0" class="field">
         <label for="jobTitle">Puestos de Trabajo</label>
         <p-dropdown
@@ -219,7 +227,7 @@
           [(ngModel)]="user.JobTitleID"
         ></p-dropdown>
       </div>
-      
+
       <div class="field">
         <label for="birthDate">Fecha de Nacimiento</label>
         <input

@@ -51,7 +51,7 @@ const getRoleById = async (req, res) => {
       .request()
       .input("RoleID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
-      .execute("GetRoleById");
+      .execute("GetRoleInformationById");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "Role no encontrado" });

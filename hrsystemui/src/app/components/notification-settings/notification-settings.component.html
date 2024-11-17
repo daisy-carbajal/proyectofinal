@@ -1,0 +1,70 @@
+<div class="surface-card p-4 shadow-2 border-round mt-3">
+    <div class="card flex content-left gap-3 mb-3">
+      <p-button
+        label="Regresar"
+        icon="pi pi-arrow-circle-left"
+        (onClick)="goBackToHome()"
+      ></p-button>
+      <p-button
+        label="Guardar Cambios"
+        severity="success"
+        icon="pi pi-check"
+        (onClick)="saveChanges()"
+      ></p-button>
+    </div>
+  
+    <div class="font-bold text-3xl text-700 pt-2 mb-3">Configuración de Notificaciones</div>
+    <div class="text-600 mb-5">Ajusta las notificaciones que deseas recibir.</div>
+  
+    <form>
+      <div class="field">
+        <label for="emailNotifications" class="font-semibold">Notificaciones por Email</label>
+        <p-checkbox
+          id="emailNotifications"
+          name="emailNotifications"
+          [(ngModel)]="settings.emailNotifications"
+          [label]="'Recibir notificaciones por correo electrónico'"
+        ></p-checkbox>
+      </div>
+  
+      <div class="field">
+        <label for="smsNotifications" class="font-semibold">Notificaciones por SMS</label>
+        <p-checkbox
+          id="smsNotifications"
+          name="smsNotifications"
+          [(ngModel)]="settings.smsNotifications"
+          [label]="'Recibir notificaciones por SMS'"
+        ></p-checkbox>
+      </div>
+  
+      <div class="field">
+        <label for="appNotifications" class="font-semibold">Notificaciones en la App</label>
+        <p-checkbox
+          id="appNotifications"
+          name="appNotifications"
+          [(ngModel)]="settings.appNotifications"
+          [label]="'Recibir notificaciones en la aplicación'"
+        ></p-checkbox>
+      </div>
+  
+      <div class="field">
+        <label for="evaluationReminders" class="font-semibold">Recordatorios de Evaluación</label>
+        <p-checkbox
+          id="evaluationReminders"
+          name="evaluationReminders"
+          [(ngModel)]="settings.evaluationReminders"
+          [label]="'Recibir recordatorios de evaluación'"
+        ></p-checkbox>
+      </div>
+  
+      <div class="field">
+        <label for="performanceFeedback" class="font-semibold">Comentarios de Desempeño</label>
+        <p-checkbox
+          id="performanceFeedback"
+          name="performanceFeedback"
+          [(ngModel)]="settings.performanceFeedback"
+          [label]="'Recibir comentarios de desempeño'"
+        ></p-checkbox>
+      </div>
+    </form>
+  </div>

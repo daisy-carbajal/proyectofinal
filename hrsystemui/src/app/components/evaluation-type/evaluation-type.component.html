@@ -1,0 +1,133 @@
+<div class="border-round">
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        severity="success"
+        label="Nuevo Tipo de Evaluación"
+        icon="pi pi-plus"
+        class="mr-2"
+        (onClick)="openNew()"
+      ></p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    [value]="evaluationTypes"
+    [rows]="10"
+    [paginator]="true"
+    [(selection)]="selectedEvaluationTypes"
+    dataKey="EvaluationTypeID"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 4rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="Name">
+          Nombre <p-sortIcon field="Name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="Description">
+          Descripción <p-sortIcon field="Description"></p-sortIcon>
+        </th>
+        <th pSortableColumn="Status">
+          <div class="flex flex-shrink-0">Estado <p-sortIcon field="Status"></p-sortIcon></div>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-evaluationType>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="evaluationType"></p-tableCheckbox>
+        </td>
+        <td>{{ evaluationType.Name }}</td>
+        <td>{{ evaluationType.Description }}</td>
+        <td>
+          <p-tag
+            [rounded]="true"
+            [value]="evaluationType.Status ? 'Activo' : 'Inactivo'"
+          ></p-tag>
+        </td>
+        <td>
+          <div class="flex align-items-center px-4 pt-3 flex-shrink-0">
+          <p-button
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [outlined]="true"
+            class="mr-2"
+            (onClick)="editEvaluationType(evaluationType)"
+            severity="success"
+          ></p-button>
+          <p-button
+            icon="pi pi-eye-slash"
+            [rounded]="true"
+            [outlined]="true"
+            class="mr-2"
+            (onClick)="deactivateEvaluationType(evaluationType)"
+            severity="warning"
+          ></p-button>
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [outlined]="true"
+            severity="danger"
+            (onClick)="deleteEvaluationType(evaluationType.EvaluationTypeID)"
+          ></p-button></div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="evaluationTypeDialog"
+    [style]="{ width: '450px' }"
+    header="Detalles de Tipo de Evaluación"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="name">Nombre</label>
+        <input
+          type="text"
+          pInputText
+          id="name"
+          [(ngModel)]="evaluationType.Name"
+          required
+          autofocus
+        />
+      </div>
+      <div class="field">
+        <label for="description">Descripción</label>
+        <textarea
+          rows="5"
+          cols="30"
+          pInputTextarea
+          id="description"
+          [(ngModel)]="evaluationType.Description"
+          required
+        ></textarea>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (onClick)="hideDialog()"
+        text="true"
+      ></p-button>
+      <p-button
+        label="Guardar"
+        icon="pi pi-check"
+        (onClick)="saveEvaluationType()"
+        text="true"
+      ></p-button>
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{ width: '500px' }"></p-confirmDialog>
+</div>

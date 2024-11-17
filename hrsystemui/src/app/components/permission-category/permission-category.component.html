@@ -1,0 +1,130 @@
+<p-toolbar styleClass="mb-4 gap-2">
+  <ng-template pTemplate="left">
+    <p-button
+      severity="success"
+      label="Nuevo Registro"
+      icon="pi pi-plus"
+      class="mr-2"
+      (onClick)="openNew()"
+    ></p-button>
+  </ng-template>
+</p-toolbar>
+
+<p-table
+  #dt
+  [value]="permissionCategories"
+  [rows]="10"
+  [paginator]="true"
+  [(selection)]="selectedPermissionCategories"
+  [rowHover]="true"
+  dataKey="PermissionCategoryID"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} categorias."
+  [showCurrentPageReport]="true"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 4rem">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <th pSortableColumn="PermissionName">
+        <div class="flex flex-shrink-0">
+          Nombre<p-sortIcon field="PermissionName"></p-sortIcon>
+        </div>
+      </th>
+      <th pSortableColumn="Status">
+        <div class="flex flex-shrink-0">
+          Estado <p-sortIcon field="Status"></p-sortIcon>
+        </div>
+      </th>
+      <th></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-permissionCategory>
+    <tr>
+      <td>
+        <p-tableCheckbox [value]="permissionCategory"></p-tableCheckbox>
+      </td>
+      <td>{{ permissionCategory.Name }}</td>
+      <td>
+        <p-tag
+          [rounded]="true"
+          [value]="permissionCategory.Status ? 'Pendiente' : 'Revisado'"
+          [severity]="permissionCategory.Status ? 'warning' : 'success'"
+        ></p-tag>
+      </td>
+      <td>
+        <div class="flex flex-shrink-0">
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            severity="success"
+            (conCick)="editPermissionCategory(permissionCategory)"
+          ></p-button>
+          <p-button
+            icon="pi pi-eye-slash"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            severity="warning"
+            (onClick)="deactivatePermissionCategory(permissionCategory)"
+          ></p-button>
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (onClick)="deletePermissionCategory(permissionCategory.PermissionCategoryID)"
+          ></p-button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="summary">
+    <div class="flex align-items-center justify-content-between">
+      En total hay {{ permissionCategories ? permissionCategories.length : 0 }} categorías.
+    </div>
+  </ng-template>
+</p-table>
+
+<p-dialog
+  [(visible)]="permissionCategoryDialog"
+  [style]="{ width: '450px' }"
+  header="Detalles de Categoría"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="name">Nombre</label>
+      <input
+        type="text"
+        pInputText
+        id="name"
+        [(ngModel)]="permissionCategory.Name"
+        required
+        autofocus
+      />
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancelar"
+      icon="pi pi-times"
+      [text]="true"
+      (onCick)="hideDialog()"
+    />
+    <p-button
+      label="Guardar"
+      icon="pi pi-check"
+      [text]="true"
+      (onClick)="savePermissionCategory()"
+    />
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '500px' }" />

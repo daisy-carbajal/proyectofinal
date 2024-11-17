@@ -1,0 +1,151 @@
+<div class="border-round">
+    <p-toolbar styleClass="mb-4 gap-2">
+      <ng-template pTemplate="left">
+        <p-button
+          severity="success"
+          label="Nuevo Registro"
+          icon="pi pi-plus"
+          class="mr-2"
+          (onClick)="openNew()"
+        ></p-button>
+      </ng-template>
+    </p-toolbar>
+
+    <p-table
+      #dt
+      [value]="califications"
+      [rows]="10"
+      [paginator]="true"
+      [(selection)]="selectedCalifications"
+      [rowHover]="true"
+      dataKey="EvaluationCalificationID"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+      [showCurrentPageReport]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="Value">
+            <div class="flex flex-shrink-0"> Nota <p-sortIcon field="Value"></p-sortIcon></div>
+          </th>
+          <th pSortableColumn="Description">
+            Etiqueta <p-sortIcon field="Description"></p-sortIcon>
+          </th>
+          <th pSortableColumn="Summary">
+            Descripción <p-sortIcon field="Summary"></p-sortIcon>
+          </th>
+          <th pSortableColumn="Status">
+            <div class="flex flex-shrink-0">Estado <p-sortIcon field="Status"></p-sortIcon></div>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-calification>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="calification"></p-tableCheckbox>
+          </td>
+          <td>{{ calification.Value }}</td>
+          <td>{{ calification.Description }}</td>
+          <td>{{ calification.Summary }}</td>
+          <td>
+            <p-tag [rounded]="true" [value]="calification.Status ? 'Activo' : 'Inactivo'"></p-tag>
+          </td>
+          <td>
+            <div class="flex align-items-center px-4 pt-3 flex-shrink-0">
+            <p-button
+              icon="pi pi-pencil"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="success"
+              (onClick)="editCalification(calification)"
+            ></p-button>
+            <p-button
+              icon="pi pi-eye-slash"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="warning"
+              (onClick)="deactivateCalification(calification)"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+              (onClick)="deleteCalification(calification.EvaluationCalificationID)"
+            ></p-button></div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          En total hay {{ califications ? califications.length : 0 }} calificaciones.
+        </div>
+      </ng-template>
+    </p-table>
+
+    <p-dialog
+      [(visible)]="calificationDialog"
+      [style]="{ width: '450px' }"
+      header="Detalles de Calificación"
+      [modal]="true"
+      styleClass="p-fluid"
+    >
+      <ng-template pTemplate="content">
+        <div class="field">
+          <label for="value">Nota</label>
+          <input
+            type="number"
+            pInputText
+            id="value"
+            [(ngModel)]="calification.Value"
+            required
+            autofocus
+          />
+        </div>
+        <div class="field">
+          <label for="description">Descripción</label>
+          <input
+            type="text"
+            pInputText
+            id="description"
+            [(ngModel)]="calification.Description"
+            required
+          />
+        </div>
+        <div class="field">
+          <label for="summary">Qué Evalúa</label>
+          <input
+            type="text"
+            pInputText
+            id="summary"
+            [(ngModel)]="calification.Summary"
+            required
+          />
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          [text]="true"
+          (onClick)="hideDialog()"
+        />
+        <p-button
+          label="Guardar"
+          icon="pi pi-check"
+          [text]="true"
+          (onClick)="saveCalification()"
+        />
+      </ng-template>
+    </p-dialog>
+
+    <p-confirmDialog [style]="{ width: '450px' }" />
+</div>

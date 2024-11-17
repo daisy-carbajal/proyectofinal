@@ -1,0 +1,255 @@
+<div class="surface-card p-4 shadow-2 border-round">
+    <p-toolbar styleClass="mb-4 gap-2">
+      <ng-template pTemplate="left">
+        <p-button
+          severity="success"
+          label="Nuevo Registro"
+          icon="pi pi-plus"
+          class="mr-2"
+          (onClick)="openNew()"
+        ></p-button>
+      </ng-template>
+  
+      <ng-template pTemplate="right">
+        <!--<p-fileUpload
+            mode="basic"
+            accept="image/*"
+            [maxFileSize]="1000000"
+            label="Importar"
+            chooseLabel="Importar"
+            class="mr-2 inline-block"
+          />
+          <p-button severity="help" label="Export" icon="pi pi-upload" />-->
+      </ng-template>
+    </p-toolbar>
+  
+    <p-table
+      #dt
+      [value]="incidents"
+      [rows]="10"
+      [paginator]="true"
+      [(selection)]="selectedIncidents"
+      [rowHover]="true"
+      dataKey="incidentID"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+      [showCurrentPageReport]="true"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          <h2 class="text-700 m-0">Incidentes</h2>
+          <!--<span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                placeholder=" Search"
+              />
+            </span>-->
+        </div>
+      </ng-template>
+  
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="IncidentTypeName">
+            <div class="flex flex-shrink-0">
+              Tipo<p-sortIcon field="IncidentTypeName"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="Reason">
+            <div class="flex flex-shrink-0">
+              Razón <p-sortIcon field="Reason"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="FullName">
+            <div class="flex flex-shrink-0">
+              Empleado <p-sortIcon field="FullName"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="Date">
+            <div class="flex flex-shrink-0">
+              Fecha <p-sortIcon field="Date"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="Duration">
+            <div class="flex flex-shrink-0">
+              Duración <p-sortIcon field="Duration"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="Status">
+            <div class="flex flex-shrink-0">
+              Estado <p-sortIcon field="Status"></p-sortIcon>
+            </div>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="body" let-incident>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="incident"></p-tableCheckbox>
+          </td>
+          <td>{{ incident.IncidentTypeName }}</td>
+          <td>{{ incident.Reason }}</td>
+          <td>{{ incident.FullName }}</td>
+          <td>{{ incident.Date | date : "yyyy-MM-dd" }}</td>
+          <td>{{ incident.Duration }}</td>
+          <td>
+            <p-tag
+              [rounded]="true"
+              [value]="incident.Status ? 'Pendiente' : 'Revisado'"
+              [severity]="incident.Status ? 'warning' : 'success'"
+            ></p-tag>
+          </td>
+          <td>
+            <div class="flex flex-shrink-0">
+              <p-button
+                icon="pi pi-pencil"
+                class="mr-2"
+                [rounded]="true"
+                [outlined]="true"
+                severity="success"
+                (onClick)="editIncident(incident)"
+              ></p-button>
+              <p-button
+                icon="pi pi-eye-slash"
+                class="mr-2"
+                [rounded]="true"
+                [outlined]="true"
+                severity="warning"
+                (onClick)="deactivateIncident(incident)"
+              >
+              </p-button>
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [rounded]="true"
+                [outlined]="true"
+                (onClick)="deleteIncident(incident.incidentID)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          En total hay {{ incidents ? incidents.length : 0 }} incidentes.
+        </div>
+      </ng-template>
+    </p-table>
+  
+    <p-dialog
+      [(visible)]="incidentDialog"
+      [style]="{ width: '450px' }"
+      header="Detalles de Incidente"
+      [modal]="true"
+      styleClass="p-fluid"
+    >
+      <ng-template pTemplate="content">
+        <div class="field">
+          <label for="incidentType">Tipo de Incidente</label>
+          <p-dropdown
+            [options]="incidentTypes"
+            optionLabel="Description"
+            optionValue="IncidentTypeID"
+            placeholder="Selecciona un tipo"
+            [(ngModel)]="incident.IncidentTypeID"
+            appendTo="body"
+          >
+          </p-dropdown>
+        </div>
+        <div class="field">
+          <label for="FullName">Empleado</label>
+          <p-dropdown
+            [options]="users"
+            [(ngModel)]="incident.UserID"
+            optionLabel="FullName"
+            optionValue="UserID"
+            [filter]="true"
+            filterBy="FullName"
+            [showClear]="true"
+            placeholder="Selecciona un Empleado"
+            (onChange)="onUserSelected($event)"
+            appendTo="body"
+          >
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-items-center gap-2">
+                <div>{{ selectedOption?.FullName }}</div>
+              </div>
+            </ng-template>
+            <ng-template let-user pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <div>{{ user.FullName }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="field">
+          <label for="reason">Razón</label>
+          <input
+            type="text"
+            pInputText
+            id="reason"
+            [(ngModel)]="incident.Reason"
+            required
+            autofocus
+          />
+        </div>
+        <div class="field">
+          <label for="date">Fecha</label>
+          <p-calendar [(ngModel)]="incident.Date" appendTo="body" />
+        </div>
+        <div class="field">
+          <label for="name">Duración</label>
+          <div class="flex-container">
+            <input
+              type="number"
+              pInputText
+              [(ngModel)]="incident.Duration"
+              placeholder="Cantidad"
+            />
+            <p-dropdown
+              [options]="timeOptions"
+              [(ngModel)]="selectedTimeUnit"
+              optionLabel="label"
+              placeholder="Unidad"
+              appendTo="body"
+            ></p-dropdown>
+          </div>
+        </div>
+        <div class="field">
+          <label for="name">Comentarios</label>
+          <input
+            type="text"
+            pInputText
+            id="name"
+            [(ngModel)]="incident.Comments"
+            required
+            autofocus
+          />
+        </div>
+      </ng-template>
+  
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          [text]="true"
+          (onClick)="hideDialog()"
+        />
+        <p-button
+          label="Guardar"
+          icon="pi pi-check"
+          [text]="true"
+          (onClick)="saveIncident()"
+        />
+      </ng-template>
+    </p-dialog>
+  
+    <p-confirmDialog [style]="{ width: '500px' }" />
+  </div>  

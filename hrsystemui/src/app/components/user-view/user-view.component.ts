@@ -45,6 +45,7 @@ import { AuthService } from '../../services/auth.service';
     InputTextModule,
     FormsModule,
     InputNumberModule,
+    ConfirmDialogModule
   ],
   providers: [MessageService, ConfirmationService, UserService],
   styles: [
@@ -94,6 +95,7 @@ export class UserViewComponent implements OnInit {
 
     this.loggedUserId = this.authService.getUserId();
     console.log('Logged User ID - :', this.loggedUserId);
+    console.log('Rol de usuario logueado:', this.authService.getRoleId());
   }
 
   loadDepartments(): void {

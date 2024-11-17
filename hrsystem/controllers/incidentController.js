@@ -2,7 +2,7 @@ const { poolPromise, sql } = require("../database/db");
 
 const createIncident = async (req, res) => {
   try {
-    const { IncidentTypeID, UserID, Reason, Date, Duration, Comments, CreatedBy } = req.body;
+    const { IncidentTypeID, UserID, Reason, Date, Duration, Unit, Comments, CreatedBy } = req.body;
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
@@ -12,6 +12,7 @@ const createIncident = async (req, res) => {
       .input("Reason", sql.NVarChar, Reason)
       .input("Date", sql.DateTime, Date)
       .input("Duration", sql.Int, Duration)
+      .input("Unit", sql.NVarChar, Unit)
       .input("Comments", sql.Text, Comments)
       .input("CreatedBy", sql.Int, CreatedBy)
       .input("RequesterID", sql.Int, RequesterID)
@@ -64,7 +65,7 @@ const getIncidentByUserId = async (req, res) => {
 const updateIncident = async (req, res) => {
   try {
     const { id } = req.params;
-    const { IncidentTypeID, Reason, Date, Duration, Comments, UpdatedBy } = req.body;
+    const { IncidentTypeID, Reason, Date, Duration, Unit, Comments, UpdatedBy } = req.body;
     const RequesterID = req.userId;
 
     const pool = await poolPromise;
@@ -75,6 +76,7 @@ const updateIncident = async (req, res) => {
       .input("Reason", sql.NVarChar, Reason)
       .input("Date", sql.DateTime, Date)
       .input("Duration", sql.Int, Duration)
+      .input("Unit", sql.NVarChar, Unit)
       .input("Comments", sql.Text, Comments)
       .input("UpdatedBy", sql.Int, UpdatedBy)
       .input("RequesterID", sql.Int, RequesterID)

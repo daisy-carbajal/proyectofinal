@@ -1,65 +1,69 @@
 <div class="flex align-items-center justify-content-center min-h-screen">
-    <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
-      <div class="flex align-items-center justify-content-center mb-4">
-        <img src="../../../assets/icon.svg" alt="Icono HR" width="48" height="48" />
-        <span class="font-bold text-4xl text-primary ml-2"> ¡Bienvenido! </span>
-      </div>
-      <div class="text-center mb-1">
-        <div class="text-purple-600 text-xl font-semibold">
-          COMPLETE SU REGISTRO
-        </div>
-      </div>
-      <div class="text-center mb-5">
-        <div class="text-purple-800 text-base font-normal mb-3">
-          Por favor, ingrese su correo laboral junto con la contraseña temporal para crear una nueva y completar su registro.
-        </div>
-      </div>
-      <div class="formgrid grid">
-        <div class="field col-12 mb-3 p-2">
-          <p-floatLabel>
-            <p-password
-              [feedback]="false"
-              inputStyleClass="w-full"
-              [style]="{ width: '100%' }"
-              [toggleMask]="true"
-              [(ngModel)]="tempPassword"
-            ></p-password>
-            <label for="tempPassword">Contraseña Temporal</label>
-          </p-floatLabel>
-        </div>
-        <div class="field col-12 mb-3 p-2">
-          <p-floatLabel>
-            <p-password
-              [feedback]="false"
-              inputStyleClass="w-full"
-              [style]="{ width: '100%' }"
-              [toggleMask]="true"
-              [(ngModel)]="newPassword"
-            ></p-password>
-            <label for="new-password">Nueva Contraseña</label>
-          </p-floatLabel>
-        </div>
-        <div class="field col-12 mb-3 p-2">
-          <p-floatLabel>
-            <p-password
-              [feedback]="false"
-              inputStyleClass="w-full"
-              [style]="{ width: '100%' }"
-              [toggleMask]="true"
-              [(ngModel)]="confirmPassword"
-            ></p-password>
-            <label for="confirm-new-password">Confirmar Nueva Contraseña</label>
-          </p-floatLabel>
-        </div>
-        <p-toast></p-toast>
-        <button
-          pButton
-          pRipple
-          label="Completar Registro"
-          icon="pi pi-user"
-          class="w-full"
-          (click)="completeRegistration()"
-        ></button>
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="flex align-items-center justify-content-center mb-4">
+      <img
+        src="../../../assets/icon.svg"
+        alt="Icono HR"
+        width="48"
+        height="48"
+      />
+      <span class="font-bold text-4xl text-primary ml-2"> ¡Bienvenido! </span>
+    </div>
+    <div class="text-center mb-1">
+      <div class="text-600 text-xl font-semibold">COMPLETE SU REGISTRO</div>
+    </div>
+    <div class="text-center mb-5">
+      <div class="text-800 text-base font-normal mb-3">
+        Por favor, ingrese su correo laboral junto con la contraseña temporal
+        para crear una nueva y completar su registro.
       </div>
     </div>
-  </div>  
+    <div class="formgrid grid">
+      <div class="field col-12 mb-3 p-2">
+        <p-floatLabel>
+          <p-password
+            [feedback]="false"
+            inputStyleClass="w-full"
+            [style]="{ width: '100%' }"
+            [toggleMask]="true"
+            [(ngModel)]="tempPassword"
+          ></p-password>
+          <label for="tempPassword">Contraseña Temporal</label>
+        </p-floatLabel>
+      </div>
+      <div class="field col-12 mb-3 p-2">
+        <p-floatLabel>
+          <p-password
+            [feedback]="false"
+            inputStyleClass="w-full"
+            [style]="{ width: '100%' }"
+            [toggleMask]="true"
+            [(ngModel)]="newPassword"
+          ></p-password>
+          <label for="new-password">Nueva Contraseña</label>
+        </p-floatLabel>
+      </div>
+      <div class="field col-12 mb-3 p-2">
+        <p-floatLabel>
+          <p-password
+            [feedback]="false"
+            inputStyleClass="w-full"
+            [style]="{ width: '100%' }"
+            [toggleMask]="true"
+            [(ngModel)]="confirmPassword"
+          ></p-password>
+          <label for="confirm-new-password">Confirmar Nueva Contraseña</label>
+        </p-floatLabel>
+      </div>
+      <p-toast></p-toast>
+      <button
+        pButton
+        pRipple
+        label="Completar Registro"
+        icon="pi pi-user"
+        class="w-full"
+        (click)="completeRegistration()"
+      ></button>
+    </div>
+  </div>
+</div>

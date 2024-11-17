@@ -1,0 +1,59 @@
+<div class="surface-card p-4 shadow-2 border-round mt-3">
+  <div class="card flex content-left gap-3 mb-3">
+    <p-button
+      label="Regresar"
+      icon="pi pi-arrow-circle-left"
+      (onClick)="goBackToRoles()"
+    ></p-button>
+    <p-button
+      label="Editar"
+      icon="pi pi-pencil"
+      (onClick)="editPermissions()"
+      *ngIf="!isEditing"
+    ></p-button>
+    <p-button
+      label="Guardar"
+      severity="success"
+      icon="pi pi-check"
+      (onClick)="savePermissions()"
+      *ngIf="isEditing"
+    ></p-button>
+    <p-button
+      label="Cancelar"
+      severity="danger"
+      icon="pi pi-times"
+      (onClick)="cancelEdit()"
+      *ngIf="isEditing"
+    ></p-button>
+  </div>
+
+    <div class="font-bold text-3xl text-700 pt-2 mb-3">{{ roleName }}</div>
+    <div class="text-600 mb-5">{{ roleDescription }}</div>
+
+  <ul class="list-none p-0 m-0">
+    <li
+      *ngFor="let group of groupedPermissions"
+      class="flex py-4 px-3 border-top-1 surface-border flex-wrap right-0"
+    >
+      <div
+        class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2 text-right"
+      >
+        {{ group.category }}
+      </div>
+
+      <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
+        <div
+          class="field-checkbox"
+          *ngFor="let permission of group.permissions"
+        >
+          <p-checkbox
+            [(ngModel)]="selectedPermissions"
+            [value]="permission.PermissionID"
+            [label]="permission.Description"
+            [disabled]="!isEditing"
+          ></p-checkbox>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

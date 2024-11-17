@@ -10,6 +10,8 @@ router.post('/', checkPermission("CREATE_SETTINGS"), rolePermissionController.ad
 
 router.get('/', checkPermission("VIEW_SETTINGS"), rolePermissionController.getAllRolePermissions);
 
+router.get('/:id', checkPermission("VIEW_SETTINGS"), rolePermissionController.getRolePermissionsByRoleID);
+
 router.put('/d/:id', checkPermission("EDIT_SETTINGS"), rolePermissionController.deactivateRolePermission);
 
 router.delete('/:id', checkPermission("DELETE_SETTINGS"), rolePermissionController.deleteRolePermission);

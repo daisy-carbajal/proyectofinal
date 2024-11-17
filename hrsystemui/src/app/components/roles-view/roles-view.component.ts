@@ -19,6 +19,8 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../services/auth.service';
+import { TreeTableModule } from 'primeng/treetable';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-roles-view',
@@ -42,6 +44,7 @@ import { AuthService } from '../../services/auth.service';
     InputTextModule,
     FormsModule,
     InputNumberModule,
+    TreeTableModule
   ],
   providers: [MessageService, ConfirmationService, RoleService],
   styles: [
@@ -67,13 +70,14 @@ export class RolesViewComponent implements OnInit {
   role!: any;
   submitted: boolean = false;
   loggedUserId: number |  null = null;
-
+  rolePermissions: any[] = [];
 
   constructor(
+    private router: Router,
     private roleService: RoleService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -81,6 +85,11 @@ export class RolesViewComponent implements OnInit {
       this.roles = data;
     });
     this.loggedUserId = this.authService.getUserId();
+  }
+
+  goToRoleDetails(roleId: number): void {
+    console.log('Navigating to role ID:', roleId);
+    this.router.navigate(['/home/roles', roleId], { replaceUrl: true });
   }
 
   openNew() {

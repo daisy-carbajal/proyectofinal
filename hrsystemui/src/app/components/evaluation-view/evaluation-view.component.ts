@@ -24,6 +24,7 @@ import { UserService } from '../../services/user.service';
 import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-evaluation-view',
@@ -49,6 +50,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
     CalendarModule,
     InputGroupModule,
     InputGroupAddonModule,
+    RouterModule
   ],
   providers: [
     MessageService,

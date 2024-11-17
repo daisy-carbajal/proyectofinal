@@ -29,6 +29,7 @@ export class UserService {
   getUserDetails(): Observable<any> {
     const url = `${this.apiUrl}/details`;
     return this.http.get(url, this.getHeaders());
+
   }
 
   postUser(user: any): Observable<any> {  

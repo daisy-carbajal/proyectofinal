@@ -1,0 +1,127 @@
+<div class="border-round">
+    <p-toolbar styleClass="mb-4 gap-2">
+      <ng-template pTemplate="left">
+        <p-button
+          severity="success"
+          label="Nuevo Parámetro"
+          icon="pi pi-plus"
+          class="mr-2"
+          (onClick)="openNew()"
+        ></p-button>
+      </ng-template>
+    </p-toolbar>
+  
+    <p-table
+      #dt
+      [value]="evaluationParameters"
+      [rows]="10"
+      [paginator]="true"
+      [(selection)]="selectedParameters"
+      [rowHover]="true"
+      dataKey="EvaluationParameterID"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+      [showCurrentPageReport]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="Name">
+            Name <p-sortIcon field="Name"></p-sortIcon>
+          </th>
+          <th pSortableColumn="Description">
+            Descripción <p-sortIcon field="Description"></p-sortIcon>
+          </th>
+          <th pSortableColumn="Status">
+            <div class="flex flex-shrink-0"> Estado <p-sortIcon field="Status"></p-sortIcon></div>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="body" let-parameter>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="parameter"></p-tableCheckbox>
+          </td>
+          <td>{{ parameter.Name }}</td>
+          <td>{{ parameter.Description }}</td>
+          <td>
+            <p-tag [rounded]="true" [value]="parameter.Status ? 'Activo' : 'Inactivo'"></p-tag>
+          </td>
+          <td>
+            <div class="flex align-items-center px-4 pt-3 flex-shrink-0">
+            <span><p-button
+              icon="pi pi-pencil"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="success"
+              (onClick)="editParameter(parameter)"
+            ></p-button></span>
+            <span><p-button
+              icon="pi pi-eye-slash"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="warning"
+              (onClick)="deactivateParameter(parameter)"
+            ></p-button></span>
+            <span><p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+              (onClick)="deleteParameter(parameter.EvaluationParameterID)"
+            ></p-button></span></div>
+          </td>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          En total hay {{ evaluationParameters ? evaluationParameters.length : 0 }} parámetros.
+        </div>
+      </ng-template>
+    </p-table>
+  
+    <p-dialog
+      [(visible)]="parameterDialog"
+      [style]="{ width: '450px' }"
+      header="Detalles del Parámetro"
+      [modal]="true"
+      styleClass="p-fluid"
+    >
+      <ng-template pTemplate="content">
+        <div class="field">
+          <label for="description">Descripción</label>
+          <input
+            type="text"
+            pInputText
+            id="description"
+            [(ngModel)]="parameter.Description"
+            required
+            autofocus
+          />
+        </div>
+      </ng-template>
+  
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          [text]="true"
+          (onClick)="hideDialog()"
+        />
+        <p-button
+          label="Guardar"
+          icon="pi pi-check"
+          [text]="true"
+          (onClick)="saveParameter()"
+        />
+      </ng-template>
+    </p-dialog>
+  
+    <p-confirmDialog [style]="{ width: '450px' }" />
+  </div>

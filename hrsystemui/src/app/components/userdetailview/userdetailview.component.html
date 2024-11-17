@@ -2,9 +2,12 @@
   <div class="card flex content-left gap-3 mb-3">
     <p-button label="Regresar" icon="pi pi-arrow-circle-left" (onClick)="goBackToUsers()" />
   </div>
+  <div class="card flex content-left gap-3 mb-2">
   <div class="font-medium text-3xl text-700 mb-3">{{ employeeName }}</div>
+  <p-button label="Actualizar Rol" icon="pi pi-pencil" [text]="true" severity="info" (onClick)="editUserRole(userId)" />
+</div>
   <div class="text-500 mb-5">
-    {{ workEmail }} | {{ jobTitle }} | {{ department }}
+    {{ workEmail }} | {{ jobTitle }} | {{ department }} | {{ role }}
   </div>
   <ul class="list-none p-0 m-0">
     <li
@@ -56,4 +59,46 @@
       </div>
     </li>
   </ul>
+
+  <p-dialog
+    [(visible)]="userRoleDialog"
+    [style]="{ width: '450px' }"
+    header="Asignar Nuevo Rol"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="role">Rol Asignado</label>
+        <p-dropdown
+          [options]="roles"
+          optionLabel="Name"
+          optionValue="RoleID"
+          id="role"
+          placeholder="Selecciona un rol"
+          [(ngModel)]="role"
+          (onChange)="onRoleSelect($event)"
+          appendTo="body"
+        >
+        </p-dropdown>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="hideDialog()"
+      />
+      <p-button
+        label="Guardar"
+        icon="pi pi-check"
+        [text]="true"
+        (onClick)="saveUserRole()"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{ width: '450px' }" />
 </div>

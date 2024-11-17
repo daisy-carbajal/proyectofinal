@@ -124,6 +124,15 @@ const requestPasswordReset = async (req, res) => {
     const { personalEmail } = req.body;
     const pool = await poolPromise;
 
+    const userCheck = await pool
+      .request()
+      .input("PersonalEmail", sql.NVarChar, personalEmail)
+      .execute("CheckIfEmailExists");
+
+    if (userCheck.recordset[0].EmailCount === 0) {
+      return res.status(404).json({ message: "Correo personal no encontrado" });
+    }
+
     const result = await pool
       .request()
       .input("PersonalEmail", sql.NVarChar, personalEmail)
@@ -139,20 +148,19 @@ const requestPasswordReset = async (req, res) => {
         .request()
         .input("PersonalEmail", sql.NVarChar, personalEmail)
         .input("Password", sql.NVarChar, hashedTempPassword)
-        .query(
-          "UPDATE [User] SET Password = @Password, UpdatedAt = GETDATE() WHERE PersonalEmail = @PersonalEmail"
-        );
+        .execute("UpdateUserPassword");
 
       const resetLink = `http://localhost:4200/reset-password?token=${resetToken}`;
 
       await sendPasswordResetEmail(personalEmail, resetLink, tempPassword);
-      res.status(200).json({ message: "Correo de restablecimiento enviado" });
+
+      return res.status(200).json({ message: "Correo de restablecimiento enviado" });
     } else {
-      res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
   } catch (error) {
     console.error("Error en requestPasswordReset:", error);
-    res
+    return res
       .status(500)
       .json({ message: "Error al solicitar restablecimiento de contraseña" });
   }

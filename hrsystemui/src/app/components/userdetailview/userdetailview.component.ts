@@ -1,6 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChipsModule } from 'primeng/chips';
 import { CardModule } from 'primeng/card';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
@@ -11,12 +10,17 @@ import { UserService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { DialogModule } from 'primeng/dialog';
+import { RoleService } from '../../services/role.service';
+import { UserRoleService } from '../../services/user-role.service';
+import { DropdownModule } from 'primeng/dropdown';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-userdetailview',
   standalone: true,
   imports: [
-    ChipsModule,
     CardModule,
     RippleModule,
     ButtonModule,
@@ -26,8 +30,11 @@ import { InputIconModule } from 'primeng/inputicon';
     FormsModule,
     IconFieldModule,
     InputIconModule,
+    DialogModule,
+    DropdownModule,
+    ConfirmDialogModule
   ],
-  providers: [UserService],
+  providers: [ConfirmationService, UserService],
   templateUrl: './userdetailview.component.html',
   styleUrls: ['./userdetailview.component.css'],
 })
@@ -37,6 +44,13 @@ export class UserDetailViewComponent implements OnInit {
   jobTitle = '';
   department = '';
   userId!: number;
+  role = null;
+
+  userRoleDialog: boolean = false;
+  submitted: boolean = false;
+  userRole!: any;
+  roles: any[] = [];
+  selectedRole: number | null = null;
 
   userFields = [
     { label: 'Nombre', value: '', fieldName: 'FirstName', isEditing: false },
@@ -75,26 +89,13 @@ export class UserDetailViewComponent implements OnInit {
       fieldName: 'PostalCode',
       isEditing: false,
     },
-    { label: 'País', value: '', fieldName: 'Country', isEditing: false },
-    {
-      label: 'Puesto Laboral',
-      value: '',
-      fieldName: 'JobTitle',
-      isEditing: false,
-    },
-    {
-      label: 'Departamento',
-      value: '',
-      fieldName: 'Department',
-      isEditing: false,
-    },
-    { label: 'Rol', value: '', fieldName: 'Role', isEditing: false },
   ];
 
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private roleService: RoleService,
   ) {}
 
   ngOnInit(): void {
@@ -103,6 +104,7 @@ export class UserDetailViewComponent implements OnInit {
       if (id) {
         this.userId = +id;
         this.loadUserData(this.userId);
+        this.loadRoles();
       }
     });
   }
@@ -118,7 +120,8 @@ export class UserDetailViewComponent implements OnInit {
       this.workEmail = data.WorkEmail;
       this.jobTitle = data.JobTitle || 'Sin puesto asignado';
       this.department = data.Department || 'Sin departamento asignado';
-
+      this.role = data.Role || 'Sin rol asignado';
+      
       this.userFields.forEach((field) => {
         field.value = this.getFieldOriginalValue(data, field.label);
       });
@@ -201,5 +204,36 @@ export class UserDetailViewComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  editUserRole(userRole: any) {
+    this.userRole = { ...userRole };
+    this.role = userRole.RoleID;
+    this.userRoleDialog = true;
+  }
+
+  hideDialog() {
+    this.userRoleDialog = false;
+    this.submitted = false;
+  }
+
+  loadRoles(): void {
+    this.roleService.getAllRoles().subscribe(
+      (dataRole) => {
+        this.roles = dataRole;
+      },
+      (error) => {
+        console.error('Error al cargar roles:', error);
+      }
+    );
+  }
+
+  onRoleSelect(event: any) {
+    this.selectedRole = event.value;
+    console.log('ID del Role seleccionado:', this.selectedRole);
+  }
+
+  saveUserRole() {
+    this.submitted = true;
   }
 }

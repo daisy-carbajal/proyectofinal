@@ -86,7 +86,7 @@ export class IncidentViewComponent implements OnInit {
   users: any[] = [];
   userSelected: number | null = null;
   timeValue: number | null = null;
-  selectedTimeUnit: string = 'mins';
+  selectedTimeUnit: string = '';
 
   constructor(
     private incidentService: IncidentService,
@@ -114,6 +114,7 @@ export class IncidentViewComponent implements OnInit {
       Reason: '',
       Date: null,
       Duration: null,
+      Unit: null,
       Comments: '',
     };
     this.submitted = false;
@@ -161,7 +162,9 @@ export class IncidentViewComponent implements OnInit {
     this.incident = { ...incident };
     if (this.incident.Date) {
       this.incident.Date = new Date(this.incident.Date);
-  }
+    }
+
+    this.selectedTimeUnit = this.incident.Unit;
     this.incidentDialog = true;
   }
 
@@ -293,20 +296,4 @@ export class IncidentViewComponent implements OnInit {
     { label: 'Horas', value: 'hours' },
     { label: 'Días', value: 'days' },
   ];
-
-  convertAndSend() {
-    if (this.timeValue !== null && this.selectedTimeUnit) {
-      let timeInMinutes = this.timeValue;
-
-      if (this.selectedTimeUnit === 'hours') {
-        timeInMinutes = this.timeValue * 60;
-      } else if (this.selectedTimeUnit === 'days') {
-        timeInMinutes = this.timeValue * 60 * 24;
-      }
-
-      console.log('Tiempo en minutos:', timeInMinutes);
-    } else {
-      console.error('Por favor ingresa una cantidad y selecciona una unidad.');
-    }
-  }
 }

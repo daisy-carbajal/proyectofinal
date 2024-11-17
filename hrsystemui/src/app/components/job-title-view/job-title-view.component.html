@@ -8,7 +8,7 @@
         class="mr-2"
         (onClick)="openNew()"
       ></p-button>
-      <p-button
+      <!--<p-button
         severity="warning"
         label="Desactivar"
         icon="pi pi-eye-slash"
@@ -22,7 +22,7 @@
         icon="pi pi-trash"
         (onClick)="deleteSelectedJobTitles()"
         [disabled]="!selectedJobTitles || !selectedJobTitles.length"
-      ></p-button>
+      ></p-button>-->
     </ng-template>
 
     <ng-template pTemplate="right">
@@ -51,7 +51,7 @@
   >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
-        <h2 class="text-purple-700 m-0">Puestos de Trabajo</h2>
+        <h2 class="text-700 m-0">Puestos de Trabajo</h2>
         <!--<span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input
@@ -75,14 +75,14 @@
         <th pSortableColumn="Description">
           Descripción <p-sortIcon field="Description"></p-sortIcon>
         </th>
-        <th pSortableColumn="Description">
-          Departamento<p-sortIcon field="Description"></p-sortIcon>
+        <th pSortableColumn="Department">
+          <div class="flex flex-shrink-0"> Departamento<p-sortIcon field="Department"></p-sortIcon> </div>
         </th>
-        <th pSortableColumn="Description">
-          Rol <p-sortIcon field="Description"></p-sortIcon>
+        <th pSortableColumn="Role">
+          <div class="flex flex-shrink-0">  Rol <p-sortIcon field="Role"></p-sortIcon> </div>
         </th>
         <th pSortableColumn="Status">
-          Estado <p-sortIcon field="Status"></p-sortIcon>
+          <div class="flex flex-shrink-0"> Estado <p-sortIcon field="Status"></p-sortIcon> </div>
         </th>
         <th></th>
       </tr>
@@ -104,6 +104,7 @@
           ></p-tag>
         </td>
         <td>
+          <div class="flex flex-shrink-0"> 
           <p-button
             icon="pi pi-pencil"
             class="mr-2"
@@ -127,7 +128,7 @@
             [rounded]="true"
             [outlined]="true"
             (onClick)="deleteJobTitle(jobTitle)"
-          ></p-button>
+          ></p-button> </div>
         </td>
       </tr>
     </ng-template>
@@ -161,15 +162,15 @@
 
       <div class="field">
         <label for="description">Descripción</label>
-        <input
-          type="text"
-          pInputText
+        <textarea
+          rows="5"
+          cols="30"
+          pInputTextarea
           id="description"
           [(ngModel)]="jobTitle.Description"
           required
-        />
+        ></textarea>
       </div>
-
       <div class="field">
         <label for="department">Departamento</label>
         <p-dropdown
@@ -182,7 +183,6 @@
         >
         </p-dropdown>
       </div>
-
       <div class="field">
         <label for="role">Rol Asignado</label>
         <p-dropdown
@@ -202,6 +202,54 @@
         icon="pi pi-times"
         [text]="true"
         (onClick)="hideDialog()"
+      />
+      <p-button
+        label="Save"
+        icon="pi pi-check"
+        [text]="true"
+        (onClick)="saveJobTitle()"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="jobTitleEditDialog"
+    [style]="{ width: '450px' }"
+    header="Detalles de Puesto de Trabajo"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="title">Editar Puesto de Trabajo</label>
+        <input
+          type="text"
+          pInputText
+          id="title"
+          [(ngModel)]="jobTitle.JobTitle"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="field">
+        <label for="description">Descripción</label>
+        <textarea
+          rows="5"
+          cols="30"
+          pInputTextarea
+          id="description"
+          [(ngModel)]="jobTitle.Description"
+          required
+        ></textarea>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancel"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="hideEditDialog()"
       />
       <p-button
         label="Save"

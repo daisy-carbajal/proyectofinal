@@ -4,10 +4,9 @@ import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RolePermissionService {
-
   private apiUrl = 'http://localhost:3000/role-permissions';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
@@ -28,6 +27,11 @@ export class RolePermissionService {
 
   getAllRolePermissions(): Observable<any> {
     return this.http.get(this.apiUrl, this.getHeaders());
+  }
+
+  getRolePermissionsByRoleID(roleId: number): Observable<any> {
+    const url = `${this.apiUrl}/${roleId}`;
+    return this.http.get(url, this.getHeaders());
   }
 
   deactivateRolePermission(id: number, deletedBy: any): Observable<any> {
