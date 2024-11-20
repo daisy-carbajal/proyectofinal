@@ -43,7 +43,7 @@ export class DepartmentService {
 
   deactivateDepartment(departmentId: number, deactivatedDepartment: {DeletedBy: any}): Observable<any> {
     const url = `${this.apiUrl}/d/${departmentId}`;
-    return this.http.put(url, deactivatedDepartment, this.getHeaders());
+    return this.http.patch(url, deactivatedDepartment, this.getHeaders());
   }
 
   deleteDepartment(departmentId: number): Observable<any> {

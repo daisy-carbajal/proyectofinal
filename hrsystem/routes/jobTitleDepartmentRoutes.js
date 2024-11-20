@@ -14,6 +14,6 @@ router.get("/:id", checkPermission("VIEW_SETTINGS"), jobTitleDepartmentControlle
 
 router.put("/u/:id", checkPermission("EDIT_SETTINGS"), jobTitleDepartmentController.updateJobTitleDepartment);
 
-router.put("/d/:id", checkPermission("DELETE_SETTINGS"), jobTitleDepartmentController.deactivateJobTitleDepartment);
+router.patch("/d/:id", checkPermission("DELETE_SETTINGS"), jobTitleDepartmentController.deactivateJobTitleDepartment);
 
 module.exports = router;

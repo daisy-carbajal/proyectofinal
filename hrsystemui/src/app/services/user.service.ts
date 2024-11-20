@@ -67,7 +67,7 @@ export class UserService {
   ): Observable<any> {
     const url = `${this.apiUrl}/user-detail/${userId}`;
     const body = { fieldName, newValue };
-    return this.http.patch(url, body, this.getHeaders());
+    return this.http.put(url, body, this.getHeaders());
   }
 
   deactivateUser(
@@ -75,7 +75,7 @@ export class UserService {
     deactivatedUser: { DeletedBy: any }
   ): Observable<any> {
     const url = `${this.apiUrl}/d/${userId}`;
-    return this.http.put(url, deactivatedUser, this.getHeaders());
+    return this.http.patch(url, deactivatedUser, this.getHeaders());
   }
 
   deleteUser(userId: number): Observable<any> {

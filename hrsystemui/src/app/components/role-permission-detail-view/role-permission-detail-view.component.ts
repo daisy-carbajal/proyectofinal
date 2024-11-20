@@ -10,6 +10,7 @@ import { catchError } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { RoleService } from '../../services/role.service';
+import { ToolbarModule } from 'primeng/toolbar';
 
 interface Permission {
   PermissionID: number;
@@ -19,12 +20,14 @@ interface Permission {
   CreatedAt: string;
   UpdatedAt: string | null;
   CategoryName: string;
+  Estado?: string;
 }
 
 interface Role {
   RoleName: string;
   RoleDescription: string;
   PermissionID: number;
+  Estado: string; // Agregar el campo Estado
 }
 
 @Component({
@@ -36,6 +39,7 @@ interface Role {
     CheckboxModule,
     CommonModule,
     ChipsModule,
+    ToolbarModule
   ],
   providers: [RolePermissionService, PermissionCategoryService, RoleService],
   templateUrl: './role-permission-detail-view.component.html',
@@ -56,7 +60,7 @@ export class RolePermissionDetailViewComponent implements OnInit {
     private route: ActivatedRoute,
     private permissionCategoryService: PermissionCategoryService,
     private roleService: RoleService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -74,14 +78,12 @@ export class RolePermissionDetailViewComponent implements OnInit {
   }
 
   loadRoleDataAndPermissions(roleId: number): void {
-    // Cargar los datos del rol
     this.roleService.getRoleById(roleId).subscribe(
       (dataRole) => {
         console.log('Datos del Rol:', dataRole);
         this.roleName = dataRole.Name;
         this.roleDescription = dataRole.Description;
-  
-        // Cargar permisos después de que los datos del rol se hayan cargado
+
         this.loadPermissionsAndRole(roleId);
       },
       (error) => {
@@ -100,8 +102,9 @@ export class RolePermissionDetailViewComponent implements OnInit {
         })
       )
       .subscribe((permissions: Permission[]) => {
+        const activePermissions = permissions.filter(permission => permission.Status); 
         const categories = new Map<string, Permission[]>();
-        permissions.forEach((permission) => {
+        activePermissions.forEach((permission) => {
           const category = permission.CategoryName;
           if (!categories.has(category)) {
             categories.set(category, []);
@@ -142,14 +145,23 @@ export class RolePermissionDetailViewComponent implements OnInit {
   }
 
   savePermissions() {
-    // Lógica para guardar los permisos seleccionados
     console.log('Permisos guardados:', this.selectedPermissions);
-    this.isEditing = false; // Salir del modo de edición
+    
+    this.rolePermissionService.manageRolePermissions(this.roleId, this.selectedPermissions)
+      .subscribe(
+        (response) => {
+          console.log('Permisos actualizados exitosamente:', response);
+          this.isEditing = false; // Salir del modo de edición
+        },
+        (error) => {
+          console.error('Error al actualizar permisos:', error);
+        }
+      );
   }
 
   cancelEdit() {
-    // Lógica para cancelar la edición
-    this.isEditing = false; // Salir del modo de edición
-    // Aquí puedes restaurar los permisos seleccionados si es necesario
+    this.isEditing = false;
+    this.loadRoleDataAndPermissions(this.roleId);
   }
+
 }

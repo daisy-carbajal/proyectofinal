@@ -18,7 +18,6 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../services/auth.service';
-import { UserService } from '../../services/user.service';
 import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
@@ -56,7 +55,6 @@ import { PermissionCategoryService } from '../../services/permission-category.se
     ConfirmationService,
     PermissionService,
     PermissionCategoryService,
-    UserService,
   ],
   styles: [
     `
@@ -94,7 +92,6 @@ export class PermissionsViewComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private authService: AuthService,
     private permissionCategoryService: PermissionCategoryService,
-    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -104,7 +101,6 @@ export class PermissionsViewComponent implements OnInit {
     });
     this.loggedUserId = this.authService.getUserId();
     this.loadPermissionCategories();
-    this.loadUsers();
   }
 
   openNew() {
@@ -120,39 +116,25 @@ export class PermissionsViewComponent implements OnInit {
 
   loadPermissionCategories(): void {
     this.permissionCategoryService.getAllPermissionCategories().subscribe(
-      (dataType) => {
-        console.log('Datos de categorias:', dataType);
-        this.permissionCategory = dataType;
+      (data) => {
+        console.log('Categorías cargadas:', data);
+        this.permissionCategory = data;
       },
       (error) => {
-        console.error('Error al cargar categorias de permission:', error);
+        console.error('Error al cargar las categorías:', error);
       }
     );
   }
 
   onPermissionCategorySelect(event: any) {
     this.permissionCategorySelected = event.value;
-    console.log(
-      'ID de la categoria seleccionada:',
-      this.permissionCategorySelected
-    );
+    this.permission.CategoryID = this.permissionCategorySelected; 
+    console.log('ID de la categoria seleccionada:', this.permissionCategorySelected);
   }
 
-  loadUsers(): void {
-    this.userService.getUsers().subscribe(
-      (dataUser ) => {
-        console.log('Datos de usuarios:', dataUser );
-        this.users = dataUser ;
-      },
-      (error) => {
-        console.error('Error al cargar usuarios:', error);
-      }
-    );
-  }
-
-  onUserSelected(event: any) {
-    this.userSelected = event.value;
-    console.log('ID del Usuario seleccionado:', this.userSelected);
+  onCategoryChange(event: any) {
+    console.log('Categoría seleccionada:', event.value);
+    console.log('Objeto permiso actualizado:', this.permission);
   }
 
   editPermission(permission: any) {
@@ -160,6 +142,7 @@ export class PermissionsViewComponent implements OnInit {
     if (this.permission.Date) {
       this.permission.Date = new Date(this.permission.Date);
     }
+    this.permission.CategoryID = this.permission.PermissionCategoryID;
     this.permissionDialog = true;
   }
 
@@ -199,30 +182,58 @@ export class PermissionsViewComponent implements OnInit {
 
   deactivatePermission(permission: any) {
     this.confirmationService.confirm({
-      message: '¿Está seguro de borrar ' + permission.PermissionTypeName + '?',
+      message: `¿Está seguro de borrar ${permission.PermissionName}?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Permission a Desactivar:' + permission.PermissionID);
-
-        const deletedBy = this.loggedUserId;
-
-        this.permissionService
-          .deactivatePermission(permission.PermissionID, { DeletedBy: deletedBy })
-          .subscribe(() => {
+        if (!permission.PermissionID) {
+          console.error('PermissionID no válido:', permission.PermissionID);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'El PermissionID no es válido.',
+            life: 3000,
+          });
+          return;
+        }
+  
+        console.log('Permission a desactivar:', permission.PermissionID);
+  
+        this.permissionService.deactivatePermission(permission.PermissionID).subscribe(
+          (response) => {
+            console.log('Respuesta de desactivación:', response);
+  
             const index = this.findIndexById(permission.PermissionID);
             if (index !== -1) {
-              this.permissions[index].status = false;
+              this.permissions[index].status = false; 
             }
-
+  
             this.messageService.add({
               severity: 'success',
-              summary: 'Successful',
-              detail: 'Permission Borado.',
+              summary: 'Éxito',
+              detail: 'Permiso desactivado correctamente.',
               life: 3000,
             });
-          });
+          },
+          (error) => {
+            console.error('Error al desactivar permiso:', error);
+  
+            // Manejar error
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo desactivar el permiso.',
+              life: 3000,
+            });
+          }
+        );
       },
+    });
+  }
+
+  refreshRoles() {
+    this.permissionService.getAllPermissions().subscribe((data: any[]) => {
+      this.permissions = data;
     });
   }
 
@@ -232,14 +243,14 @@ export class PermissionsViewComponent implements OnInit {
   }
 
   savePermission() {
-    this .submitted = true;
-
+    this.submitted = true;
+  
     if (this.permission.PermissionName?.trim()) {
-      console.log('Datos del permission antes de actualizar:', this.permission);
-
+      console.log('Datos del permiso antes de actualizar:', this.permission);
+  
       if (this.permission.PermissionID) {
         this.permissionService
-        /*  .updatePermissions(this.permission.PermissionID, this.permission)
+          .updatePermission(this.permission.PermissionID, this.permission) // Asegúrate de que esta línea esté descomentada
           .subscribe(() => {
             const index = this.findIndexById(this.permission.PermissionID);
             if (index !== -1) {
@@ -253,10 +264,14 @@ export class PermissionsViewComponent implements OnInit {
             });
           });
       } else {
-        this.permissionService*/
-          .postPermission(this.permission)
+        this.permissionService
+          .postPermission({
+            PermissionName: this.permission.PermissionName,
+            Description: this.permission.Description,
+            CategoryID: this.permission.CategoryID
+          })
           .subscribe((newPermission) => {
-            console.log('Datos del permission antes de enviar:', this.permission);
+            console.log('Datos del permiso antes de enviar:', newPermission);
             this.permissions.push(newPermission);
             this.messageService.add({
               severity: 'success',
@@ -266,7 +281,7 @@ export class PermissionsViewComponent implements OnInit {
             });
           });
       }
-
+      this.refreshRoles();
       this.permissionDialog = false;
       this.permission = {};
     }
@@ -283,10 +298,4 @@ export class PermissionsViewComponent implements OnInit {
 
     return index;
   }
-
-  timeOptions = [
-    { label: 'Minutos', value: 'mins' },
-    { label: 'Horas', value: 'hours' },
-    { label: 'Días', value: 'days' },
-  ];
 }

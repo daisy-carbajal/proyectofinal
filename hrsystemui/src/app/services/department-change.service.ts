@@ -47,11 +47,19 @@ export class DepartmentChangeService {
     deactivatedDepartmentChange: any
   ): Observable<any> {
     const url = `${this.apiUrl}/d/${departmentChangeId}`;
-    return this.http.put(url, deactivatedDepartmentChange, this.getHeaders());
+    return this.http.patch(url, deactivatedDepartmentChange, this.getHeaders());
   }
 
   deleteDepartmentChange(departmentChangeId: number): Observable<any> {
     const url = `${this.apiUrl}/${departmentChangeId}`;
     return this.http.delete(url, this.getHeaders());
+  }
+
+  approveDepartmentChange(departmentChange: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/approve`, departmentChange, this.getHeaders());
+  }
+
+  denyDepartmentChange(departmentChange: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/deny`, departmentChange, this.getHeaders());
   }
 }

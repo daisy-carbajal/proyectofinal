@@ -10,11 +10,11 @@ router.post('/', checkPermission("CREATE_ACTION_PLAN"), actionPlanController.cre
 
 router.get('/', checkPermission("VIEW_ACTION_PLAN"), actionPlanController.getAllActionPlans);
 
-router.get('/user/:UserID', checkPermission("VIEW_ACTION_PLAN"), actionPlanController.getActionPlansByUserID);
+router.get('/user/:id', checkPermission("VIEW_ACTION_PLAN"), actionPlanController.getActionPlansByUserID);
 
-router.put('/:id', checkPermission("EDIT_ACTION_PLAN"), actionPlanController.updateActionPlan);
+router.put('/u/:id', checkPermission("EDIT_ACTION_PLAN"), actionPlanController.updateActionPlan);
 
-router.put('/deactivate/:id', checkPermission("DEACTIVATE_ACTION_PLAN"), actionPlanController.deactivateActionPlan);
+router.patch('/d/:id', checkPermission("EDIT_ACTION_PLAN"), actionPlanController.deactivateActionPlan);
 
 router.delete('/:id', checkPermission("DELETE_ACTION_PLAN"), actionPlanController.deleteActionPlan);
 

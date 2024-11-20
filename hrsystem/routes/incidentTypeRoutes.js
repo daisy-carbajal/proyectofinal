@@ -12,7 +12,7 @@ router.get("/", checkPermission("VIEW_OPTIONS"), incidentTypeController.getAllIn
 
 router.get("/:id", checkPermission("VIEW_OPTIONS"), incidentTypeController.getIncidentTypeById);
 
-router.put("/:id", checkPermission("EDIT_OPTIONS"), incidentTypeController.updateIncidentType);
+router.put("/u/:id", checkPermission("EDIT_OPTIONS"), incidentTypeController.updateIncidentType);
 
 router.delete("/:id", checkPermission("DELETE_OPTIONS"), incidentTypeController.deleteIncidentType);
 

@@ -42,7 +42,7 @@ export class JobtitleDepartmentService {
 
   deactivateJobTitleDepartment(jobTitleDepartmentId: number, deactivatedJobTitleDepartment: any): Observable<any> {
     const url = `${this.apiUrl}/d/${jobTitleDepartmentId}`;
-    return this.http.put(url, deactivatedJobTitleDepartment, this.getHeaders());
+    return this.http.patch(url, deactivatedJobTitleDepartment, this.getHeaders());
   }
 
   deleteJobTitleDepartment(jobTitleDepartmentId: number): Observable<any> {

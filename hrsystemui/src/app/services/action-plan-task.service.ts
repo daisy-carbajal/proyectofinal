@@ -38,7 +38,7 @@ export class ActionPlanTaskService {
 
   deactivateActionPlanTask(actionPlanTaskID: number, deletedBy: any): Observable<any> {
     const url = `${this.apiUrl}/d/${actionPlanTaskID}`;
-    return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
   }
 
   deleteActionPlanTask(actionPlanTaskID: number): Observable<any> {

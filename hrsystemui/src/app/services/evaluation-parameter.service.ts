@@ -37,7 +37,7 @@ export class EvaluationParameterService {
 
   deactivateEvaluationParameter(evaluationParameterID: number, deletedBy: any): Observable<any> {
     const url = `${this.apiUrl}/d/${evaluationParameterID}`;
-    return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
   }
 
   deleteEvaluationParameter(evaluationParameterID: number): Observable<any> {

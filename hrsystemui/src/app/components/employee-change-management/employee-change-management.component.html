@@ -1,0 +1,16 @@
+<div class="surface-card p-4 border-round">
+    <p-toolbar styleClass="mb-2 gap-2">
+      <ng-template pTemplate="left">
+        <h2 class="text-700 m-0">Cambio de Posición de Empleados</h2>
+      </ng-template>
+    </p-toolbar>
+  
+    <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange()">
+      <p-tabPanel *ngFor="let tab of tabs; let i = index">
+        <ng-template pTemplate="header">
+          <span class="tab-header">{{ tab.title }}</span>
+        </ng-template>
+        <ng-template #dynamicContainer></ng-template>
+      </p-tabPanel>
+    </p-tabView>
+  </div>

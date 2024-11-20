@@ -21,7 +21,7 @@ export class RolePermissionService {
     };
   }
 
-  postRolePermission(rolePermission: any): Observable<any> {
+  postRolePermission(rolePermission: { RoleID: number; PermissionID: number; CreatedBy: number }): Observable<any> {
     return this.http.post(this.apiUrl, rolePermission, this.getHeaders());
   }
 
@@ -34,9 +34,19 @@ export class RolePermissionService {
     return this.http.get(url, this.getHeaders());
   }
 
-  deactivateRolePermission(id: number, deletedBy: any): Observable<any> {
-    const url = `${this.apiUrl}/d/${id}`;
-    return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());
+  activateRolePermission(roleId: number, permissionId: number, updatedBy: number): Observable<any> {
+    const url = `${this.apiUrl}/activate`;
+    return this.http.put(url, { RoleID: roleId, PermissionID: permissionId, UpdatedBy: updatedBy });
+  }
+
+  deactivateRolePermission(roleId: number, permissionId: number, deletedBy: number): Observable<any> {
+    const url = `${this.apiUrl}/deactivate`;
+    return this.http.patch(url, { RoleID: roleId, PermissionID: permissionId, DeletedBy: deletedBy });
+  }
+
+  manageRolePermissions(roleId: number, permissions: number[]): Observable<any> {
+    const url = `${this.apiUrl}/m/`;
+    return this.http.post(url, { RoleID: roleId, Permissions: permissions }, this.getHeaders());
   }
 
   deleteRolePermission(id: number): Observable<any> {

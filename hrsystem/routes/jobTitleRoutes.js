@@ -42,7 +42,7 @@ router.put(
   jobTitleController.updateJobTitle
 );
 
-router.put("/d/:id", jobTitleController.deactivateJobTitle);
+router.patch("/d/:id", jobTitleController.deactivateJobTitle);
 
 router.delete("/:id", jobTitleController.deleteJobTitle);
 

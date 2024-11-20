@@ -70,19 +70,25 @@
           <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         </th>
         <th pSortableColumn="Title">
-          Puesto de Trabajo <p-sortIcon field="Title"></p-sortIcon>
+          Puesto Laboral <p-sortIcon field="Title"></p-sortIcon>
         </th>
         <th pSortableColumn="Description">
           Descripción <p-sortIcon field="Description"></p-sortIcon>
         </th>
         <th pSortableColumn="Department">
-          <div class="flex flex-shrink-0"> Departamento<p-sortIcon field="Department"></p-sortIcon> </div>
+          <div class="flex flex-shrink-0">
+            Departamento<p-sortIcon field="Department"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="Role">
-          <div class="flex flex-shrink-0">  Rol <p-sortIcon field="Role"></p-sortIcon> </div>
+          <div class="flex flex-shrink-0">
+            Rol <p-sortIcon field="Role"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="Status">
-          <div class="flex flex-shrink-0"> Estado <p-sortIcon field="Status"></p-sortIcon> </div>
+          <div class="flex flex-shrink-0">
+            Estado <p-sortIcon field="Status"></p-sortIcon>
+          </div>
         </th>
         <th></th>
       </tr>
@@ -93,7 +99,7 @@
         <td>
           <p-tableCheckbox [value]="jobTitle"></p-tableCheckbox>
         </td>
-        <td>{{ jobTitle.JobTitle }}</td>
+        <td>{{ jobTitle.Title }}</td>
         <td>{{ jobTitle.Description }}</td>
         <td>{{ jobTitle.Department }}</td>
         <td>{{ jobTitle.Role }}</td>
@@ -104,31 +110,32 @@
           ></p-tag>
         </td>
         <td>
-          <div class="flex flex-shrink-0"> 
-          <p-button
-            icon="pi pi-pencil"
-            class="mr-2"
-            [rounded]="true"
-            [outlined]="true"
-            severity="success"
-            (onClick)="editJobTitle(jobTitle)"
-          ></p-button>
-          <p-button
-            icon="pi pi-eye-slash"
-            class="mr-2"
-            [rounded]="true"
-            [outlined]="true"
-            severity="warning"
-            (onClick)="deactivateJobTitle(jobTitle.JobTitleID)"
-          >
-          </p-button>
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="deleteJobTitle(jobTitle)"
-          ></p-button> </div>
+          <div class="flex flex-shrink-0">
+            <p-button
+              icon="pi pi-pencil"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="success"
+              (onClick)="editJobTitle(jobTitle)"
+            ></p-button>
+            <p-button
+              icon="pi pi-eye-slash"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="warning"
+              (onClick)="deactivateJobTitle(jobTitle.JobTitleID)"
+            >
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+              (onClick)="deleteJobTitle(jobTitle.JobTitleID)"
+            ></p-button>
+          </div>
         </td>
       </tr>
     </ng-template>
@@ -143,18 +150,18 @@
   <p-dialog
     [(visible)]="jobTitleDialog"
     [style]="{ width: '450px' }"
-    header="Detalles de Puesto de Trabajo"
+    header="Detalles de Puesto Laboral"
     [modal]="true"
     styleClass="p-fluid"
   >
     <ng-template pTemplate="content">
       <div class="field">
-        <label for="title">Puesto de Trabajo</label>
+        <label for="title">Puesto Laboral</label>
         <input
           type="text"
           pInputText
           id="title"
-          [(ngModel)]="jobTitle.JobTitle"
+          [(ngModel)]="jobTitle.Title"
           required
           autofocus
         />
@@ -215,13 +222,13 @@
   <p-dialog
     [(visible)]="jobTitleEditDialog"
     [style]="{ width: '450px' }"
-    header="Detalles de Puesto de Trabajo"
+    header="Detalles de Puesto Laboral"
     [modal]="true"
     styleClass="p-fluid"
   >
     <ng-template pTemplate="content">
       <div class="field">
-        <label for="title">Editar Puesto de Trabajo</label>
+        <label for="title">Editar Puesto Laboral</label>
         <input
           type="text"
           pInputText

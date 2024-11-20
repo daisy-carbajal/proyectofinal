@@ -36,7 +36,7 @@ import { DropdownModule } from 'primeng/dropdown';
     InputTextModule,
     FormsModule,
     InputTextareaModule,
-    DropdownModule
+    DropdownModule,
   ],
   providers: [MessageService, ConfirmationService, JobtitleService],
   styles: [
@@ -80,6 +80,7 @@ export class JobTitleViewComponent implements OnInit {
   ngOnInit() {
     this.jobTitleService.getAllJobTitleDetails().subscribe((data: any[]) => {
       this.jobtitles = data;
+      console.log("Puestos Laborales:", data)
     });
     this.loadDepartments();
     this.loadRoles();
@@ -89,11 +90,11 @@ export class JobTitleViewComponent implements OnInit {
 
   openNew() {
     this.jobTitle = {
-      title: '',
-      description: '',
-      departmentId: null,
-      roleId: null,
-      createdby: this.loggedUserId,
+      Title: '',
+      Description: '',
+      DepartmentID: null,
+      RoleID: null,
+      CreatedBy: this.loggedUserId,
     };
     this.submitted = false;
     this.jobTitleDialog = true;
@@ -140,16 +141,16 @@ export class JobTitleViewComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      message: `¿Está seguro de desactivar el puesto: ${jobTitle.JobTitle}?`,
+      message: `¿Está seguro de desactivar el puesto: ${jobTitle.Title}?`,
       header: 'Confirmar Desactivación',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         const deletedBy = this.loggedUserId;
 
-        console.log(jobTitleID,  deletedBy);
+        console.log(jobTitleID, deletedBy);
 
         this.jobTitleService
-          .deactivateJobTitle(jobTitleID, jobTitle)
+          .deactivateJobTitle(jobTitleID)
           .subscribe(() => {
             jobTitle.status = false;
 
@@ -160,49 +161,6 @@ export class JobTitleViewComponent implements OnInit {
               life: 3000,
             });
           });
-      },
-    });
-  }
-
-  deactivateSelectedJobTitles() {
-    this.confirmationService.confirm({
-      message: '¿Está seguro de desactivar los puestos seleccionados?',
-      header: 'Confirmar Desactivación Múltiple',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        const deactivateRequests = this.selectedJobTitles.map((jobTitle) =>
-          this.jobTitleService.deactivateJobTitle(jobTitle.JobTitleID, {
-            DeletedBy: this.loggedUserId,
-          })
-        );
-
-        Promise.all(deactivateRequests).then(
-          () => {
-            this.jobtitles = this.jobtitles.map((jobTitle) =>
-              this.selectedJobTitles.includes(jobTitle)
-                ? { ...jobTitle, status: false }
-                : jobTitle
-            );
-
-            this.selectedJobTitles = [];
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Puestos desactivados correctamente.',
-              life: 3000,
-            });
-          },
-          (error) => {
-            console.error('Error al desactivar puestos', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudieron desactivar algunos puestos.',
-              life: 3000,
-            });
-          }
-        );
       },
     });
   }
@@ -291,15 +249,18 @@ export class JobTitleViewComponent implements OnInit {
 
   saveJobTitle() {
     this.submitted = true;
-  
-    if (this.jobTitle.JobTitle?.trim() && this.jobTitle.Description?.trim()) {
-      console.log('Datos del puesto de trabajo antes de guardar:', this.jobTitle);
-  
+
+    if (this.jobTitle.Title?.trim() && this.jobTitle.Description?.trim()) {
+      console.log(
+        'Datos del puesto de trabajo antes de guardar:',
+        this.jobTitle
+      );
+
       if (this.jobTitle.JobTitleID) {
         this.jobTitleService
           .updateJobTitle(this.jobTitle.JobTitleID, {
-            Title: this.jobTitle.JobTitle,
-            Description: this.jobTitle.Description
+            Title: this.jobTitle.Title,
+            Description: this.jobTitle.Description,
           })
           .subscribe(() => {
             const index = this.findIndexById(this.jobTitle.JobTitleID);
@@ -309,24 +270,26 @@ export class JobTitleViewComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
-              detail: 'Puesto de Trabajo Actualizado.',
+              detail: 'Puesto Laboral Actualizado.',
               life: 3000,
             });
             this.jobTitleDialog = false;
             this.jobTitle = {};
           });
       } else {
-        this.jobTitleService.postJobTitle(this.jobTitle).subscribe((newJobTitle) => {
-          this.jobtitles.push(newJobTitle);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Successful',
-            detail: 'Puesto de Trabajo Creado.',
-            life: 3000,
+        this.jobTitleService
+          .postJobTitle(this.jobTitle)
+          .subscribe((newJobTitle) => {
+            this.jobtitles.push(newJobTitle);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Puesto Laboral Creado.',
+              life: 3000,
+            });
+            this.jobTitleDialog = false;
+            this.jobTitle = {};
           });
-          this.jobTitleDialog = false;
-          this.jobTitle = {};
-        });
       }
     }
   }

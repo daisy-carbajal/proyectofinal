@@ -12,7 +12,7 @@ router.get('/:id', checkPermission("VIEW_FEEDBACK"), commentFeedbackController.g
 
 router.put('/u/:id', checkPermission("EDIT_FEEDBACK"), commentFeedbackController.updateCommentFeedback);
 
-router.put('/d/:id', checkPermission("EDIT_FEEDBACK"), commentFeedbackController.deactivateCommentFeedback);
+router.patch('/d/:id', checkPermission("EDIT_FEEDBACK"), commentFeedbackController.deactivateCommentFeedback);
 
 router.delete('/:id', checkPermission("DELETE_FEEDBACK"), commentFeedbackController.deleteCommentFeedback);
 

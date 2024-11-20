@@ -12,7 +12,7 @@ router.get('/', checkPermission("VIEW_OPTIONS"), evaluationTypeController.getAll
 
 router.put('/u/:id', checkPermission("EDIT_OPTIONS"), evaluationTypeController.updateEvaluationType);
 
-router.put('/d/:id', checkPermission("EDIT_OPTIONS"), evaluationTypeController.deactivateEvaluationType);
+router.patch('/d/:id', checkPermission("EDIT_OPTIONS"), evaluationTypeController.deactivateEvaluationType);
 
 router.delete('/:id', checkPermission("DELETE_OPTIONS"), evaluationTypeController.deleteEvaluationType);
 

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { IncidentService } from '../../services/incident.service';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { RippleModule } from 'primeng/ripple';
@@ -19,11 +18,15 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../services/auth.service';
-import { IncidentTypeService } from '../../services/incident-type.service';
 import { UserService } from '../../services/user.service';
 import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { DepartmentService } from '../../services/department.service';
+import { ChangeReasonService } from '../../services/change-reason.service';
+import { JobtitleDepartmentService } from '../../services/job-title-department.service';
+import { JobtitleChangeService } from '../../services/job-title-change.service';
+import { DepartmentChangeService } from '../../services/department-change.service';
 
 @Component({
   selector: 'app-employee-change-record',
@@ -54,9 +57,12 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
   providers: [
     MessageService,
     ConfirmationService,
-    IncidentService,
-    IncidentTypeService,
     UserService,
+    DepartmentService,
+    JobtitleDepartmentService,
+    ChangeReasonService,
+    JobtitleChangeService,
+    DepartmentChangeService
   ],
   styles: [
     `
@@ -68,83 +74,52 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
     `,
   ],
   templateUrl: './employee-change-record.component.html',
-  styleUrl: './employee-change-record.component.css',
+  styleUrls: ['./employee-change-record.component.css'],
 })
 export class EmployeeChangeRecordComponent implements OnInit {
-  filterGlobal(arg0: EventTarget | null) {
-    throw new Error('Method not implemented.');
-  }
 
-  incidents: any[] = [];
+  loggedUserId: number | null = null;
   selectedIncidents: any[] = [];
   incidentDialog: boolean = false;
-  incident!: any;
+  information: any = {
+    UserID: null,
+    DepartmentID: null,
+    JobPositionID: null,
+    StartDate: null,
+    ChangeReasonID: null,
+    Comments: '',
+    CreatedBy: ''
+  };
   submitted: boolean = false;
-  loggedUserId: number | null = null;
-  incidentTypes: any[] = [];
-  incidentTypeSelected: number | null = null;
   users: any[] = [];
-  userSelected: number | null = null;
-  timeValue: number | null = null;
-  selectedTimeUnit: string = 'mins';
+  departments: any[] = [];
+  jobTitles: any[] = [];
+  reasonOptions: any[] = []; // Opciones de razón
 
   constructor(
-    private incidentService: IncidentService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private authService: AuthService,
-    private incidentTypeService: IncidentTypeService,
-    private userService: UserService
+    private userService: UserService,
+    private departmentService: DepartmentService,
+    private jobTitleDepartmentService: JobtitleDepartmentService,
+    private changeReasonService: ChangeReasonService,
+    private jobTitleChangeService: JobtitleChangeService,
+    private departmentChangeService: DepartmentChangeService
   ) {}
 
   ngOnInit() {
-    this.incidentService.getAllIncidents().subscribe((data: any[]) => {
-      console.log('Datos de incidentes:', data);
-      this.incidents = data;
-    });
-    this.loggedUserId = this.authService.getUserId();
-    this.loadIncidentTypes();
     this.loadUsers();
-  }
-
-  openNew() {
-    this.incident = {
-      IncidentTypeID: null,
-      UserID: null,
-      Reason: '',
-      Date: null,
-      Duration: null,
-      Comments: '',
-    };
-    this.submitted = false;
-    this.incidentDialog = true;
-  }
-
-  loadIncidentTypes(): void {
-    this.incidentTypeService.getAllIncidentTypes().subscribe(
-      (dataType) => {
-        console.log('Datos de tipos:', dataType);
-        this.incidentTypes = dataType;
-      },
-      (error) => {
-        console.error('Error al cargar tipos de incidente:', error);
-      }
-    );
-  }
-
-  onIncidentTypeSelect(event: any) {
-    this.incidentTypeSelected = event.value;
-    console.log(
-      'ID del Tipo de Incidente seleccionado:',
-      this.incidentTypeSelected
-    );
+    this.loadDepartments();
+    this.loadReasons();
+    this.loggedUserId = this.authService.getUserId();
   }
 
   loadUsers(): void {
     this.userService.getUsers().subscribe(
-      (dataUser) => {
-        console.log('Datos de usuaros:', dataUser);
-        this.users = dataUser;
+      (dataUser ) => {
+        this.users = dataUser ;
+        console.log(dataUser);
       },
       (error) => {
         console.error('Error al cargar usuarios:', error);
@@ -152,81 +127,97 @@ export class EmployeeChangeRecordComponent implements OnInit {
     );
   }
 
-  onUserSelected(event: any) {
-    this.userSelected = event.value;
-    console.log('ID del Usuario seleccionado:', this.userSelected);
-  }
-
-  editIncident(incident: any) {
-    this.incident = { ...incident };
-    if (this.incident.Date) {
-      this.incident.Date = new Date(this.incident.Date);
-  }
-    this.incidentDialog = true;
-  }
-
-  deleteIncident(IncidentID: number) {
-    const confirmed = confirm(
-      '¿Estás seguro de que deseas eliminar este incident?'
+  loadDepartments(): void {
+    this.departmentService.getAllDepartments().subscribe(
+      (dataDepto) => {
+        this.departments = dataDepto;
+        console.log("Data de Deptos:", dataDepto);
+      },
+      (error) => {
+        console.error('Error al cargar departamentos:', error);
+      }
     );
-    if (confirmed) {
-      this.incidentService.deleteIncident(IncidentID).subscribe(
-        (response) => {
-          console.log('ID de incidente eliminado:', IncidentID);
-          console.log('Incidente eliminado exitosamente', response);
+  }
 
-          this.incidents = this.incidents.filter(
-            (incident) => incident.IncidentID !== IncidentID
-          );
+  loadReasons(): void {
+    this.changeReasonService.getAllChangeReasons().subscribe(
+      (dataReasons) => {
+        this.reasonOptions = dataReasons;
+        console.log(this.reasonOptions);
+      },
+      (error) => {
+        console.error('Error al cargar razones:', error);
+      }
+    );
+  }
 
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Incidente eliminado correctamente.',
-            life: 3000,
-          });
-        },
-        (error) => {
-          console.error('Error al eliminar incidente', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo eliminar el incidente.',
-            life: 3000,
-          });
-        }
-      );
+  onDepartmentSelect(event: any) {
+    this.information.DepartmentID = event.value;
+    if (this.information.DepartmentID) {
+      this.loadJobTitlesByDepartment(this.information.DepartmentID);
     }
   }
 
-  deactivateIncident(incident: any) {
-    this.confirmationService.confirm({
-      message: '¿Está seguro de borrar ' + incident.IncidentTypeName + '?',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        console.log('Incidente a Desactivar:' + incident.IncidentID);
-
-        const deletedBy = this.loggedUserId;
-
-        this.incidentService
-          .deactivateIncident(incident.IncidentID, { DeletedBy: deletedBy })
-
-          .subscribe(() => {
-            const index = this.findIndexById(incident.IncidentID);
-            if (index !== -1) {
-              this.incidents[index].status = false;
-            }
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Incidente Borado.',
-              life: 3000,
-            });
-          });
+  loadJobTitlesByDepartment(departmentID: number): void {
+    this.jobTitleDepartmentService.getJobTitlesByDepartmentId(departmentID).subscribe(
+      (dataJobTitles) => {
+        this.jobTitles = Array.isArray(dataJobTitles) ? dataJobTitles : [dataJobTitles];
+        console.log("Puestos:", dataJobTitles);
       },
-    });
+      (error) => {
+        console.error('Error al cargar puestos de trabajo:', error);
+        this.jobTitles = [];
+      }
+    );
+}
+
+  onUserSelected(event: any) {
+    this.information.UserID = event.value;
+    console.log('Usuario seleccionado:', this.information.UserID);
+  }
+
+  saveInformation() {
+    const departmentChange = {
+      UserID: this.information.UserID, 
+      DepartmentID: this.information.DepartmentID,
+      StartDate: this.information.StartDate,
+      ChangeReasonID: this.information.ReasonID,
+      CreatedBy: this.loggedUserId
+    };
+  
+    const jobTitleChange = {
+      UserID: this.information.UserID, 
+      JobTitleID: this.information.JobPositionID,
+      StartDate: this.information.StartDate,
+      ChangeReasonID: this.information.ReasonID,
+      CreatedBy: this.loggedUserId
+    };
+  
+    console.log("Datos Enviados:", JSON.stringify(departmentChange), JSON.stringify(jobTitleChange));
+  
+    this.departmentChangeService.postDepartmentChange(departmentChange).subscribe(
+      (response) => {
+        console.log('Cambio de departamento guardado:', response);
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Cambio de departamento guardado exitosamente.' });
+      },
+      (error) => {
+        console.error('Error al guardar cambio de departamento:', error);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar el cambio de departamento.' });
+      }
+    );
+  
+    this.jobTitleChangeService.postJobTitleChange(jobTitleChange).subscribe(
+      (response) => {
+        console.log('Cambio de puesto de trabajo guardado:', response);
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Cambio de puesto de trabajo guardado exitosamente.' });
+      },
+      (error) => {
+        console.error('Error al guardar cambio de puesto de trabajo:', error);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar el cambio de puesto de trabajo.' });
+      }
+    );
+
+    this.clearForm();
   }
 
   hideDialog() {
@@ -234,63 +225,16 @@ export class EmployeeChangeRecordComponent implements OnInit {
     this.submitted = false;
   }
 
-  saveIncident() {
-    this.submitted = true;
-
-    if (this.incident.IncidentTypeName?.trim()) {
-      console.log('Datos del incidente antes de actualizar:', this.incident);
-
-      if (this.incident.IncidentID) {
-        this.incidentService
-          .updateIncident(this.incident.IncidentID, this.incident)
-          .subscribe(() => {
-            const index = this.findIndexById(this.incident.IncidentID);
-            if (index !== -1) {
-              this.incidents[index] = this.incident;
-            }
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Incidente Actualizado.',
-              life: 3000,
-            });
-          });
-      } else {
-        this.incidentService
-          .postIncident(this.incident)
-          .subscribe((newIncident) => {
-            console.log('Datos del incidente antes de enviar:', this.incident);
-            this.incidents.push(newIncident);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Incidente Creado.',
-              life: 3000,
-            });
-          });
-      }
-
-      this.incidents = [...this.incident];
-      this.incidentDialog = false;
-      this.incident = {};
-    }
+  clearForm() {
+    this.information = {
+      UserID: null,
+      DepartmentID: null,
+      JobPositionID: null,
+      StartDate: null,
+      ChangeReasonID: null,
+      Comments: '',
+    };
+  
+    this.jobTitles = [];
   }
-
-  findIndexById(id: number): number {
-    let index = -1;
-    for (let i = 0; i < this.incidents.length; i++) {
-      if (this.incidents[i].JobTitleID === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  }
-
-  timeOptions = [
-    { label: 'Minutos', value: 'mins' },
-    { label: 'Horas', value: 'hours' },
-    { label: 'Días', value: 'days' },
-  ];
 }

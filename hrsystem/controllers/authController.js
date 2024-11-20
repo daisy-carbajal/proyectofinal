@@ -54,7 +54,7 @@ const login = async (req, res) => {
       message: "Login exitoso",
       token,
       userId: result.output.UserID,
-      roleId: result.output.RoleID // Incluye el RoleID en la respuesta
+      roleId: result.output.RoleID, // Incluye el RoleID en la respuesta
     });
   } catch (err) {
     res.status(500).send("Error en el login");
@@ -154,7 +154,9 @@ const requestPasswordReset = async (req, res) => {
 
       await sendPasswordResetEmail(personalEmail, resetLink, tempPassword);
 
-      return res.status(200).json({ message: "Correo de restablecimiento enviado" });
+      return res
+        .status(200)
+        .json({ message: "Correo de restablecimiento enviado" });
     } else {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }

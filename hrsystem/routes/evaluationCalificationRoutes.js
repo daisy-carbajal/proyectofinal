@@ -24,7 +24,7 @@ router.put(
   evaluationCalificationController.updateEvaluationCalification
 );
 
-router.put(
+router.patch(
   "/d/:id",
   checkPermission("DEACTIVATE_OPTIONS"),
   evaluationCalificationController.deactivateEvaluationCalification

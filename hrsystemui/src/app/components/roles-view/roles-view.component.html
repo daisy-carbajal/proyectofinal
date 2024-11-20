@@ -11,6 +11,13 @@
     </ng-template>
 
     <ng-template pTemplate="right">
+      <p-button
+          icon="pi pi-refresh"
+          class="p-button-secondary p-mb-3"
+          rounded="true"
+          text="true"
+          (onClick)="ngOnInit()"
+        ></p-button>
       <!--<p-fileUpload
           mode="basic"
           accept="image/*"
@@ -82,6 +89,14 @@
         </td>
         <td>
           <p-button
+            icon="pi pi-ellipsis-h"
+            class="mr-2"
+            severity="info"
+            [rounded]="true"
+            [outlined]="true"
+            (onClick)="goToRoleDetails(role.RoleID)"
+          ></p-button>
+          <p-button
             icon="pi pi-pencil"
             class="mr-2"
             [rounded]="true"
@@ -98,14 +113,6 @@
             (onClick)="deactivateRole(role)"
           >
           </p-button>
-          <p-button
-            icon="pi pi-ellipsis-h"
-            class="mr-2"
-            severity="info"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="goToRoleDetails(role.RoleID)"
-          ></p-button>
           <p-button
             icon="pi pi-trash"
             severity="danger"

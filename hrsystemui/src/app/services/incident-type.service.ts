@@ -42,7 +42,7 @@ export class IncidentTypeService {
 
   deactivateIncidentType(incidentTypeId: number, deactivatedIncidentType: any): Observable<any> {
     const url = `${this.apiUrl}/d/${incidentTypeId}`;
-    return this.http.put(url, deactivatedIncidentType, this.getHeaders());
+    return this.http.patch(url, deactivatedIncidentType, this.getHeaders());
   }
 
   deleteIncidentType(incidentTypeId: number): Observable<any> {

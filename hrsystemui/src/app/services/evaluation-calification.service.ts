@@ -37,7 +37,7 @@ export class EvaluationCalificationService {
 
   deactivateEvaluationCalification(calificationID: number, deletedBy: any): Observable<any> {
     const url = `${this.apiUrl}/d/${calificationID}`;
-    return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
   }
 
   deleteEvaluationCalification(calificationID: number): Observable<any> {

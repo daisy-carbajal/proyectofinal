@@ -6,12 +6,12 @@ const { checkPermission } = require("../middlewares/checkRolePermission");
 
 router.use(verifyToken);
 
-router.post('/', checkPermission("CREATE_ACTION_PLAN_PARAMETER"), actionPlanParameterController.createActionPlanParameter);
+router.post('/', checkPermission("CREATE_ACTION_PLAN"), actionPlanParameterController.createActionPlanParameter);
 
-router.get('/:ActionPlanID', checkPermission("VIEW_ACTION_PLAN_PARAMETER"), actionPlanParameterController.getActionPlanParametersByActionPlanID);
+router.get('/:ActionPlanID', checkPermission("VIEW_ACTION_PLAN"), actionPlanParameterController.getActionPlanParametersByActionPlanID);
 
-router.put('/:id', checkPermission("EDIT_ACTION_PLAN_PARAMETER"), actionPlanParameterController.updateActionPlanParameter);
+router.put('/:id', checkPermission("EDIT_ACTION_PLAN"), actionPlanParameterController.updateActionPlanParameter);
 
-router.delete('/:id', checkPermission("DELETE_ACTION_PLAN_PARAMETER"), actionPlanParameterController.deleteActionPlanParameter);
+router.delete('/:id', checkPermission("DELETE_ACTION_PLAN"), actionPlanParameterController.deleteActionPlanParameter);
 
 module.exports = router;

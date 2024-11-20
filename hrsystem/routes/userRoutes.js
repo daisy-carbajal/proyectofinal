@@ -42,7 +42,7 @@ router.patch(
   userController.updateUserField
 );
 
-router.put(
+router.patch(
   "/d/:id",
   checkPermission("EDIT_USER"),
   userController.deactivateUser

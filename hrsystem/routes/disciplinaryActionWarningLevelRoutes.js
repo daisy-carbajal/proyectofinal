@@ -14,7 +14,7 @@ router.get("/:id", checkPermission("VIEW_OPTIONS"), disciplinaryActionWarningLev
 
 router.put("/u/:id", checkPermission("EDIT_OPTIONS"), disciplinaryActionWarningLevelController.updateWarningLevel);
 
-router.put("/d/:id", checkPermission("EDIT_OPTIONS"), disciplinaryActionWarningLevelController.deactivateWarningLevel);
+router.patch("/d/:id", checkPermission("EDIT_OPTIONS"), disciplinaryActionWarningLevelController.deactivateWarningLevel);
 
 router.delete("/:id", checkPermission("DELETE_OPTIONS"), disciplinaryActionWarningLevelController.deleteWarningLevel);
 

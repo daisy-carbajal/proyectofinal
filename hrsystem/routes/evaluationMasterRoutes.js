@@ -14,7 +14,7 @@ router.get('/eval/:id', checkPermission("VIEW_EVALUATION"), evaluationMasterCont
 
 router.get('/user/:ID', checkPermission("VIEW_EVALUATION"), evaluationMasterController.getEvaluationMasterByUserID);
 
-router.put('/d/:id', checkPermission("EDIT_EVALUATION"), evaluationMasterController.deactivateEvaluationMaster);
+router.patch('/d/:id', checkPermission("EDIT_EVALUATION"), evaluationMasterController.deactivateEvaluationMaster);
 
 router.delete('/:id', checkPermission("DELETE_EVALUATION"), evaluationMasterController.deleteEvaluationMaster);
 

@@ -42,7 +42,7 @@ export class DisciplinaryActionWarningLevelService {
 
   deactivateWarningLevel(warningLevelId: number, deactivatedWarningLevel: any): Observable<any> {
     const url = `${this.apiUrl}/d/${warningLevelId}`;
-    return this.http.put(url, deactivatedWarningLevel, this.getHeaders());
+    return this.http.patch(url, deactivatedWarningLevel, this.getHeaders());
   }
 
   deleteWarningLevel(warningLevelId: number): Observable<any> {

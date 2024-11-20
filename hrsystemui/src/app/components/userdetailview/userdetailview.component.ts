@@ -12,10 +12,10 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { RoleService } from '../../services/role.service';
-import { UserRoleService } from '../../services/user-role.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { UserRoleService } from '../../services/user-role.service';
 
 @Component({
   selector: 'app-userdetailview',
@@ -45,6 +45,7 @@ export class UserDetailViewComponent implements OnInit {
   department = '';
   userId!: number;
   role = null;
+  roleID = null;
 
   userRoleDialog: boolean = false;
   submitted: boolean = false;
@@ -96,6 +97,7 @@ export class UserDetailViewComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private roleService: RoleService,
+    private userRoleService: UserRoleService
   ) {}
 
   ngOnInit(): void {
@@ -121,6 +123,7 @@ export class UserDetailViewComponent implements OnInit {
       this.jobTitle = data.JobTitle || 'Sin puesto asignado';
       this.department = data.Department || 'Sin departamento asignado';
       this.role = data.Role || 'Sin rol asignado';
+      this.roleID = data.RoleID;
       
       this.userFields.forEach((field) => {
         field.value = this.getFieldOriginalValue(data, field.label);
@@ -195,12 +198,6 @@ export class UserDetailViewComponent implements OnInit {
         return data.PostalCode || '';
       case 'País':
         return data.Country || '';
-      case 'Puesto Laboral':
-        return data.JobTitle || '';
-      case 'Departamento':
-        return data.Department || '';
-      case 'Rol':
-        return data.Role || '';
       default:
         return '';
     }
@@ -208,7 +205,7 @@ export class UserDetailViewComponent implements OnInit {
 
   editUserRole(userRole: any) {
     this.userRole = { ...userRole };
-    this.role = userRole.RoleID;
+    this.selectedRole = userRole.RoleID; // Cambiar a selectedRole
     this.userRoleDialog = true;
   }
 
@@ -221,6 +218,7 @@ export class UserDetailViewComponent implements OnInit {
     this.roleService.getAllRoles().subscribe(
       (dataRole) => {
         this.roles = dataRole;
+        console.log("Data de Roles:", dataRole);
       },
       (error) => {
         console.error('Error al cargar roles:', error);
@@ -235,5 +233,24 @@ export class UserDetailViewComponent implements OnInit {
 
   saveUserRole() {
     this.submitted = true;
-  }
+
+    if (this.selectedRole) {
+        const roleUpdateData = {
+            UserID: this.userId, 
+            RoleID: this.selectedRole 
+        };
+
+        this.userRoleService.updateUserRole(roleUpdateData).subscribe(
+            (response) => {
+                console.log('Rol actualizado correctamente', response);
+                this.loadUserData(this.userId); 
+                this.hideDialog();
+            },
+            (error) => {
+                console.log("Datos enviados:", roleUpdateData); 
+                console.error('Error al actualizar el rol', error);
+            }
+        );
+    }
+}
 }

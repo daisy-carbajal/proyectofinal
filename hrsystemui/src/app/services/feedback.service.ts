@@ -42,7 +42,7 @@ export class FeedbackService {
 
   deactivateFeedback(feedbackId: number, deactivatedFeedback: any): Observable<any> {
     const url = `${this.apiUrl}/d/${feedbackId}`;
-    return this.http.put(url, deactivatedFeedback, this.getHeaders());
+    return this.http.patch(url, deactivatedFeedback, this.getHeaders());
   }
 
   deleteFeedback(feedbackId: number): Observable<any> {

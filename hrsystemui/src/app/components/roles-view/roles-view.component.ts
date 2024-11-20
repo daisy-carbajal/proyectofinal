@@ -44,7 +44,7 @@ import { Router } from '@angular/router';
     InputTextModule,
     FormsModule,
     InputNumberModule,
-    TreeTableModule
+    TreeTableModule,
   ],
   providers: [MessageService, ConfirmationService, RoleService],
   styles: [
@@ -57,7 +57,7 @@ import { Router } from '@angular/router';
     `,
   ],
   templateUrl: './roles-view.component.html',
-  styleUrl: './roles-view.component.css'
+  styleUrl: './roles-view.component.css',
 })
 export class RolesViewComponent implements OnInit {
   filterGlobal(arg0: EventTarget | null) {
@@ -69,7 +69,7 @@ export class RolesViewComponent implements OnInit {
   roleDialog: boolean = false;
   role!: any;
   submitted: boolean = false;
-  loggedUserId: number |  null = null;
+  loggedUserId: number | null = null;
   rolePermissions: any[] = [];
 
   constructor(
@@ -77,7 +77,7 @@ export class RolesViewComponent implements OnInit {
     private roleService: RoleService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private authService: AuthService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -92,30 +92,32 @@ export class RolesViewComponent implements OnInit {
     this.router.navigate(['/home/roles', roleId], { replaceUrl: true });
   }
 
+  refreshRoles() {
+    this.roleService.getAllRoles().subscribe((data: any[]) => {
+      this.roles = data;
+    });
+  }
+
   openNew() {
     this.role = {
       Name: '',
       Description: '',
       CreatedBy: this.loggedUserId,
-      UpdatedBy: this.loggedUserId
+      UpdatedBy: this.loggedUserId,
     };
     this.submitted = false;
     this.roleDialog = true;
   }
 
   deleteRole(RoleID: number) {
-    const confirmed = confirm(
-      '¿Estás seguro de que deseas eliminar este rol?'
-    );
+    const confirmed = confirm('¿Estás seguro de que deseas eliminar este rol?');
     if (confirmed) {
       this.roleService.deleteRole(RoleID).subscribe(
         (response) => {
           console.log('ID de puesto eliminado:', RoleID);
           console.log('Rol eliminado exitosamente', response);
 
-          this.roles = this.roles.filter(
-            (role) => role.RoleID !== RoleID
-          );
+          this.roles = this.roles.filter((role) => role.RoleID !== RoleID);
 
           this.messageService.add({
             severity: 'success',
@@ -142,7 +144,7 @@ export class RolesViewComponent implements OnInit {
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log("Rol a Desactivar:"  + role.RoleID);
+        console.log('Rol a Desactivar:' + role.RoleID);
 
         this.roleService
           .deactivateRole(role.RoleID, { DeletedBy: this.loggedUserId })
@@ -173,39 +175,45 @@ export class RolesViewComponent implements OnInit {
     this.submitted = true;
 
     if (this.role.Name?.trim() && this.role.Description?.trim()) {
-        console.log('Datos del puesto de trabajo antes de actualizar:', this.role);
+      console.log(
+        'Datos del puesto de trabajo antes de actualizar:',
+        this.role
+      );
 
-        if (this.role.RoleID) {
-            this.roleService.updateRole(this.role.RoleID, this.role).subscribe(() => {
-                const index = this.findIndexById(this.role.RoleID);
-                if (index !== -1) {
-                    this.roles[index] = this.role;
-                }
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Rol Actualizado.',
-                    life: 3000,
-                });
+      if (this.role.RoleID) {
+        this.roleService
+          .updateRole(this.role.RoleID, this.role)
+          .subscribe(() => {
+            const index = this.findIndexById(this.role.RoleID);
+            if (index !== -1) {
+              this.roles[index] = this.role;
+            }
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Rol Actualizado.',
+              life: 3000,
             });
-        } else {
-            this.roleService.postRole(this.role).subscribe((newRole) => {
-                console.log('Datos del rol antes de enviar:', this.role);
-                this.roles.push(newRole);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Rol Creado.',
-                    life: 3000,
-                });
-            });
-        }
+            this.refreshRoles();
+          });
+      } else {
+        this.roleService.postRole(this.role).subscribe((newRole) => {
+          console.log('Datos del rol antes de enviar:', this.role);
+          this.roles.push(newRole);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Rol Creado.',
+            life: 3000,
+          });
+        });
+      }
 
-        this.roles = [...this.roles]; 
-        this.roleDialog = false; 
-        this.role = {};
+      this.roles = [...this.roles];
+      this.roleDialog = false;
+      this.role = {};
     }
-}
+  }
 
   findIndexById(id: number): number {
     let index = -1;

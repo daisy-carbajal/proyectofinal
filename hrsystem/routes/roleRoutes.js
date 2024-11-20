@@ -24,7 +24,7 @@ router.put(
   validateFields,
   roleController.updateRole
 );
-router.put(
+router.patch(
   "/d/:id",
   checkPermission("EDIT_SETTINGS"),
   roleController.deactivateRole

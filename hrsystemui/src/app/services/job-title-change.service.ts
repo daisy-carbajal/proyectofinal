@@ -42,11 +42,36 @@ export class JobtitleChangeService {
 
   deactivateJobTitleChange(jobTitleChangeId: number, deactivatedJobTitleChange: any): Observable<any> {
     const url = `${this.apiUrl}/d/${jobTitleChangeId}`;
-    return this.http.put(url, deactivatedJobTitleChange, this.getHeaders());
+    return this.http.patch(url, deactivatedJobTitleChange, this.getHeaders());
   }
 
   deleteJobTitleChange(jobTitleChangeId: number): Observable<any> {
     const url = `${this.apiUrl}/${jobTitleChangeId}`;
     return this.http.delete(url, this.getHeaders());
+  }
+
+  approveChanges(useChangeId: number, infoChange: any): Observable<any> {
+    const url = `${this.apiUrl}/approve/${useChangeId}`
+    return this.http.put(url, infoChange, this.getHeaders());
+  }
+
+  denyChanges(useChangeId: number, infoChange: any): Observable<any> {
+    const url = `${this.apiUrl}/deny/${useChangeId}`
+    return this.http.put(url, infoChange, this.getHeaders());
+  }
+
+  getPendingChanges(): Observable<any> {
+    const url = `${this.apiUrl}/changes/pending`;
+    return this.http.get(url, this.getHeaders());
+  }
+
+  getCurrentDetailsByID(userId: number): Observable<any> {
+    const url = `${this.apiUrl}/change-detail/current-details/${userId}`;
+    return this.http.get(url, this.getHeaders());
+  }
+
+  getPendingChangesByID(userId: number): Observable<any> {
+    const url = `${this.apiUrl}/change-detail/pending-changes/${userId}`;
+    return this.http.get(url, this.getHeaders());
   }
 }

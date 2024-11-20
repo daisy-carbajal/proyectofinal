@@ -20,10 +20,12 @@ import { NewEvaluationComponent } from './components/new-evaluation/new-evaluati
 import { EvaluationConfigurationComponent } from './components/evaluation-configuration/evaluation-configuration.component';
 import { RolePermissionDetailViewComponent } from './components/role-permission-detail-view/role-permission-detail-view.component';
 import { ProfileViewComponent } from './components/profile-view/profile-view.component';
-import { EmployeeChangeRecordComponent } from './components/employee-change-record/employee-change-record.component';
 import { PermissionsConfigComponent } from './components/permissions-config/permissions-config.component';
 import { EvaluationSavedComponent } from './components/evaluation-saved/evaluation-saved.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
+import { EmployeeChangeManagementComponent } from './components/employee-change-management/employee-change-management.component';
+import { EmployeeChangeRecordComponent } from './components/employee-change-record/employee-change-record.component';
+import { EmployeeChangeDetailViewComponent } from './components/employee-change-detail-view/employee-change-detail-view.component';
 
 export const routes: Routes = [
   {
@@ -59,6 +61,10 @@ export const routes: Routes = [
     component: DisciplinaryActionViewComponent,
   },
   {
+    path: 'posi',
+    component: EmployeeChangeRecordComponent
+  },
+  {
     path: 'home',
     component: HomeComponent,
     canActivate: [AuthGuard],
@@ -69,7 +75,11 @@ export const routes: Routes = [
         path: 'user',
         children: [
           { path: '', component: UserViewComponent },
-          { path: 'change', component: EmployeeChangeRecordComponent },
+          { path: 'change',
+            children: [
+              { path: '', component: EmployeeChangeManagementComponent },
+              { path: ':id', component: EmployeeChangeDetailViewComponent }
+            ]},
           { path: ':id', component: UserDetailViewComponent },
         ],
       },

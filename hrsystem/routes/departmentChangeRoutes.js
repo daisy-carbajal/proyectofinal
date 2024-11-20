@@ -14,6 +14,10 @@ router.get("/:id", checkPermission("VIEW_USER"), departmentChangeController.getD
 
 router.put("/u/:id", checkPermission("EDIT_USER"), departmentChangeController.updateStartDateDepartmentChange);
 
-router.put("/d/:id", checkPermission("EDIT_USER"), departmentChangeController.deactivateDepartmentChange);
+router.patch("/d/:id", checkPermission("EDIT_USER"), departmentChangeController.deactivateDepartmentChange);
+
+router.post('/approve', checkPermission("EDIT_USER"), departmentChangeController.approveDepartmentChange);
+
+router.post('/deny', checkPermission("EDIT_USER"), departmentChangeController.denyDepartmentChange);
 
 module.exports = router;

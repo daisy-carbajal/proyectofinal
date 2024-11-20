@@ -44,7 +44,7 @@ export class RoleService {
     deactivatedRole: {DeletedBy: any}
   ): Observable<any> {
     const url = `${this.apiUrl}/d/${roleId}`;
-    return this.http.put(url, deactivatedRole, this.getHeaders());
+    return this.http.patch(url, deactivatedRole, this.getHeaders());
   }
 
   deleteRole(roleId: number): Observable<any> {

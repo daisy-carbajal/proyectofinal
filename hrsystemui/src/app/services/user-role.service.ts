@@ -34,18 +34,19 @@ export class UserRoleService {
     return this.http.get(url, this.getHeaders());
   }
 
-  updateUserRole(userRoleId: number, updatedUserRole: any): Observable<any> {
-    const url = `${this.apiUrl}/u/${userRoleId}`;
-    return this.http.put(url, updatedUserRole, this.getHeaders());
-  }
-
-  deactivateUserRole(userRoleId: number, deactivatedUserRole: any): Observable<any> {
-    const url = `${this.apiUrl}/d/${userRoleId}`;
-    return this.http.put(url, deactivatedUserRole, this.getHeaders());
-  }
-
-  deleteUserRole(userRoleId: number): Observable<any> {
+  updateStartDateUserRole(
+    userRoleId: number,
+    updatedStartDateUserRole: any
+  ): Observable<any> {
     const url = `${this.apiUrl}/${userRoleId}`;
-    return this.http.delete(url, this.getHeaders());
+    return this.http.put(url, updatedStartDateUserRole, this.getHeaders());
+  }
+
+  updateUserRole(roleUpdateData: {
+    UserID: number;
+    RoleID: number;
+  }): Observable<any> {
+    const url = `${this.apiUrl}/ur/${roleUpdateData.UserID}`;
+    return this.http.put(url, roleUpdateData, this.getHeaders());
   }
 }

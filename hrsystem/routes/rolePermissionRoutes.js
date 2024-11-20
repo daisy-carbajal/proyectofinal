@@ -12,8 +12,8 @@ router.get('/', checkPermission("VIEW_SETTINGS"), rolePermissionController.getAl
 
 router.get('/:id', checkPermission("VIEW_SETTINGS"), rolePermissionController.getRolePermissionsByRoleID);
 
-router.put('/d/:id', checkPermission("EDIT_SETTINGS"), rolePermissionController.deactivateRolePermission);
-
 router.delete('/:id', checkPermission("DELETE_SETTINGS"), rolePermissionController.deleteRolePermission);
+
+router.post('/m', checkPermission("MANAGE_SETTINGS"), rolePermissionController.manageRolePermissions);
 
 module.exports = router;

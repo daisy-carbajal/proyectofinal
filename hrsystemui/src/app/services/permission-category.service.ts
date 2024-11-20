@@ -46,7 +46,7 @@ export class PermissionCategoryService {
 
   deactivatePermissionCategory(categoryId: number, deletedBy: any): Observable<any> {
     const url = `${this.apiUrl}/deactivate/${categoryId}`;
-    return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
   }
 
   deletePermissionCategory(categoryId: number): Observable<any> {

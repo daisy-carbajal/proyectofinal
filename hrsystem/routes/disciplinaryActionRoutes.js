@@ -14,7 +14,7 @@ router.get("/:id", checkPermission("VIEW_DISCIPLINARY_ACTION"), disciplinaryActi
 
 router.put("/u/:id", checkPermission("EDIT_DISCIPLINARY_ACTION"), disciplinaryActionController.updateDisciplinaryAction);
 
-router.put("/d/:id", checkPermission("EDIT_DISCIPLINARY_ACTION"), disciplinaryActionController.deactivateDisciplinaryAction);
+router.patch("/d/:id", checkPermission("EDIT_DISCIPLINARY_ACTION"), disciplinaryActionController.deactivateDisciplinaryAction);
 
 router.delete("/:id", checkPermission("DELETE_DISCIPLINARY_ACTION"), disciplinaryActionController.deleteDisciplinaryAction);
 

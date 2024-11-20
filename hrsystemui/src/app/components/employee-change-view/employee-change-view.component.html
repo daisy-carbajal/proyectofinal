@@ -1,0 +1,99 @@
+<div class="pt-2 border-round">
+  <p-table
+    #dt
+    [value]="pendingChanges"
+    [rows]="10"
+    [paginator]="true"
+    [(selection)]="selectedPendingChanges"
+    [rowHover]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h3 class="text-700 m-0">Cambios de Posición Pendientes</h3>
+        <p-button
+          icon="pi pi-refresh"
+          class="p-button-secondary p-mb-3"
+          rounded="true"
+          text="true"
+          (onClick)="ngOnInit()"
+        ></p-button>
+        <!--<span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                placeholder=" Search"
+              />
+            </span>-->
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        
+        <th pSortableColumn="UserName">
+          Nombre <p-sortIcon field="UserName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="DepartmentName">
+          Departamento <p-sortIcon field="DepartmentName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="JobTitle">
+          Puesto Laboral <p-sortIcon field="JobTitle"></p-sortIcon>
+        </th>
+        <th pSortableColumn="StartDate">
+          Fecha de Inicio <p-sortIcon field="StartDate"></p-sortIcon>
+        </th>
+        <th pSortableColumn="changeReason">
+          Razón <p-sortIcon field="changeReason"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-pendingChange>
+      <tr>
+        <td>{{ pendingChange.UserName }}</td>
+        <td>{{ pendingChange.DepartmentName }}</td>
+        <td>{{ pendingChange.JobTitle }}</td>
+        <td>{{ pendingChange.StartDate | date : "yyyy-MM-dd" : "+0000" }}</td>
+        <td>{{ pendingChange.ChangeReason }}</td>
+        <td>
+          <p-button
+            icon="pi pi-eye"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            severity="info"
+            (click)="goToPendingChangesDetails(pendingChange.UserID)"
+          ></p-button>
+          <p-button
+            icon="pi pi-check"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            severity="success"
+            (click)="approveChange(pendingChange)"
+          >
+          </p-button>
+          <p-button
+            icon="pi pi-ban"
+            class="mr-2"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="denyChange(pendingChange)"
+          ></p-button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        En total hay {{ pendingChanges ? pendingChanges.length : 0 }} registros.
+      </div>
+    </ng-template>
+  </p-table>
+</div>

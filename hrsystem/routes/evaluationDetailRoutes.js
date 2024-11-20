@@ -10,9 +10,9 @@ router.post('/', checkPermission("CREATE_EVALUATION"), evaluationDetailControlle
 
 router.get('/:id', checkPermission("VIEW_EVALUATION"), evaluationDetailController.getEvaluationDetailsByEvaluationMasterID);
 
-router.put('/:id', checkPermission("EDIT_EVALUATION"), evaluationDetailController.updateEvaluationDetail);
+router.put('/u/:id', checkPermission("EDIT_EVALUATION"), evaluationDetailController.updateEvaluationDetail);
 
-router.put('/d/:id', checkPermission("EDIT_EVALUATION"), evaluationDetailController.deactivateEvaluationDetail);
+router.patch('/d/:id', checkPermission("EDIT_EVALUATION"), evaluationDetailController.deactivateEvaluationDetail);
 
 router.delete('/:id', checkPermission("DELETE_EVALUATION"), evaluationDetailController.deleteEvaluationDetail);
 

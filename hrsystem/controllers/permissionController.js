@@ -2,7 +2,7 @@ const { poolPromise, sql } = require("../database/db");
 
 const addPermission = async (req, res) => {
   try {
-    const { PermissionName, Description, CreatedBy } = req.body;
+    const { PermissionName, Description, CategoryID } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
@@ -10,7 +10,7 @@ const addPermission = async (req, res) => {
       .request()
       .input("PermissionName", sql.NVarChar, PermissionName)
       .input("Description", sql.NVarChar, Description)
-      .input("CreatedBy", sql.Int, CreatedBy)
+      .input("CategoryID", sql.Int, CategoryID)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddPermission");
     res.status(201).json({ message: "Permiso agregado exitosamente" });
@@ -42,14 +42,12 @@ const getAllPermissions = async (req, res) => {
 const deactivatePermission = async (req, res) => {
   try {
     const { id } = req.params;
-    const { DeletedBy } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("PermissionID", sql.Int, id)
-      .input("DeletedBy", sql.Int, DeletedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivatePermission");
 
@@ -76,9 +74,33 @@ const deletePermission = async (req, res) => {
   }
 };
 
+const updatePermission = async (req, res) => {
+  try {
+    const { PermissionName, Description, CategoryID } = req.body;
+    const PermissionID = req.params.id; // Obtener el ID del permiso de los parámetros de la URL
+    const RequesterID = req.userId; // Obtener el ID del usuario logueado desde el middleware de autenticación
+    const pool = await poolPromise;
+
+    await pool
+      .request()
+      .input("PermissionID", sql.Int, PermissionID)
+      .input("PermissionName", sql.NVarChar, PermissionName)
+      .input("Description", sql.NVarChar, Description)
+      .input("CategoryID", sql.Int, CategoryID)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("UpdatePermission");
+
+    res.status(200).json({ message: "Permiso actualizado exitosamente" });
+  } catch (error) {
+    console.error("Error al actualizar permiso:", error);
+    res.status(500).json({ message: "Error al actualizar permiso", error });
+  }
+};
+
 module.exports = {
   addPermission,
   getAllPermissions,
   deactivatePermission,
   deletePermission,
+  updatePermission
 };

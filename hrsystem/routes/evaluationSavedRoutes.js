@@ -12,7 +12,7 @@ router.get('/', checkPermission("VIEW_EVALUATION"), evaluationSavedController.ge
 
 router.get('/filtered', checkPermission("VIEW_EVALUATION"), evaluationSavedController.getEvaluationSavedFiltered);
 
-router.put('/d/:id', checkPermission("EDIT_EVALUATION"), evaluationSavedController.deactivateEvaluationSaved);
+router.patch('/d/:id', checkPermission("EDIT_EVALUATION"), evaluationSavedController.deactivateEvaluationSaved);
 
 router.delete('/:id', checkPermission("DELETE_EVALUATION"), evaluationSavedController.deleteEvaluationSaved);
 

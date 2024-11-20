@@ -42,7 +42,7 @@ export class TypeFeedbackService {
 
   deactivateTypeFeedback(typeFeedbackId: number, deactivatedTypeFeedback: any): Observable<any> {
     const url = `${this.apiUrl}/d/${typeFeedbackId}`;
-    return this.http.put(url, deactivatedTypeFeedback, this.getHeaders());
+    return this.http.patch(url, deactivatedTypeFeedback, this.getHeaders());
   }
 
   deleteTypeFeedback(typeFeedbackId: number): Observable<any> {

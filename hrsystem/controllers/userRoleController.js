@@ -2,13 +2,14 @@ const { poolPromise, sql } = require("../database/db");
 
 const createUserRole = async (req, res) => {
   try {
-    const { UserID, RoleID } = req.body;
+    const { UserID, RoleID, CreatedBy } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("UserID", sql.Int, UserID)
       .input("RoleID", sql.Int, RoleID)
+      .input("CreatedBy", sql.NVarChar, CreatedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddUserRole"); 
 
@@ -76,9 +77,41 @@ const updateStartDateUserRole = async (req, res) => {
   }
 };
 
+const updateUserRole = async (req, res) => {
+  try {
+    const { UserID, RoleID } = req.body;
+    const RequesterID = req.userId;
+    const pool = await poolPromise;
+
+    const checkActiveRole = await pool.request()
+      .input("UserID", sql.Int, UserID)
+      .execute("CheckActiveRole");
+
+    if (checkActiveRole.recordset.length > 0) {
+      await pool.request()
+        .input("UserID", sql.Int, UserID)
+        .input("UpdatedBy", sql.Int, RequesterID)
+        .execute("DeactivateActiveRole");
+    }
+
+    await pool.request()
+      .input("UserID", sql.Int, UserID)
+      .input("RoleID", sql.Int, RoleID)
+      .input("CreatedBy", sql.Int, RequesterID)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("AddUserRole");
+
+    res.status(201).json({ message: "Relación de usuario y rol actualizada exitosamente" });
+  } catch (err) {
+    console.error("Error al actualizar la relación de usuario y rol:", err);
+    res.status(500).json({ message: "Error al actualizar la relación de usuario y rol" });
+  }
+};
+
 module.exports = {
   createUserRole,
   getAllUserRoles,
   getUserRoleById,
   updateStartDateUserRole,
+  updateUserRole
 };

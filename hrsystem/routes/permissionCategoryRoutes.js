@@ -16,7 +16,7 @@ router.get('/:id', checkPermission("VIEW_SETTINGS"), permissionCategoryControlle
 
 router.put('/u/:id', checkPermission("EDIT_SETTINGS"), permissionCategoryController.updatePermissionCategory);
 
-router.put('/deactivate/:id', checkPermission("DEACTIVATE_SETTINGS"), permissionCategoryController.deactivatePermissionCategory);
+router.patch('/d/:id', checkPermission("DEACTIVATE_SETTINGS"), permissionCategoryController.deactivatePermissionCategory);
 
 router.delete('/:id', checkPermission("DELETE_SETTINGS"), permissionCategoryController.deletePermissionCategory);
 

@@ -43,7 +43,7 @@ export class JobtitleRoleService {
 
   deactivateJobTitleRole(jobTitleRoleId: number, deactivatedJobTitleRole: any): Observable<any> {
     const url = `${this.apiUrl}/d/${jobTitleRoleId}`;
-    return this.http.put(url, deactivatedJobTitleRole, this.getHeaders());
+    return this.http.patch(url, deactivatedJobTitleRole, this.getHeaders());
   }
 
   deleteJobTitleRole(jobTitleRoleId: number): Observable<any> {

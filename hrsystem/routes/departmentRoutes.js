@@ -16,7 +16,7 @@ router.get("/:id", checkPermission("VIEW_SETTINGS"), departmentController.getDep
 
 router.put("/u/:id", checkPermission("EDIT_SETTINGS"), departmentValidations, validateFields, departmentController.updateDepartment);
 
-router.put("/d/:id", checkPermission("EDIT_SETTINGS"), departmentController.deactivateDepartment);
+router.patch("/d/:id", checkPermission("EDIT_SETTINGS"), departmentController.deactivateDepartment);
 
 router.delete("/:id", checkPermission("DELETE_SETTINGS"), departmentController.deleteDepartment);
 

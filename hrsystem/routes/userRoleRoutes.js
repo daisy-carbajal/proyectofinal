@@ -14,4 +14,6 @@ router.get("/:id", checkPermission("VIEW_USER"), userRoleController.getUserRoleB
 
 router.put("/:id", checkPermission("EDIT_USER"), userRoleController.updateStartDateUserRole);
 
+router.put("/ur/:id", checkPermission("EDIT_USER"), userRoleController.updateUserRole);
+
 module.exports = router;

@@ -21,7 +21,7 @@ export class ChangeReasonService {
     };
   }
 
-  addChangeReason(reason: any): Observable<any> {
+  postChangeReason(reason: any): Observable<any> {
     return this.http.post(this.apiUrl, reason, this.getHeaders());
   }
 
@@ -36,7 +36,7 @@ export class ChangeReasonService {
 
   deactivateChangeReason(reasonId: number, deletedBy: number): Observable<any> {
     const url = `${this.apiUrl}/deactivate/${reasonId}`;
-    return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
   }
 
   deleteChangeReason(reasonId: number): Observable<any> {

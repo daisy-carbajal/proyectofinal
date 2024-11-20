@@ -12,7 +12,7 @@ router.get("/", checkPermission("VIEW_INCIDENT"), incidentController.getAllIncid
 
 router.get("/:id", checkPermission("VIEW_INCIDENT"), incidentController.getIncidentByUserId);
 
-router.put("/:id", checkPermission("EDIT_INCIDENT"), incidentController.updateIncident);
+router.put("/u/:id", checkPermission("EDIT_INCIDENT"), incidentController.updateIncident);
 
 router.delete("/:id", checkPermission("DELETE_INCIDENT"), incidentController.deleteIncident);
 

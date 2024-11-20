@@ -8,31 +8,31 @@ router.use(verifyToken);
 
 router.post(
   "/",
-  checkPermission("CREATE_CHANGE_REASON"),
+  checkPermission("CREATE_SETTINGS"),
   changeReasonController.createChangeReason
 );
 
 router.get(
   "/",
-  checkPermission("VIEW_CHANGE_REASON"),
+  checkPermission("VIEW_SETTINGS"),
   changeReasonController.getAllChangeReasons
 );
 
 router.put(
   "/u/:id",
-  checkPermission("EDIT_CHANGE_REASON"),
+  checkPermission("EDIT_SETTINGS"),
   changeReasonController.updateChangeReason
 );
 
-router.put(
+router.patch(
   "/d/:id",
-  checkPermission("DEACTIVATE_CHANGE_REASON"),
+  checkPermission("EDIT_SETTINGS"),
   changeReasonController.deactivateChangeReason
 );
 
 router.delete(
   "/:id",
-  checkPermission("DELETE_CHANGE_REASON"),
+  checkPermission("DELETE_SETTINGS"),
   changeReasonController.deleteChangeReason
 );
 

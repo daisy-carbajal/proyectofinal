@@ -38,7 +38,7 @@ export class CommentFeedbackService {
 
   deactivateCommentFeedback(commentFeedbackID: number, deletedBy: any): Observable<any> {
     const url = `${this.apiUrl}/d/${commentFeedbackID}`;
-    return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
   }
 
   deleteCommentFeedback(commentFeedbackID: number): Observable<any> {
