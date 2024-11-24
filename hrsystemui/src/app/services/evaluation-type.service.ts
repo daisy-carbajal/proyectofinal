@@ -35,9 +35,9 @@ export class EvaluationTypeService {
     return this.http.put(url, updatedEvaluationType, this.getHeaders());
   }
 
-  deactivateEvaluationType(evaluationTypeID: number, deletedBy: any): Observable<any> {
+  deactivateEvaluationType(evaluationTypeID: number): Observable<any> {
     const url = `${this.apiUrl}/d/${evaluationTypeID}`;
-    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { }, this.getHeaders());
   }
 
   deleteEvaluationType(evaluationTypeID: number): Observable<any> {

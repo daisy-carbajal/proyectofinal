@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { IncidentService } from '../../services/incident.service';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { RippleModule } from 'primeng/ripple';
@@ -18,18 +17,16 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { AuthService } from '../../services/auth.service';
-import { IncidentTypeService } from '../../services/incident-type.service';
-import { UserService } from '../../services/user.service';
 import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-
+import { DisciplinaryActionService } from '../../services/disciplinary-action.service';
 
 @Component({
   selector: 'app-disciplinary-action-view',
   standalone: true,
-  imports: [TableModule,
+  imports: [
+    TableModule,
     DialogModule,
     RippleModule,
     ButtonModule,
@@ -51,13 +48,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
     InputGroupModule,
     InputGroupAddonModule,
   ],
-  providers: [
-    MessageService,
-    ConfirmationService,
-    IncidentService,
-    IncidentTypeService,
-    UserService,
-  ],
+  providers: [MessageService, ConfirmationService],
   styles: [
     `
       :host ::ng-deep .p-dialog .product-image {
@@ -68,130 +59,58 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
     `,
   ],
   templateUrl: './disciplinary-action-view.component.html',
-  styleUrl: './disciplinary-action-view.component.css'
+  styleUrl: './disciplinary-action-view.component.css',
 })
 export class DisciplinaryActionViewComponent {
   filterGlobal(arg0: EventTarget | null) {
     throw new Error('Method not implemented.');
   }
 
-  incidents: any[] = [];
-  selectedIncidents: any[] = [];
-  incidentDialog: boolean = false;
-  incident!: any;
+  das: any[] = [];
+  selectedDAs: any[] = [];
+  da!: any;
   submitted: boolean = false;
-  loggedUserId: number | null = null;
-  incidentTypes: any[] = [];
-  incidentTypeSelected: number | null = null;
-  users: any[] = [];
-  userSelected: number | null = null;
-  timeValue: number | null = null;
-  selectedTimeUnit: string = 'mins';
 
   constructor(
-    private incidentService: IncidentService,
+    private daService: DisciplinaryActionService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private authService: AuthService,
-    private incidentTypeService: IncidentTypeService,
-    private userService: UserService
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
-    this.incidentService.getAllIncidents().subscribe((data: any[]) => {
-      console.log('Datos de incidentes:', data);
-      this.incidents = data;
+    this.daService.getAllDisciplinaryActions().subscribe((data: any[]) => {
+      console.log('Datos de DAs:', data);
+      this.das = data;
     });
-    this.loggedUserId = this.authService.getUserId();
-    this.loadIncidentTypes();
-    this.loadUsers();
   }
 
-  openNew() {
-    this.incident = {
-      IncidentTypeID: null,
-      UserID: null,
-      Reason: '',
-      Date: null,
-      Duration: null,
-      Comments: '',
-    };
-    this.submitted = false;
-    this.incidentDialog = true;
-  }
+  editDA(incident: any) {}
 
-  loadIncidentTypes(): void {
-    this.incidentTypeService.getAllIncidentTypes().subscribe(
-      (dataType) => {
-        console.log('Datos de tipos:', dataType);
-        this.incidentTypes = dataType;
-      },
-      (error) => {
-        console.error('Error al cargar tipos de incidente:', error);
-      }
-    );
-  }
-
-  onIncidentTypeSelect(event: any) {
-    this.incidentTypeSelected = event.value;
-    console.log(
-      'ID del Tipo de Incidente seleccionado:',
-      this.incidentTypeSelected
-    );
-  }
-
-  loadUsers(): void {
-    this.userService.getUsers().subscribe(
-      (dataUser) => {
-        console.log('Datos de usuaros:', dataUser);
-        this.users = dataUser;
-      },
-      (error) => {
-        console.error('Error al cargar usuarios:', error);
-      }
-    );
-  }
-
-  onUserSelected(event: any) {
-    this.userSelected = event.value;
-    console.log('ID del Usuario seleccionado:', this.userSelected);
-  }
-
-  editIncident(incident: any) {
-    this.incident = { ...incident };
-    if (this.incident.Date) {
-      this.incident.Date = new Date(this.incident.Date);
-  }
-    this.incidentDialog = true;
-  }
-
-  deleteIncident(IncidentID: number) {
+  deleteDA(daID: number) {
     const confirmed = confirm(
       '¿Estás seguro de que deseas eliminar este incident?'
     );
     if (confirmed) {
-      this.incidentService.deleteIncident(IncidentID).subscribe(
+      this.daService.deleteDisciplinaryAction(daID).subscribe(
         (response) => {
-          console.log('ID de incidente eliminado:', IncidentID);
-          console.log('Incidente eliminado exitosamente', response);
+          console.log('ID de Acción Disciplinaria eliminado:', daID);
+          console.log('Acción Disciplinaria eliminado exitosamente', response);
 
-          this.incidents = this.incidents.filter(
-            (incident) => incident.IncidentID !== IncidentID
-          );
+          this.das = this.das.filter((da) => da.daID !== daID);
 
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Incidente eliminado correctamente.',
+            detail: 'Acción Disciplinaria eliminado correctamente.',
             life: 3000,
           });
         },
         (error) => {
-          console.error('Error al eliminar incidente', error);
+          console.error('Error al eliminar Acción Disciplinaria', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'No se pudo eliminar el incidente.',
+            detail: 'No se pudo eliminar el Acción Disciplinaria.',
             life: 3000,
           });
         }
@@ -199,114 +118,26 @@ export class DisciplinaryActionViewComponent {
     }
   }
 
-  deactivateIncident(incident: any) {
+  deactivateDA(da: any) {
     this.confirmationService.confirm({
-      message: '¿Está seguro de borrar ' + incident.IncidentTypeName + '?',
+      message: '¿Está seguro de borrar ' + da.Reason + '?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Incidente a Desactivar:' + incident.IncidentID);
+        console.log('Acción Disciplinaria a Desactivar:' + da.daID);
 
-        const deletedBy = this.loggedUserId;
-
-        this.incidentService
-          .deactivateIncident(incident.IncidentID, { DeletedBy: deletedBy })
+        this.daService
+          .deactivateDisciplinaryAction(da.daID)
 
           .subscribe(() => {
-            const index = this.findIndexById(incident.IncidentID);
-            if (index !== -1) {
-              this.incidents[index].status = false;
-            }
-
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
-              detail: 'Incidente Borado.',
+              detail: 'Acción Disciplinaria Borrada.',
               life: 3000,
             });
           });
       },
     });
-  }
-
-  hideDialog() {
-    this.incidentDialog = false;
-    this.submitted = false;
-  }
-
-  saveIncident() {
-    this.submitted = true;
-
-    if (this.incident.IncidentTypeName?.trim()) {
-      console.log('Datos del incidente antes de actualizar:', this.incident);
-
-      if (this.incident.IncidentID) {
-        this.incidentService
-          .updateIncident(this.incident.IncidentID, this.incident)
-          .subscribe(() => {
-            const index = this.findIndexById(this.incident.IncidentID);
-            if (index !== -1) {
-              this.incidents[index] = this.incident;
-            }
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Incidente Actualizado.',
-              life: 3000,
-            });
-          });
-      } else {
-        this.incidentService
-          .postIncident(this.incident)
-          .subscribe((newIncident) => {
-            console.log('Datos del incidente antes de enviar:', this.incident);
-            this.incidents.push(newIncident);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Incidente Creado.',
-              life: 3000,
-            });
-          });
-      }
-
-      this.incidents = [...this.incident];
-      this.incidentDialog = false;
-      this.incident = {};
-    }
-  }
-
-  findIndexById(id: number): number {
-    let index = -1;
-    for (let i = 0; i < this.incidents.length; i++) {
-      if (this.incidents[i].JobTitleID === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  }
-
-  timeOptions = [
-    { label: 'Minutos', value: 'mins' },
-    { label: 'Horas', value: 'hours' },
-    { label: 'Días', value: 'days' },
-  ];
-
-  convertAndSend() {
-    if (this.timeValue !== null && this.selectedTimeUnit) {
-      let timeInMinutes = this.timeValue;
-
-      if (this.selectedTimeUnit === 'hours') {
-        timeInMinutes = this.timeValue * 60;
-      } else if (this.selectedTimeUnit === 'days') {
-        timeInMinutes = this.timeValue * 60 * 24;
-      }
-
-      console.log('Tiempo en minutos:', timeInMinutes);
-    } else {
-      console.error('Por favor ingresa una cantidad y selecciona una unidad.');
-    }
   }
 }

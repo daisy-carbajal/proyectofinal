@@ -30,12 +30,22 @@ export class EvaluationSavedService {
     return this.http.get(this.apiUrl, this.getHeaders());
   }
 
+  getEvaluationSavedById(evaluationID: number): Observable<any> {
+    const url = `${this.apiUrl}/saved/${evaluationID}`;
+    return this.http.get(url, this.getHeaders());
+  }
+
   getEvaluationSavedFiltered(departmentID?: number, typeID?: number): Observable<any> {
     const params: any = {};
     if (departmentID) params.DepartmentID = departmentID;
     if (typeID) params.TypeID = typeID;
     const url = `${this.apiUrl}/filtered`;
     return this.http.get(url, { ...this.getHeaders(), params });
+  }
+
+  updateEvaluationSaved(evaluationSavedID: number, updatedEvaluationSaved: any): Observable<any> {
+    const url = `${this.apiUrl}/u/${evaluationSavedID}`;
+    return this.http.put(url, updatedEvaluationSaved, this.getHeaders());
   }
 
   deactivateEvaluationSaved(id: number, deletedBy: any): Observable<any> {

@@ -12,6 +12,9 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { FormsModule } from '@angular/forms';
 import { PanelModule } from 'primeng/panel';
 import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -28,20 +31,58 @@ import { CardModule } from 'primeng/card';
     IconFieldModule,
     FormsModule,
     PanelModule,
-    CardModule
+    CardModule,
+    ButtonModule,
+    MenuModule,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent implements OnInit {
   items: MenuItem[] | undefined;
+  showButton: boolean = false;
+  currentUrl: string = '';
+
+  constructor(private router: Router) {
+    this.router.events.subscribe(() => {
+      this.currentUrl = this.router.url;
+    });
+  }
 
   ngOnInit() {
     this.items = [
       {
-        label: 'Inicio',
-        icon: 'pi pi-home',
-      } 
+        label: 'Nuevo',
+        items: [
+          {
+            label: 'Incidente',
+            icon: 'pi pi-file-plus',
+            command: () => {
+              this.router.navigate(['/home','incident','new']);
+            },
+          },
+          {
+            label: 'Evaluación',
+            icon: 'pi pi-file-edit',
+            command: () => {
+              this.router.navigate(['/home','evaluation','new']);
+            },
+          },
+          {
+            label: 'Acción Disciplinaria',
+            icon: 'pi pi-file',
+            command: () => {
+              this.router.navigate(['/home','da','new']);
+            },
+          },
+        ],
+      },
     ];
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.showButton = event.url === '/home';
+      }
+    });
   }
 }

@@ -3,7 +3,7 @@
     <p-button
       label="Regresar"
       icon="pi pi-arrow-circle-left"
-      click="goBackToHome()"
+      (click)="goBackToHome()"
     ></p-button>
   </div>
   <div class="font-medium text-3xl text-700 mb-3">Registro de Incidente</div>
@@ -16,7 +16,7 @@
         class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
       >
         <div class="text-500 w-6 md:w-2 font-medium">Tipo de Incidente</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
           <p-dropdown
             [options]="incidentTypes"
             optionLabel="Description"
@@ -24,6 +24,7 @@
             placeholder="Selecciona un tipo"
             [(ngModel)]="incident.IncidentTypeID"
             name="incidentType"
+            styleClass="w-full"
             appendTo="body"
           ></p-dropdown>
         </div>
@@ -32,7 +33,7 @@
         class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
       >
         <div class="text-500 w-6 md:w-2 font-medium">Empleado</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
           <p-dropdown
             [options]="users"
             [(ngModel)]="incident.UserID"
@@ -44,6 +45,7 @@
             [showClear]="true"
             placeholder="Selecciona un Empleado"
             (onChange)="onUserSelected($event)"
+            styleClass="w-full"
             appendTo="body"
           >
             <ng-template pTemplate="selectedItem" let-selectedOption>
@@ -63,26 +65,28 @@
         class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
       >
         <div class="text-500 w-6 md:w-2 font-medium">Razón</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-          <input
-            type="text"
-            pInputText
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
+          <textarea
+            rows="3"
+            pInputTextarea
             [(ngModel)]="incident.Reason"
             name="reason"
             placeholder="Razón del incidente"
+            class="w-full"
             required
-          />
+          ></textarea>
         </div>
       </li>
       <li
         class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
       >
         <div class="text-500 w-6 md:w-2 font-medium">Fecha</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
           <p-calendar
             [(ngModel)]="incident.Date"
             name="date"
             appendTo="body"
+            styleClass="w-full"
             [showIcon]="true"
           ></p-calendar>
         </div>
@@ -91,21 +95,24 @@
         class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
       >
         <div class="text-500 w-6 md:w-2 font-medium">Duración</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
           <div class="flex-container">
             <input
               type="number"
               pInputText
               [(ngModel)]="incident.Duration"
+              class="w-6"
               name="quantity"
               placeholder="Cantidad"
             />
             <p-dropdown
               [options]="timeOptions"
-              [(ngModel)]="selectedTimeUnit"
+              [(ngModel)]="incident.Unit"
               optionLabel="label"
+              optionValue="value"
+              styleClass="w-6"
               name="unit"
-              placeholder="Unidad"
+              placeholder="Selecciona una unidad"
               appendTo="body"
             ></p-dropdown>
           </div>

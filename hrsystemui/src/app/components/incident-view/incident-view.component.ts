@@ -24,6 +24,7 @@ import { UserService } from '../../services/user.service';
 import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-incident-view',
@@ -94,7 +95,8 @@ export class IncidentViewComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private authService: AuthService,
     private incidentTypeService: IncidentTypeService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -158,14 +160,52 @@ export class IncidentViewComponent implements OnInit {
     console.log('ID del Usuario seleccionado:', this.userSelected);
   }
 
-  editIncident(incident: any) {
-    this.incident = { ...incident };
-    if (this.incident.Date) {
-      this.incident.Date = new Date(this.incident.Date);
+  approveIncident(incident: any) {
+    if (!incident || !incident.IncidentID) {
+      console.error('El objeto incidente no es válido:', incident);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El incidente no tiene un ID válido.',
+        life: 3000,
+      });
+      return;
     }
 
-    this.selectedTimeUnit = this.incident.Unit;
-    this.incidentDialog = true;
+    console.log('Datos a aprobar:', incident);
+    this.confirmationService.confirm({
+      message: `¿Está seguro de aprobar el incidente para "${incident.FullName}"?`,
+      header: 'Confirmación',
+      icon: 'pi pi-check-circle',
+      accept: () => {
+        this.incidentService.approveIncident(incident.IncidentID).subscribe(
+          () => {
+            const index = this.findIndexById(incident.IncidentID);
+            console.log('ID aprobado:', incident.IncidentID);
+            if (index !== -1) {
+              this.incidents[index].Status = true; // Actualiza el estado en la lista
+            }
+
+            this.refreshIncident();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'El incidente ha sido aprobado correctamente.',
+              life: 3000,
+            });
+          },
+          (error) => {
+            console.error('Error al aprobar el incidente:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo aprobar el incidente.',
+              life: 3000,
+            });
+          }
+        );
+      },
+    });
   }
 
   deleteIncident(IncidentID: number) {
@@ -202,46 +242,40 @@ export class IncidentViewComponent implements OnInit {
     }
   }
 
-  deactivateIncident(incident: any) {
-    this.confirmationService.confirm({
-      message: '¿Está seguro de borrar ' + incident.IncidentTypeName + '?',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        console.log('Incidente a Desactivar:' + incident.IncidentID);
-
-        const deletedBy = this.loggedUserId;
-
-        this.incidentService
-          .deactivateIncident(incident.IncidentID, { DeletedBy: deletedBy })
-
-          .subscribe(() => {
-            const index = this.findIndexById(incident.IncidentID);
-            if (index !== -1) {
-              this.incidents[index].status = false;
-            }
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Incidente Borado.',
-              life: 3000,
-            });
-          });
-      },
-    });
-  }
-
   hideDialog() {
     this.incidentDialog = false;
     this.submitted = false;
   }
 
+  refreshIncident() {
+    this.incidentService.getAllIncidents().subscribe((data: any[]) => {
+      this.incidents = data;
+    });
+  }
+
+  goToIncidentDetails(IncidentID: number): void {
+    console.log('Navigating to incident ID:', IncidentID);
+    this.router.navigate(['/home/incident/details', IncidentID], {
+      replaceUrl: true,
+    });
+  }
+
   saveIncident() {
+    console.log('saveIncident called');
     this.submitted = true;
 
-    if (this.incident.IncidentTypeName?.trim()) {
-      console.log('Datos del incidente antes de actualizar:', this.incident);
+    if (this.incident.Date) {
+      this.incident.Date = new Date(this.incident.Date)
+        .toISOString()
+        .split('T')[0];
+    }
+
+    if (this.incident.Unit && typeof this.incident.Unit === 'object') {
+      this.incident.Unit = this.incident.Unit.label;
+    }
+
+    if (this.incident.IncidentTypeID && this.incident.UserID) {
+      console.log('Datos del incidente antes de enviar:', this.incident);
 
       if (this.incident.IncidentID) {
         this.incidentService
@@ -259,21 +293,31 @@ export class IncidentViewComponent implements OnInit {
             });
           });
       } else {
-        this.incidentService
-          .postIncident(this.incident)
-          .subscribe((newIncident) => {
-            console.log('Datos del incidente antes de enviar:', this.incident);
-            this.incidents.push(newIncident);
+        this.incidentService.postIncident(this.incident).subscribe(
+          (newIncident) => {
+            console.log('Respuesta del backend:', newIncident);
+            this.incidents = [...this.incidents, newIncident];
             this.messageService.add({
               severity: 'success',
-              summary: 'Successful',
-              detail: 'Incidente Creado.',
+              summary: 'Éxito',
+              detail: 'Incidente creado correctamente.',
               life: 3000,
             });
-          });
+            this.hideDialog();
+            this.refreshIncident();
+          },
+          (error) => {
+            console.error('Error al crear el incidente:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo crear el incidente.',
+              life: 3000,
+            });
+          }
+        );
       }
 
-      this.incidents = [...this.incident];
       this.incidentDialog = false;
       this.incident = {};
     }
@@ -292,8 +336,8 @@ export class IncidentViewComponent implements OnInit {
   }
 
   timeOptions = [
-    { label: 'Minutos', value: 'mins' },
-    { label: 'Horas', value: 'hours' },
-    { label: 'Días', value: 'days' },
+    { label: 'min', value: 'min' },
+    { label: 'hr', value: 'hr' },
+    { label: 'd', value: 'd' },
   ];
 }

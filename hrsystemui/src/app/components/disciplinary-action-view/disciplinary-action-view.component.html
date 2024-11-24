@@ -1,42 +1,18 @@
 <div class="surface-card p-4 shadow-2 border-round">
-  <p-toolbar styleClass="mb-4 gap-2">
-    <ng-template pTemplate="left">
-      <p-button
-        severity="success"
-        label="Nuevo Registro"
-        icon="pi pi-plus"
-        class="mr-2"
-        (onClick)="openNew()"
-      ></p-button>
-    </ng-template>
-
-    <ng-template pTemplate="right">
-      <!--<p-fileUpload
-            mode="basic"
-            accept="image/*"
-            [maxFileSize]="1000000"
-            label="Importar"
-            chooseLabel="Importar"
-            class="mr-2 inline-block"
-          />
-          <p-button severity="help" label="Export" icon="pi pi-upload" />-->
-    </ng-template>
-  </p-toolbar>
-
   <p-table
     #dt
-    [value]="incidents"
+    [value]="das"
     [rows]="10"
     [paginator]="true"
-    [(selection)]="selectedIncidents"
+    [(selection)]="selectedDAs"
     [rowHover]="true"
-    dataKey="incidentID"
+    dataKey="daID"
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
     [showCurrentPageReport]="true"
   >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
-        <h2 class="text-700 m-0">Incidentes</h2>
+        <h2 class="text-700 m-0">Acciones Disciplinarias</h2>
         <!--<span class="p-input-icon-left">
               <i class="pi pi-search"></i>
               <input
@@ -51,11 +27,8 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-        </th>
         <th pSortableColumn="IncidentTypeName">
-          Tipo de Acción Disciplinaria
+          Razon
           <p-sortIcon field="IncidentTypeName"></p-sortIcon>
         </th>
         <th pSortableColumn="Reason">
@@ -65,16 +38,10 @@
           Supervisor <p-sortIcon field="FullName"></p-sortIcon>
         </th>
         <th pSortableColumn="Date">
-          Razón <p-sortIcon field="Date"></p-sortIcon>
+          Tipo <p-sortIcon field="Date"></p-sortIcon>
         </th>
         <th pSortableColumn="Duration">
-          Descripción <p-sortIcon field="Duration"></p-sortIcon>
-        </th>
-        <th pSortableColumn="Duration">
-          Firmado por Empleado <p-sortIcon field="Duration"></p-sortIcon>
-        </th>
-        <th pSortableColumn="Duration">
-          Firmado por Supervisor <p-sortIcon field="Duration"></p-sortIcon>
+          Fecha <p-sortIcon field="Duration"></p-sortIcon>
         </th>
         <th pSortableColumn="Status">
           Estado <p-sortIcon field="Status"></p-sortIcon>
@@ -83,21 +50,18 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-incident>
+    <ng-template pTemplate="body" let-da>
       <tr>
-        <td>
-          <p-tableCheckbox [value]="incident"></p-tableCheckbox>
-        </td>
-        <td>{{ incident.IncidentTypeName }}</td>
-        <td>{{ incident.Reason }}</td>
-        <td>{{ incident.FullName }}</td>
-        <td>{{ incident.Date | date : "yyyy-MM-dd" }}</td>
-        <td>{{ incident.Duration }}</td>
+        <td>{{ da.ReasonDescription }}</td>
+        <td>{{ da.EmployeeName }}</td>
+        <td>{{ da.ReportedByName }}</td>
+        <td>{{ da.WarningLevelName }}</td>
+        <td>{{ da.DateApplied | date : "yyyy-MM-dd" }}</td>
         <td>
           <p-tag
             [rounded]="true"
-            [value]="incident.Status ? 'Pendiente' : 'Revisado'"
-            [severity]="incident.Status ? 'warning' : 'success'"
+            [value]="da.Status ? 'Pendiente' : 'Revisado'"
+            [severity]="da.Status ? 'warning' : 'success'"
           ></p-tag>
         </td>
         <td>
@@ -107,7 +71,7 @@
             [rounded]="true"
             [outlined]="true"
             severity="success"
-            (onClick)="editIncident(incident)"
+            (onClick)="editDA(da)"
           ></p-button>
           <p-button
             icon="pi pi-eye-slash"
@@ -115,7 +79,7 @@
             [rounded]="true"
             [outlined]="true"
             severity="warning"
-            (onClick)="deactivateIncident(incident)"
+            (onClick)="deactivateDA(da)"
           >
           </p-button>
           <p-button
@@ -123,7 +87,7 @@
             severity="danger"
             [rounded]="true"
             [outlined]="true"
-            (onClick)="deleteIncident(incident.incidentID)"
+            (onClick)="deleteDA(da.daID)"
           ></p-button>
         </td>
       </tr>
@@ -131,118 +95,10 @@
 
     <ng-template pTemplate="summary">
       <div class="flex align-items-center justify-content-between">
-        En total hay {{ incidents ? incidents.length : 0 }} incidentes.
+        En total hay {{ das ? das.length : 0 }} registros.
       </div>
     </ng-template>
   </p-table>
-
-  <p-dialog
-    [(visible)]="incidentDialog"
-    [style]="{ width: '450px' }"
-    header="Detalles de Incidente"
-    [modal]="true"
-    styleClass="p-fluid"
-  >
-    <ng-template pTemplate="content">
-      <div class="field">
-        <label for="incidentType">Tipo de Incidente</label>
-        <p-dropdown
-          [options]="incidentTypes"
-          optionLabel="Description"
-          optionValue="IncidentTypeID"
-          placeholder="Selecciona un tipo"
-          [(ngModel)]="incident.IncidentTypeID"
-          appendTo="body"
-        >
-        </p-dropdown>
-      </div>
-      <div class="field">
-        <label for="FullName">Empleado</label>
-        <p-dropdown
-          [options]="users"
-          [(ngModel)]="incident.UserID"
-          optionLabel="FullName"
-          optionValue="UserID"
-          [filter]="true"
-          filterBy="FullName"
-          [showClear]="true"
-          placeholder="Selecciona un Empleado"
-          (onChange)="onUserSelected($event)"
-          appendTo="body"
-        >
-          <ng-template pTemplate="selectedItem" let-selectedOption>
-            <div class="flex align-items-center gap-2">
-              <div>{{ selectedOption?.FullName }}</div>
-            </div>
-          </ng-template>
-          <ng-template let-user pTemplate="item">
-            <div class="flex align-items-center gap-2">
-              <div>{{ user.FullName }}</div>
-            </div>
-          </ng-template>
-        </p-dropdown>
-      </div>
-      <div class="field">
-        <label for="reason">Razón</label>
-        <input
-          type="text"
-          pInputText
-          id="reason"
-          [(ngModel)]="incident.Reason"
-          required
-          autofocus
-        />
-      </div>
-      <div class="field">
-        <label for="date">Fecha</label>
-        <p-calendar [(ngModel)]="incident.Date" appendTo="body" />
-      </div>
-      <div class="field">
-        <label for="name">Duración</label>
-        <div class="flex-container">
-          <input
-            type="number"
-            pInputText
-            [(ngModel)]="incident.Duration"
-            placeholder="Cantidad"
-          />
-          <p-dropdown
-            [options]="timeOptions"
-            [(ngModel)]="selectedTimeUnit"
-            optionLabel="label"
-            placeholder="Unidad"
-            appendTo="body"
-          ></p-dropdown>
-        </div>
-      </div>
-      <div class="field">
-        <label for="name">Comentarios</label>
-        <input
-          type="text"
-          pInputText
-          id="name"
-          [(ngModel)]="incident.Comments"
-          required
-          autofocus
-        />
-      </div>
-    </ng-template>
-
-    <ng-template pTemplate="footer">
-      <p-button
-        label="Cancelar"
-        icon="pi pi-times"
-        [text]="true"
-        (onClick)="hideDialog()"
-      />
-      <p-button
-        label="Guardar"
-        icon="pi pi-check"
-        [text]="true"
-        (onClick)="saveIncident()"
-      />
-    </ng-template>
-  </p-dialog>
 
   <p-confirmDialog [style]="{ width: '500px' }" />
 </div>

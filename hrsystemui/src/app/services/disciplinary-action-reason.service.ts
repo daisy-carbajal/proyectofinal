@@ -41,9 +41,9 @@ export class DisciplinaryActionReasonService {
     return this.http.put(url, updatedDisciplinaryActionReason, this.getHeaders());
   }
 
-  deactivateDisciplinaryActionReason(disciplinaryActionReasonId: number, deactivatedDisciplinaryActionReason: any): Observable<any> {
+  deactivateDisciplinaryActionReason(disciplinaryActionReasonId: number): Observable<any> {
     const url = `${this.apiUrl}/d/${disciplinaryActionReasonId}`;
-    return this.http.patch(url, deactivatedDisciplinaryActionReason, this.getHeaders());
+    return this.http.patch(url, {}, this.getHeaders());
   }
 
   deleteDisciplinaryActionReason(disciplinaryActionReasonId: number): Observable<any> {

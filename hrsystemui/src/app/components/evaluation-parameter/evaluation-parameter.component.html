@@ -95,15 +95,28 @@
     >
       <ng-template pTemplate="content">
         <div class="field">
+          <label for="name">Nombre de Parámetro</label>
+          <textarea
+          rows="5"
+          cols="30"
+          pInputTextarea
+            id="name"
+            [(ngModel)]="parameter.Name"
+            required
+            autofocus
+          ></textarea>
+        </div>
+        <div class="field">
           <label for="description">Descripción</label>
-          <input
-            type="text"
-            pInputText
+          <textarea
+          rows="5"
+          cols="30"
+          pInputTextarea
             id="description"
             [(ngModel)]="parameter.Description"
             required
             autofocus
-          />
+          ></textarea>
         </div>
       </ng-template>
   

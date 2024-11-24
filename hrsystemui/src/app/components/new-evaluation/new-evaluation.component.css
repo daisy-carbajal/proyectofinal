@@ -1,0 +1,23 @@
+.red-border .p-dropdown-label {
+  background-color: 2px solid rgb(245, 101, 101) !important;
+}
+
+.orange-border .p-dropdown-label {
+  background-color: 2px solid rgb(255, 165, 0) !important;
+}
+
+.yellow-border .p-dropdown-label {
+  background-color: 2px solid rgb(248, 231, 80) !important;
+}
+
+.blue-border .p-dropdown-label {
+  background-color: 2px solid rgb(64, 147, 241) !important;
+}
+
+.aqua-border .p-dropdown-label {
+  background-color: 2px solid rgb(129, 240, 240) !important;
+}
+
+.green-border .p-dropdown-label {
+  background-color: 2px solid rgb(87, 233, 87) !important;
+}

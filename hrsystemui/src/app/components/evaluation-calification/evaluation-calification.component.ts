@@ -41,7 +41,7 @@ import { AuthService } from '../../services/auth.service';
     RatingModule,
     InputTextModule,
     FormsModule,
-    InputNumberModule,
+    InputNumberModule
   ],
   providers: [
     MessageService,
@@ -161,7 +161,7 @@ export class EvaluationCalificationComponent implements OnInit {
 
   saveCalification() {
     this.submitted = true;
-    if (this.calification.Value?.trim()) {
+    if (this.calification.Description?.trim()) {
       if (this.calification.EvaluationCalificationID) {
         this.calificationService
           .updateEvaluationCalification(

@@ -41,7 +41,7 @@ const getAllEvaluationCalifications = async (req, res) => {
 
 const updateEvaluationCalification = async (req, res) => {
     try {
-        const { EvaluationCalificationID, Value, Description, Summary, UpdatedBy } = req.body;
+        const { EvaluationCalificationID, Value, Description, Summary } = req.body;
         const RequesterID = req.userId;
         const pool = await poolPromise;
 
@@ -50,7 +50,6 @@ const updateEvaluationCalification = async (req, res) => {
             .input('Value', sql.Int, Value)
             .input('Description', sql.VarChar(50), Description)
             .input('Summary', sql.VarChar(255), Summary)
-            .input('UpdatedBy', sql.Int, UpdatedBy)
             .input('RequesterID', sql.Int, RequesterID)
             .execute('UpdateEvaluationCalification');
         

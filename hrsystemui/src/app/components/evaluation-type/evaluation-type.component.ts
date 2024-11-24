@@ -20,7 +20,6 @@ import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../services/auth.service';
 
-
 @Component({
   selector: 'app-evaluation-type',
   standalone: true,
@@ -55,7 +54,7 @@ import { AuthService } from '../../services/auth.service';
     `,
   ],
   templateUrl: './evaluation-type.component.html',
-  styleUrl: './evaluation-type.component.css'
+  styleUrl: './evaluation-type.component.css',
 })
 export class EvaluationTypeComponent implements OnInit {
   evaluationTypes: any[] = [];
@@ -73,9 +72,11 @@ export class EvaluationTypeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.evaluationTypeService.getAllEvaluationTypes().subscribe((data: any[]) => {
-      this.evaluationTypes = data;
-    });
+    this.evaluationTypeService
+      .getAllEvaluationTypes()
+      .subscribe((data: any[]) => {
+        this.evaluationTypes = data;
+      });
     this.loggedUserId = this.authService.getUserId();
   }
 
@@ -98,11 +99,20 @@ export class EvaluationTypeComponent implements OnInit {
     this.confirmationService.confirm({
       message: '¿Está seguro de que desea eliminar este tipo de evaluación?',
       accept: () => {
-        this.evaluationTypeService.deleteEvaluationType(evaluationTypeId).subscribe(() => {
-          this.evaluationTypes = this.evaluationTypes.filter((type) => type.EvaluationTypeID !== evaluationTypeId);
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Tipo de evaluación eliminado', life: 3000 });
-        });
-      }
+        this.evaluationTypeService
+          .deleteEvaluationType(evaluationTypeId)
+          .subscribe(() => {
+            this.evaluationTypes = this.evaluationTypes.filter(
+              (type) => type.EvaluationTypeID !== evaluationTypeId
+            );
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Tipo de evaluación eliminado',
+              life: 3000,
+            });
+          });
+      },
     });
   }
 
@@ -110,11 +120,18 @@ export class EvaluationTypeComponent implements OnInit {
     this.confirmationService.confirm({
       message: '¿Está seguro de que desea desactivar este tipo de evaluación?',
       accept: () => {
-        this.evaluationTypeService.deactivateEvaluationType(evaluationType.EvaluationTypeID, this.loggedUserId).subscribe(() => {
-          evaluationType.Status = false;
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Tipo de evaluación desactivado', life: 3000 });
-        });
-      }
+        this.evaluationTypeService
+          .deactivateEvaluationType(evaluationType.EvaluationTypeID)
+          .subscribe(() => {
+            evaluationType.Status = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Tipo de evaluación desactivado',
+              life: 3000,
+            });
+          });
+      },
     });
   }
 
@@ -128,16 +145,36 @@ export class EvaluationTypeComponent implements OnInit {
 
     if (this.evaluationType.Name?.trim()) {
       if (this.evaluationType.EvaluationTypeID) {
-        this.evaluationTypeService.updateEvaluationType(this.evaluationType.EvaluationTypeID, this.evaluationType).subscribe(() => {
-          const index = this.evaluationTypes.findIndex((type) => type.EvaluationTypeID === this.evaluationType.EvaluationTypeID);
-          this.evaluationTypes[index] = this.evaluationType;
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Tipo de evaluación actualizado', life: 3000 });
-        });
+        this.evaluationTypeService
+          .updateEvaluationType(
+            this.evaluationType.EvaluationTypeID,
+            this.evaluationType
+          )
+          .subscribe(() => {
+            const index = this.evaluationTypes.findIndex(
+              (type) =>
+                type.EvaluationTypeID === this.evaluationType.EvaluationTypeID
+            );
+            this.evaluationTypes[index] = this.evaluationType;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Tipo de evaluación actualizado',
+              life: 3000,
+            });
+          });
       } else {
-        this.evaluationTypeService.postEvaluationType(this.evaluationType).subscribe((newType) => {
-          this.evaluationTypes.push(newType);
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Tipo de evaluación creado', life: 3000 });
-        });
+        this.evaluationTypeService
+          .postEvaluationType(this.evaluationType)
+          .subscribe((newType) => {
+            this.evaluationTypes.push(newType);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Tipo de evaluación creado',
+              life: 3000,
+            });
+          });
       }
 
       this.evaluationTypes = [...this.evaluationTypes];

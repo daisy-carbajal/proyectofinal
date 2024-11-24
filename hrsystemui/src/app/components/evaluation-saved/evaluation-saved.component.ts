@@ -13,6 +13,8 @@ import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { EvaluationParameterService } from '../../services/evaluation-parameter.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-evaluation-saved',
@@ -27,7 +29,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     DialogModule,
     CommonModule,
     FormsModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './evaluation-saved.component.html',
@@ -40,37 +42,57 @@ export class EvaluationSavedComponent implements OnInit {
   evaluation: any = {};
   evaluationTypes: any[] = [];
   departments: any[] = [];
+  parameters: any[] = [];
 
   constructor(
     private evaluationSavedService: EvaluationSavedService,
     private evaluationTypeService: EvaluationTypeService,
     private departmentService: DepartmentService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private parameterService: EvaluationParameterService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.loadEvaluations();
     this.loadEvaluationTypes();
     this.loadDepartments();
+    this.loadParameters();
   }
 
   loadEvaluations() {
     this.evaluationSavedService.getAllEvaluationSaved().subscribe((data) => {
+      console.log('Evaluaciones:', data);
       this.evaluations = data;
     });
   }
 
   loadEvaluationTypes() {
-    this.evaluationTypeService.getAllEvaluationTypes().subscribe((data) => {
-      this.evaluationTypes = data;
+    this.evaluationTypeService.getAllEvaluationTypes().subscribe((dataType) => {
+      this.evaluationTypes = dataType;
+      console.log('Evaluaciones Tipo:', this.evaluationTypes);
     });
   }
 
   loadDepartments() {
-    this.departmentService.getAllDepartments().subscribe((data) => {
-      this.departments = data;
+    this.departmentService.getAllDepartments().subscribe((dataDepto) => {
+      this.departments = dataDepto;
     });
+  }
+
+  loadParameters() {
+    this.parameterService
+      .getAllEvaluationParameters()
+      .subscribe((dataParam) => {
+        console.log('Parametros:', dataParam);
+        this.parameters = dataParam;
+      });
+  }
+
+  goToEvaluationSavedDetails(EvaluationID: number): void {
+    console.log('Navigating to Evaluation ID:', EvaluationID);
+    this.router.navigate(['/home/evaluation/saved', EvaluationID], { replaceUrl: true });
   }
 
   openNew() {
@@ -84,7 +106,11 @@ export class EvaluationSavedComponent implements OnInit {
   }
 
   addParameter() {
-    this.evaluation.Parameters.push({ Name: '', Weight: null });
+    this.evaluation.Parameters.push({
+      Name: '',
+      Weight: null,
+      ParameterID: null,
+    });
   }
 
   removeParameter(index: number) {
@@ -95,19 +121,39 @@ export class EvaluationSavedComponent implements OnInit {
     if (
       this.evaluation.Name &&
       this.evaluation.TypeID &&
-      this.evaluation.DepartmentID
+      this.evaluation.DepartmentID &&
+      this.evaluation.Parameters.length > 0 // Asegúrate de que haya parámetros
     ) {
-      this.evaluationSavedService
-        .postEvaluationSaved(this.evaluation)
-        .subscribe((response) => {
+      // Crear un objeto para guardar la evaluación
+      const evaluationToSave = {
+        Name: this.evaluation.Name,
+        TypeID: this.evaluation.TypeID,
+        DepartmentID: this.evaluation.DepartmentID,
+        ParameterWeights: this.evaluation.Parameters.map((param: { ParameterID: any; Weight: any; }) => ({
+          ParameterID: param.ParameterID,
+          Weight: param.Weight
+        }))
+      };
+  
+      // Guardar la evaluación y los parámetros
+      this.evaluationSavedService.postEvaluationSaved(evaluationToSave).subscribe(
+        (response) => {
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Evaluación guardada correctamente.',
+            detail: 'Evaluación y parámetros guardados correctamente.',
           });
           this.loadEvaluations();
           this.evaluationDialog = false;
-        });
+        },
+        (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Ocurrió un error al guardar la evaluación.',
+          });
+        }
+      );
     } else {
       this.messageService.add({
         severity: 'error',
@@ -121,24 +167,49 @@ export class EvaluationSavedComponent implements OnInit {
     this.evaluationDialog = false;
   }
 
-  editEvaluation(evaluation: any) {
-    this.evaluation = { ...evaluation };
+  editEvaluation(EvaluationSavedID: number) {
     this.evaluationDialog = true;
   }
 
-  deleteEvaluation(id: number) {
-    this.confirmationService.confirm({
-      message: '¿Estás seguro de que deseas eliminar esta evaluación?',
-      accept: () => {
-        this.evaluationSavedService.deleteEvaluationSaved(id).subscribe(() => {
-          this.loadEvaluations();
+  deleteEvaluation(evaluation: any) {
+    const confirmed = confirm('¿Estás seguro de que deseas eliminar esta evaluación?');
+    if (confirmed) {
+      this.evaluationSavedService.deleteEvaluationSaved(evaluation.EvaluationSavedID).subscribe(
+        (response) => {
+          console.log('ID de evaluación eliminada:', evaluation.EvaluationSavedID);
+          console.log('Evaluación eliminada exitosamente', response);
+  
+          this.loadEvaluations(); // Volver a cargar las evaluaciones después de eliminar
+  
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
             detail: 'Evaluación eliminada correctamente.',
           });
-        });
-      },
-    });
+        },
+        (error) => {
+          console.error('Error al eliminar evaluación', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Ocurrió un error al eliminar la evaluación.',
+          });
+        }
+      );
+    }
+  }
+
+  getFilteredParameters(index: number): any[] {
+    // Obtener los IDs seleccionados en otros dropdowns
+    const selectedParameterIDs = this.evaluation.Parameters
+      .map((param: { EvaluationParameterID: any }) => param.EvaluationParameterID)
+      .filter((id: null) => id !== null); // Filtra valores no nulos
+  
+    // Filtrar las opciones disponibles
+    return this.parameters.filter(
+      (param) =>
+        !selectedParameterIDs.includes(param.EvaluationParameterID) || // Incluir opciones no seleccionadas
+        this.evaluation.Parameters[index]?.EvaluationParameterID === param.EvaluationParameterID // Incluir el actual
+    );
   }
 }

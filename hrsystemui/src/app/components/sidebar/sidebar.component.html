@@ -1,9 +1,9 @@
-<div class="card flex justify-content-center" [ngClass]="{'static-sidebar': staticSidebar}">
+<div class="card flex justify-content-left p-3">
   <p-sidebar #sidebarRef [(visible)]="sidebarVisible">
     <ng-template pTemplate="headless">
-      <div class="flex flex-column h-full">
-        <div class="flex align-items-center justify-content-between px-4 pt-3 flex-shrink-0">
-          <p-button type="button" (onClick)="closeCallback($event)" icon="pi pi-times" rounded="true" outlined="true" styleClass="h-2rem w-2rem"></p-button>
+      <div class="flex flex-column h-full purple-500">
+        <div class="flex justify-content-between px-4 pt-3 flex-shrink-0">
+          <p-button (onClick)="closeCallback($event)" icon="pi pi-times" rounded="true" outlined="true" styleClass="h-2rem w-2rem"></p-button>
         </div>
         <div
           class="flex align-items-center justify-content-center px-4 pt-3 flex-shrink-0 mt-2"
@@ -149,7 +149,7 @@
                     leaveActiveClass="slideup"
                     class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
                   >
-                    <i class="pi pi-flag mr-2"></i>
+                    <i class="pi pi-calendar-clock mr-2"></i>
                     <span class="font-medium">Incidentes</span>
                     <i class="pi pi-chevron-down ml-auto"></i>
                   </a>
@@ -181,41 +181,12 @@
                 <li>
                   <a
                     pRipple
-                    pStyleClass="@next"
-                    enterClass="hidden"
-                    enterActiveClass="slidedown"
-                    leaveToClass="hidden"
-                    leaveActiveClass="slideup"
+                    [routerLink]="['/home', 'department']"
                     class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
                   >
-                    <i class="pi pi-flag mr-2"></i>
-                    <span class="font-medium">Acciones Disciplinarias</span>
-                    <i class="pi pi-chevron-down ml-auto"></i>
+                    <i class="pi pi-comments mr-2"></i>
+                    <span class="font-medium">Retroalimentación</span>
                   </a>
-                  <ul
-                    class="list-none py-0 pl-3 pr-0 m-0 hidden overflow-y-hidden transition-all transition-duration-400 transition-ease-in-out"
-                  >
-                    <li>
-                      <a
-                        pRipple
-                        class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
-                        [routerLink]="['/home', 'incident']"
-                      >
-                        <i class="pi pi-list-check mr-2"></i>
-                        <span class="font-medium">Ver Acciones Disciplinarias</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        pRipple
-                        class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
-                        [routerLink]="['/home', 'incident']"
-                      >
-                        <i class="pi pi-list-check mr-2"></i>
-                        <span class="font-medium">Nueva Acción Disciplinaria</span>
-                      </a>
-                    </li>
-                  </ul>
                 </li>
                 <li>
                   <a
@@ -247,8 +218,9 @@
                     <li>
                       <a
                         pRipple
-                        class="flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
-                      >
+                        class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                        [routerLink]="['/home', 'evaluation', 'records']"
+                        >
                         <i class="pi pi-book mr-2"></i>
                         <span class="font-medium"
                           >Registro de Evaluaciones</span
@@ -258,8 +230,9 @@
                     <li>
                       <a
                         pRipple
-                        class="flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
-                      >
+                        class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                        [routerLink]="['/home', 'evaluation', 'new']"
+                        >
                         <i class="pi pi-file-plus mr-2"></i>
                         <span class="font-medium">Nueva Evaluación</span>
                       </a>
@@ -287,7 +260,56 @@
                     class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
                   >
                     <i class="pi pi-flag mr-2"></i>
-                    <span class="font-medium">Planes de Acción</span>
+                    <span class="font-medium">Acciones Disciplinarias</span>
+                    <i class="pi pi-chevron-down ml-auto"></i>
+                  </a>
+                  <ul
+                    class="list-none py-0 pl-3 pr-0 m-0 hidden overflow-y-hidden transition-all transition-duration-400 transition-ease-in-out"
+                  >
+                    <li>
+                      <a
+                        pRipple
+                        class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                        [routerLink]="['/home', 'da']"
+                      >
+                        <i class="pi pi-list-check mr-2"></i>
+                        <span class="font-medium">Ver Acciones Disciplinarias</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        pRipple
+                        class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                        [routerLink]="['/home', 'da', 'new']"
+                      >
+                        <i class="pi pi-pen-to-square mr-2"></i>
+                        <span class="font-medium">Nueva Acción Disciplinaria</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        pRipple
+                        class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                        [routerLink]="['/home', 'da', 'config']"
+                      >
+                        <i class="pi pi-cog mr-2"></i>
+                        <span class="font-medium">Configuración</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <a
+                    pRipple
+                    pStyleClass="@next"
+                    enterClass="hidden"
+                    enterActiveClass="slidedown"
+                    leaveToClass="hidden"
+                    leaveActiveClass="slideup"
+                    class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                  >
+                    <i class="pi pi-file-o mr-2"></i>
+                    <span class="font-medium">Planes de Mejora</span>
                     <i class="pi pi-chevron-down ml-auto"></i>
                   </a>
                   <ul
@@ -300,17 +322,17 @@
                         [routerLink]="['/home', 'incident']"
                       >
                         <i class="pi pi-list-check mr-2"></i>
-                        <span class="font-medium">Ver Planes de Acción</span>
+                        <span class="font-medium">Ver Planes de Mejora</span>
                       </a>
                     </li>
                     <li>
                       <a
                         pRipple
                         class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
-                        [routerLink]="['/home', 'incident', 'new']"
+                        [routerLink]="['/home', 'action-plan', 'new']"
                       >
                         <i class="pi pi-file-plus mr-2"></i>
-                        <span class="font-medium">Nuevo Plan de Acción</span>
+                        <span class="font-medium">Nuevo Plan de Mejora</span>
                       </a>
                     </li>
                   </ul>
@@ -387,7 +409,7 @@
         </div>
       </div>
     </ng-template>
-    <p-button *ngIf="!staticSidebar" (onClick)="sidebarVisible = true" icon="pi pi-bars"></p-button>
+    <p-button *ngIf="!staticSidebar" (onClick)="sidebarVisible = true" icon="pi pi-objects-column" class="mr-3"></p-button>
   </p-sidebar>
-  <p-button (onClick)="sidebarVisible = true" icon="pi pi-bars"></p-button>
+  <p-button (onClick)="sidebarVisible = true" icon="pi pi-objects-column" class="mr-3"></p-button>
 </div>

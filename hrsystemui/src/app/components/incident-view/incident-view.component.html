@@ -11,6 +11,13 @@
     </ng-template>
 
     <ng-template pTemplate="right">
+      <p-button
+      icon="pi pi-refresh"
+      class="p-button-secondary p-mb-3"
+      rounded="true"
+      text="true"
+      (onClick)="ngOnInit()"
+    ></p-button>
       <!--<p-fileUpload
           mode="basic"
           accept="image/*"
@@ -30,7 +37,7 @@
     [paginator]="true"
     [(selection)]="selectedIncidents"
     [rowHover]="true"
-    dataKey="incidentID"
+    dataKey="IncidentID"
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
     [showCurrentPageReport]="true"
   >
@@ -51,8 +58,10 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        <th pSortableColumn="FullName">
+          <div class="flex flex-shrink-0">
+            Empleado <p-sortIcon field="FullName"></p-sortIcon>
+          </div>
         </th>
         <th pSortableColumn="IncidentTypeName">
           <div class="flex flex-shrink-0">
@@ -62,11 +71,6 @@
         <th pSortableColumn="Reason">
           <div class="flex flex-shrink-0">
             Razón <p-sortIcon field="Reason"></p-sortIcon>
-          </div>
-        </th>
-        <th pSortableColumn="FullName">
-          <div class="flex flex-shrink-0">
-            Empleado <p-sortIcon field="FullName"></p-sortIcon>
           </div>
         </th>
         <th pSortableColumn="Date">
@@ -90,38 +94,35 @@
 
     <ng-template pTemplate="body" let-incident>
       <tr>
-        <td>
-          <p-tableCheckbox [value]="incident"></p-tableCheckbox>
-        </td>
+        <td>{{ incident.FullName }}</td>
         <td>{{ incident.IncidentTypeName }}</td>
         <td>{{ incident.Reason }}</td>
-        <td>{{ incident.FullName }}</td>
         <td>{{ incident.Date | date : "yyyy-MM-dd" }}</td>
         <td>{{ incident.Duration }} {{ incident.Unit }}</td>
         <td>
           <p-tag
             [rounded]="true"
-            [value]="incident.Status ? 'Pendiente' : 'Revisado'"
-            [severity]="incident.Status ? 'warning' : 'success'"
+            [value]="incident.Status ? 'Revisado' : 'Pendiente'"
+            [severity]="incident.Status ? 'success' : 'warning'"
           ></p-tag>
         </td>
         <td>
           <div class="flex flex-shrink-0">
             <p-button
-              icon="pi pi-pencil"
+              icon="pi pi-ellipsis-h"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="info"
+              (onClick)="goToIncidentDetails(incident.IncidentID)"
+            ></p-button>
+            <p-button
+              icon="pi pi-check"
               class="mr-2"
               [rounded]="true"
               [outlined]="true"
               severity="success"
-              (onClick)="editIncident(incident)"
-            ></p-button>
-            <p-button
-              icon="pi pi-eye-slash"
-              class="mr-2"
-              [rounded]="true"
-              [outlined]="true"
-              severity="warning"
-              (onClick)="deactivateIncident(incident)"
+              (onClick)="approveIncident(incident)"
             >
             </p-button>
             <p-button
@@ -129,7 +130,7 @@
               severity="danger"
               [rounded]="true"
               [outlined]="true"
-              (onClick)="deleteIncident(incident.incidentID)"
+              (onClick)="deleteIncident(incident.IncidentID)"
             ></p-button>
           </div>
         </td>
@@ -215,8 +216,8 @@
           />
           <p-dropdown
             [options]="timeOptions"
-            [(ngModel)]="selectedTimeUnit"
             optionLabel="label"
+            [(ngModel)]="incident.Unit"
             placeholder="Unidad"
             appendTo="body"
           ></p-dropdown>

@@ -1,0 +1,134 @@
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        severity="success"
+        label="Nuevo Registro"
+        icon="pi pi-plus"
+        class="mr-2"
+        (click)="openNew()"
+      ></p-button>
+    </ng-template>
+  
+    <ng-template pTemplate="right">
+      <p-button
+            icon="pi pi-refresh"
+            class="p-button-secondary p-mb-3"
+            rounded="true"
+            text="true"
+            (onClick)="ngOnInit()"
+          ></p-button>
+    </ng-template>
+  </p-toolbar>
+  
+  <p-table
+    #dt
+    [value]="reasons"
+    [rows]="10"
+    [paginator]="true"
+    [(selection)]="selectedReasons"
+    [rowHover]="true"
+    dataKey="reasonID"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+    [showCurrentPageReport]="true"
+  >  
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="Description">
+          <div class="flex flex-shrink-0">
+            Descripción <p-sortIcon field="Description"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="Status">
+          <div class="flex flex-shrink-0">
+            Estado <p-sortIcon field="Status"></p-sortIcon>
+          </div>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+  
+    <ng-template pTemplate="body" let-reason>
+      <tr>
+        <td>{{ reason.Description }}</td>
+        <td>
+          <p-tag
+            [rounded]="true"
+            [value]="reason.Status ? 'Activo' : 'Inactivo'"
+            [severity]="reason.Status ? 'success' : 'warning'"
+          ></p-tag>
+        </td>
+        <td>
+          <div class="flex flex-shrink-0">
+            <p-button
+              icon="pi pi-pencil"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="success"
+              (onClick)="editReason(reason)"
+            ></p-button>
+            <p-button
+              icon="pi pi-eye-slash"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="warning"
+              (onClick)="deactivateReason(reason)"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+              (onClick)="deleteReason(reason.reasonID)"
+            ></p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        En total hay {{ reasons ? reasons.length : 0 }} registros.
+      </div>
+    </ng-template>
+  </p-table>
+  
+  <p-dialog
+    [(visible)]="reasonDialog"
+    [style]="{ width: '450px' }"
+    header="Detalles de Advertencia"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="description">Descripción</label>
+        <input
+          type="text"
+          pInputText
+          id="description"
+          [(ngModel)]="reason.Description"
+          required
+          autofocus
+        />
+      </div>
+    </ng-template>
+  
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        [text]="true"
+        (click)="hideDialog()"
+      />
+      <p-button
+        label="Guardar"
+        icon="pi pi-check"
+        [text]="true"
+        (click)="saveReason()"
+      />
+    </ng-template>
+  </p-dialog>
+  
+  <p-confirmDialog [style]="{ width: '500px' }" />  

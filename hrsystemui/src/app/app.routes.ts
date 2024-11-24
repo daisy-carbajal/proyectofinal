@@ -12,8 +12,6 @@ import { UserDetailViewComponent } from './components/userdetailview/userdetailv
 import { CompleteRegistrationComponent } from './components/complete-registration/complete-registration.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
-import { NewDAComponent } from './components/new-da/new-da.component';
-import { DisciplinaryActionViewComponent } from './components/disciplinary-action-view/disciplinary-action-view.component';
 import { NewIncidentComponent } from './components/new-incident/new-incident.component';
 import { IncidentViewComponent } from './components/incident-view/incident-view.component';
 import { NewEvaluationComponent } from './components/new-evaluation/new-evaluation.component';
@@ -24,8 +22,15 @@ import { PermissionsConfigComponent } from './components/permissions-config/perm
 import { EvaluationSavedComponent } from './components/evaluation-saved/evaluation-saved.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { EmployeeChangeManagementComponent } from './components/employee-change-management/employee-change-management.component';
-import { EmployeeChangeRecordComponent } from './components/employee-change-record/employee-change-record.component';
 import { EmployeeChangeDetailViewComponent } from './components/employee-change-detail-view/employee-change-detail-view.component';
+import { IncidentDetailViewComponent } from './components/incident-detail-view/incident-detail-view.component';
+import { EvaluationSavedDetailViewComponent } from './components/evaluation-saved-detail-view/evaluation-saved-detail-view.component';
+import { EvaluationViewComponent } from './components/evaluation-view/evaluation-view.component';
+import { EvaluationRecordDetailEditComponent } from './components/evaluation-record-detail-edit/evaluation-record-detail-edit.component';
+import { NewDAComponent } from './components/new-da/new-da.component';
+import { NewActionPlanComponent } from './components/new-action-plan/new-action-plan.component';
+import { DaConfigurationComponent } from './components/da-configuration/da-configuration.component';
+import { DisciplinaryActionViewComponent } from './components/disciplinary-action-view/disciplinary-action-view.component';
 
 export const routes: Routes = [
   {
@@ -43,26 +48,6 @@ export const routes: Routes = [
   {
     path: 'confirm-email',
     component: ConfirmEmailComponent,
-  },
-  {
-    path: 'new-da',
-    component: NewDAComponent,
-  },
-  {
-    path: 'new-incident',
-    component: NewIncidentComponent,
-  },
-  {
-    path: 'new-evaluation',
-    component: NewEvaluationComponent,
-  },
-  {
-    path: 'da',
-    component: DisciplinaryActionViewComponent,
-  },
-  {
-    path: 'posi',
-    component: EmployeeChangeRecordComponent
   },
   {
     path: 'home',
@@ -97,13 +82,35 @@ export const routes: Routes = [
         children: [
           { path: '', component: IncidentViewComponent },
           { path: 'new', component: NewIncidentComponent },
+          { path: 'details/:id', component: IncidentDetailViewComponent },
         ]
       },
       { path: 'evaluation', 
         children: [
           { path: 'saved', component: EvaluationSavedComponent },
           { path: 'config', component: EvaluationConfigurationComponent },
+          { path: 'saved/:id', component: EvaluationSavedDetailViewComponent },
+          { path: 'records', component: EvaluationViewComponent},
+          { path: 'new', component: NewEvaluationComponent },
+          { path: 'details/:id', component: EvaluationRecordDetailEditComponent },
         ],
+      },
+      {
+        path: 'da',
+        children: [
+          { path: '', component: DisciplinaryActionViewComponent },
+          { path: 'new', component: NewDAComponent },
+          { path: 'config', component: DaConfigurationComponent },
+          //{ path: 'details/:id', component: DaDetailViewComponent },
+          ],
+      },
+      {
+        path: 'action-plan',
+        children: [
+         // { path: '', component: ActionPlanViewComponent },
+          { path: 'new', component: NewActionPlanComponent },
+         // { path: 'details/:id', component: ActionPlanDetailViewComponent },
+          ],
       },
       {
         path: 'settings',

@@ -22,7 +22,7 @@ export class EvaluationParameterWeightService {
     };
   }
 
-  createEvaluationParameterWeight(parameterWeight: any): Observable<any> {
+  postEvaluationParameterWeight(parameterWeight: any): Observable<any> {
     return this.http.post(this.apiUrl, parameterWeight, this.getHeaders());
   }
 

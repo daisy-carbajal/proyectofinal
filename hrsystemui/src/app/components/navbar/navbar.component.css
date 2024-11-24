@@ -1,15 +1,18 @@
-.static-sidebar {
-    position: static; /* O cualquier otro estilo que necesites */
-    width: 250px; /* Ajusta según el ancho deseado */
-  }
-  
-  .navbar-static {
-    width: calc(100% - 250px); /* Ajusta según el ancho del sidebar */
-  }
-  
-  /* Asegúrate de que el navbar se adapte al tamaño de la pantalla */
-  @media (max-width: 768px) {
-    .navbar-static {
-      width: 100%; /* Para pantallas más pequeñas, ocupa todo el ancho */
-    }
-  }
+.floating-button {
+  position: fixed; /* Fija la posición */
+  bottom: 25px; /* Distancia desde el fondo */
+  right: 25px; /* Distancia desde la derecha */
+  z-index: 1000; /* Asegura que esté encima de todo */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para resaltar */
+  border-radius: 50%; /* Hace el botón redondo */
+  width: 45px; /* Tamaño del botón */
+  height: 45px; /* Tamaño del botón */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease; /* Animación */
+}
+
+.floating-button:hover {
+  transform: scale(1.1); /* Efecto de zoom al pasar el ratón */
+}

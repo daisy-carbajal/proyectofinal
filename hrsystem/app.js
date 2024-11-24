@@ -8,7 +8,7 @@ const routes = [
   { path: "/role", route: require("./routes/roleRoutes") },
   { path: "/auth", route: require("./routes/authRoutes") },
   { path: "/da-reason", route: require("./routes/disciplinaryActionReasonRoutes") },
-  { path: "/warning-levels", route: require("./routes/disciplinaryActionWarningLevelRoutes") },
+  { path: "/warning-level", route: require("./routes/disciplinaryActionWarningLevelRoutes") },
   { path: "/incident-types", route: require("./routes/incidentTypeRoutes") },
   { path: "/type-feedback", route: require("./routes/typeFeedbackRoutes") },
   { path: "/feedback", route: require("./routes/feedbackRoutes") },

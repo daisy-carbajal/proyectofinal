@@ -22,11 +22,10 @@
     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
     [showCurrentPageReport]="true"
   >
-
-  <ng-template pTemplate="caption">
-    <div class="flex align-items-center justify-content-between">
-      <h2 class="text-700 m-0">Evaluaciones Existentes</h2>
-      <!--<span class="p-input-icon-left">
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h2 class="text-700 m-0">Evaluaciones Existentes</h2>
+        <!--<span class="p-input-icon-left">
         <i class="pi pi-search"></i>
         <input
           pInputText
@@ -35,9 +34,8 @@
           placeholder=" Search"
         />
       </span>-->
-    </div>
-  </ng-template>
-
+      </div>
+    </ng-template>
 
     <ng-template pTemplate="header">
       <tr>
@@ -56,9 +54,9 @@
 
     <ng-template pTemplate="body" let-evaluation>
       <tr>
-        <td>{{ evaluation.Name }}</td>
-        <td>{{ evaluation.Type }}</td>
-        <td>{{ evaluation.Department }}</td>
+        <td>{{ evaluation.EvaluationName }}</td>
+        <td>{{ evaluation.EvaluationTypeName }}</td>
+        <td>{{ evaluation.DepartmentName }}</td>
         <td>
           <div class="flex flex-shrink-0">
             <p-button
@@ -67,14 +65,16 @@
               [rounded]="true"
               [outlined]="true"
               severity="success"
-              (onClick)="editEvaluation(evaluation)"
+              (onClick)="
+                goToEvaluationSavedDetails(evaluation.EvaluationSavedID)
+              "
             ></p-button>
             <p-button
               icon="pi pi-trash"
               severity="danger"
               [rounded]="true"
               [outlined]="true"
-              (onClick)="deleteEvaluation(evaluation.evaluationID)"
+              (onClick)="deleteEvaluation(evaluation)"
             ></p-button>
           </div>
         </td>
@@ -82,7 +82,8 @@
     </ng-template>
     <ng-template pTemplate="summary">
       <div class="flex align-items-center justify-content-between">
-        Hay un total de {{ evaluations ? evaluations.length : 0 }} evaluaciones existentes.
+        Hay un total de {{ evaluations ? evaluations.length : 0 }} evaluaciones
+        existentes.
       </div>
     </ng-template>
   </p-table>
@@ -109,7 +110,8 @@
         <label for="type">Tipo de Evaluación</label>
         <p-dropdown
           [options]="evaluationTypes"
-          optionLabel="Description"
+          optionLabel="Name"
+          optionValue="EvaluationTypeID"
           [(ngModel)]="evaluation.TypeID"
           placeholder="Selecciona un tipo"
           appendTo="body"
@@ -120,6 +122,7 @@
         <p-dropdown
           [options]="departments"
           optionLabel="Name"
+          optionValue="DepartmentID"
           [(ngModel)]="evaluation.DepartmentID"
           placeholder="Selecciona un departamento"
           appendTo="body"
@@ -132,18 +135,22 @@
       >
         <div class="flex align-items-center flex-wrap">
           <div class="col-8">
-            <input
-              type="text"
-              pInputText
-              [(ngModel)]="parameter.Name"
-              placeholder="Nombre del parámetro"
-            />
+            <p-dropdown
+              [options]="getFilteredParameters(i)"
+              optionLabel="Name"
+              optionValue="EvaluationParameterID"
+              [(ngModel)]="parameter.ParameterID"
+              placeholder="Selecciona un departamento"
+              styleClass="w-full"
+              appendTo="body"
+            ></p-dropdown>
           </div>
           <div class="col-3">
             <input
               type="number"
               pInputText
               [(ngModel)]="parameter.Weight"
+              class="w-full"
               placeholder="Peso"
             />
           </div>

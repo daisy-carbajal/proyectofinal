@@ -30,10 +30,16 @@ export class IncidentService {
     return this.http.post(this.apiUrl, incident, this.getHeaders());
   }
 
-  getIncidentById(incidentId: number): Observable<any> {
-    const url = `${this.apiUrl}/${incidentId}`;
+  getIncidentByUserId(userId: number): Observable<any> {
+    const url = `${this.apiUrl}/${userId}`;
     return this.http.get(url, this.getHeaders());
   }
+
+  getIncidentById(incidentId: number): Observable<any> {
+    const url = `${this.apiUrl}/details/${incidentId}`;
+    return this.http.get(url, this.getHeaders());
+  }
+
 
   updateIncident(incidentId: number, updatedIncident: any): Observable<any> {
     const url = `${this.apiUrl}/u/${incidentId}`;
@@ -43,6 +49,11 @@ export class IncidentService {
   deactivateIncident(incidentId: number, deactivatedIncident: any): Observable<any> {
     const url = `${this.apiUrl}/d/${incidentId}`;
     return this.http.patch(url, deactivatedIncident, this.getHeaders());
+  }
+
+  approveIncident(incidentId: number): Observable<any> {
+    const url = `${this.apiUrl}/approve/${incidentId}`;
+    return this.http.patch(url, {}, this.getHeaders());
   }
 
   deleteIncident(incidentId: number): Observable<any> {

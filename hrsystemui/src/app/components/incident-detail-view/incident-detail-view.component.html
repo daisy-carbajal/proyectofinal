@@ -1,0 +1,124 @@
+<div class="surface-card p-4 shadow-2 border-round mt-3">
+  <div class="card flex content-left gap-3 mb-3">
+    <p-button
+      label="Regresar"
+      icon="pi pi-arrow-circle-left"
+      (onClick)="goBackToIncidents()"
+    ></p-button>
+  </div>
+  <div class="font-medium text-3xl text-700 mb-3">Detalles del Incidente</div>
+  <div class="text-500 mb-5">
+    Edita la información del incidente y guarda los cambios al final.
+  </div>
+  <form (ngSubmit)="updateIncident()">
+    <ul class="list-none p-0 m-0">
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Tipo de Incidente</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <p-dropdown
+            [options]="incidentTypes"
+            optionLabel="Description"
+            optionValue="IncidentTypeID"
+            placeholder="Selecciona un tipo"
+            [(ngModel)]="incident.IncidentTypeID"
+            name="incidentType"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Empleado</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <p-dropdown
+            [options]="users"
+            optionLabel="FullName"
+            optionValue="UserID"
+            placeholder="Selecciona un empleado"
+            [(ngModel)]="incident.UserID"
+            name="user"
+            appendTo="body"
+          ></p-dropdown>
+          </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Razón</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <textarea
+            rows="5"
+            cols="30"
+            pInputTextarea
+            [(ngModel)]="incident.Reason"
+            name="reason"
+            placeholder="Razón del incidente"
+            required
+          ></textarea>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Fecha</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <p-calendar
+            [(ngModel)]="incident.Date"
+            name="date"
+            appendTo="body"
+            [showIcon]="true"
+          ></p-calendar>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Duración</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <div class="flex-container">
+            <input
+              type="number"
+              pInputText
+              [(ngModel)]="incident.Duration"
+              name="duration"
+              placeholder="Duración"
+            />
+            <p-dropdown
+              [options]="timeOptions"
+              [(ngModel)]="incident.Unit"
+              optionLabel="label"
+              name="unit"
+              placeholder="Unidad"
+              appendTo="body"
+            ></p-dropdown>
+          </div>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Comentarios</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <p-editor
+            [(ngModel)]="incident.Comments"
+            name="comments"
+            [style]="{ height: '200px' }"
+          ></p-editor>
+        </div>
+      </li>
+    </ul>
+    <div class="flex justify-content-end mt-3">
+      <button
+        type="button"
+        pButton
+        label="Actualizar"
+        icon="pi pi-refresh"
+        class="p-button-info"
+        (click)="updateIncident()"
+      ></button>
+    </div>
+  </form>
+</div>

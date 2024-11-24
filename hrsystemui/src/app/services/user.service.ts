@@ -26,6 +26,11 @@ export class UserService {
     return this.http.get(this.apiUrl, this.getHeaders());
   }
 
+  getUsersFiltered(): Observable<any> {
+    const url = `${this.apiUrl}/filtered`;
+    return this.http.get(url, this.getHeaders());
+  }
+
   getUserDetails(): Observable<any> {
     const url = `${this.apiUrl}/details`;
     return this.http.get(url, this.getHeaders());

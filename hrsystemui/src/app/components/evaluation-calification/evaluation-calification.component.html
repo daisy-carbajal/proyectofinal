@@ -111,23 +111,25 @@
         </div>
         <div class="field">
           <label for="description">Descripción</label>
-          <input
-            type="text"
-            pInputText
+          <textarea
+          rows="3"
+          cols="30"
+          pInputTextarea
             id="description"
             [(ngModel)]="calification.Description"
             required
-          />
+          ></textarea>
         </div>
         <div class="field">
           <label for="summary">Qué Evalúa</label>
-          <input
-            type="text"
-            pInputText
+          <textarea
+          rows="3"
+          cols="30"
+          pInputTextarea
             id="summary"
             [(ngModel)]="calification.Summary"
             required
-          />
+          ></textarea>
         </div>
       </ng-template>
 

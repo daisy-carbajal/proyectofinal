@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserService } from '../../services/user.service';
 import { TableModule } from 'primeng/table';
@@ -61,9 +61,8 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './user-view.component.css',
 })
 export class UserViewComponent implements OnInit {
-  filterGlobal(arg0: EventTarget | null) {
-    throw new Error('Method not implemented.');
-  }
+
+  @ViewChild('dt') dt: any;
 
   users: any[] = [];
   selectedUsers: any[] = [];
@@ -87,7 +86,8 @@ export class UserViewComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.userService.getUsers().subscribe((data: any[]) => {
+    this.userService.getUsersFiltered().subscribe((data: any[]) => {
+      console.log("Usuarios:", data);
       this.users = data;
     });
 
@@ -96,6 +96,11 @@ export class UserViewComponent implements OnInit {
     this.loggedUserId = this.authService.getUserId();
     console.log('Logged User ID - :', this.loggedUserId);
     console.log('Rol de usuario logueado:', this.authService.getRoleId());
+  }
+
+  onFilterGlobal(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.dt.filterGlobal(input.value, 'contains');
   }
 
   loadDepartments(): void {
@@ -220,49 +225,6 @@ export class UserViewComponent implements OnInit {
     });
   }
 
-  deactivateSelectedUsers() {
-    this.confirmationService.confirm({
-      message: '¿Está seguro de desactivar los usuarios seleccionados?',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        const deleteRequests = this.selectedUsers.map((user) =>
-          this.userService.deactivateUser(user.UserID, {
-            DeletedBy: this.loggedUserId,
-          })
-        );
-
-        Promise.all(deleteRequests).then(
-          () => {
-            this.users = this.users.map((user) =>
-              this.selectedUsers.includes(user)
-                ? { ...user, status: false }
-                : user
-            );
-
-            this.selectedUsers = [];
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Usuarios desactivados correctamente.',
-              life: 3000,
-            });
-          },
-          (error) => {
-            console.error('Error al desactivar usuarios', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudieron desactivar algunos usuarios.',
-              life: 3000,
-            });
-          }
-        );
-      },
-    });
-  }
-
   deleteUser(userID: number) {
     const confirmed = confirm(
       '¿Estás seguro de que deseas eliminar este usuario?'
@@ -287,45 +249,6 @@ export class UserViewComponent implements OnInit {
         }
       );
     }
-  }
-
-  deleteSelectedUsers() {
-    this.confirmationService.confirm({
-      message: '¿Está seguro de eliminar los usuarios seleccionados?',
-      header: 'Confirmar eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        const deleteRequests = this.selectedUsers.map((user) =>
-          this.userService.deleteUser(user.UserID)
-        );
-
-        Promise.all(deleteRequests).then(
-          () => {
-            this.users = this.users.filter(
-              (user) => !this.selectedUsers.includes(user)
-            );
-
-            this.selectedUsers = [];
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Usuarios eliminados correctamente.',
-              life: 3000,
-            });
-          },
-          (error) => {
-            console.error('Error al eliminar usuarios', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudieron eliminar algunos usuarios.',
-              life: 3000,
-            });
-          }
-        );
-      },
-    });
   }
 
   hideDialog() {

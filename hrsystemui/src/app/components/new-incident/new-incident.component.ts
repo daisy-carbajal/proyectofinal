@@ -15,6 +15,8 @@ import { IncidentTypeService } from '../../services/incident-type.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { EditorModule } from 'primeng/editor';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-new-incident',
@@ -31,7 +33,9 @@ import { EditorModule } from 'primeng/editor';
     DropdownModule,
     CalendarModule,
     EditorModule,
+    InputTextareaModule,
   ],
+  providers: [MessageService, IncidentService],
   templateUrl: './new-incident.component.html',
   styleUrl: './new-incident.component.css',
 })
@@ -51,6 +55,7 @@ export class NewIncidentComponent implements OnInit {
     Reason: '',
     Date: '',
     Duration: null,
+    Unit: null,
     Comments: '',
     CreatedBy: null,
   };
@@ -60,26 +65,23 @@ export class NewIncidentComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private incidentTypeService: IncidentTypeService,
-    private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
     this.loggedUserId = this.authService.getUserId();
     console.log('Logged User ID - :', this.loggedUserId);
+    this.loadIncidentTypes();
+    this.loadUsers();
   }
-
-  timeOptions = [
-    { label: 'Minutos', value: 'mins' },
-    { label: 'Horas', value: 'hours' },
-    { label: 'Días', value: 'days' },
-  ];
 
   loadIncidentTypes(): void {
     this.incidentTypeService.getAllIncidentTypes().subscribe(
       (dataType) => {
         console.log('Datos de tipos:', dataType);
         this.incidentTypes = dataType;
+        console.log('Tipos de Incidentes:', this.incidentTypes);
       },
       (error) => {
         console.error('Error al cargar tipos de incidente:', error);
@@ -116,25 +118,58 @@ export class NewIncidentComponent implements OnInit {
     console.log('ID del Usuario seleccionado:', this.userSelected);
   }
 
-  saveIncident(): void {
-    const incidentData = {
-      IncidentTypeName: this.incident.IncidentTypeID,
-      UserID: this.incident.UserID,
-      Reason: this.incident.Reason,
-      Date: new Date(this.incident.Date).toISOString(),
-      Duration: this.incident.Duration,
-      Comments: this.incident.Comments,
-      CreatedBy: this.loggedUserId,
-    };
+  saveIncident() {
+    console.log('saveIncident called');
 
-    console.log('Datos del incidente a enviar:', incidentData);
-    this.incidentService.postIncident(incidentData).subscribe(
-      (response) => {
-        console.log('Incidente registrado con éxito', response);
-      },
-      (error) => {
-        console.error('Error al registrar el incidente', error);
-      }
-    );
+    if (this.incident.Date) {
+      this.incident.Date = new Date(this.incident.Date)
+        .toISOString()
+        .split('T')[0];
+    }
+
+    if (this.incident.IncidentTypeID && this.incident.UserID) {
+      console.log('Datos del incidente antes de enviar:', this.incident);
+      this.incidentService.postIncident(this.incident).subscribe(
+        (newIncident) => {
+          console.log('Respuesta del backend:', newIncident);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Incidente creado correctamente.',
+            life: 3000,
+          });
+          this.clearForm();
+          this.goBackToHome();
+        },
+        (error) => {
+          console.error('Error al crear el incidente:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo crear el incidente.',
+            life: 3000,
+          });
+        }
+      );
+    }
   }
+
+  clearForm() {
+    this.incident = {
+      IncidentTypeID: null,
+      UserID: null,
+      Reason: '',
+      Date: '',
+      Duration: null,
+      Unit: null,
+      Comments: '',
+      CreatedBy: null,
+    };
+  }
+
+  timeOptions = [
+    { label: 'min', value: 'min' },
+    { label: 'hr', value: 'hr' },
+    { label: 'd', value: 'd' },
+  ];
 }

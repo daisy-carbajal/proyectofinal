@@ -1,10 +1,46 @@
-<div class="card">
-  <p-menubar>
-    <span class="font-bold text-2xl text-primary ml-2">
+<div class="surface-card">
+  <div class="flex align-items-center flex-shrink-0">
+    <app-sidebar />
+    <p class="text-right text-primary font-bold text-100 text-2xl ml-2">
       Sistema de Gestión de Recursos Humanos
-    </span>
-    <ng-template pTemplate="start">
-      <app-sidebar [staticSidebar]="true"></app-sidebar> <!-- true para que sea estático -->
+    </p>
+    <ng-template #myTemplate>
+      <p-button
+        icon="pi pi-home"
+        class="p-mb-3"
+        rounded="true"
+        text="true"
+        label="Inicio"
+        [routerLink]="['/home']"
+      ></p-button>
+      <p-button
+        icon="pi pi-cog"
+        class="p-mb-3"
+        rounded="true"
+        text="true"
+        label="Configuración"
+        [routerLink]="['/home','settings']"
+      ></p-button>
+      <p-button
+        icon="pi pi-bolt"
+        class="p-mb-3"
+        rounded="true"
+        text="true"
+        label="Atajos"
+        (onClick)="menu.toggle($event)"
+      ></p-button>
     </ng-template>
-  </p-menubar>
+    <p-menu #menu [model]="items" [popup]="true" [style]="{ width: '300px'}"/>
+    <div class="ml-auto mr-3">
+      <ng-container *ngTemplateOutlet="myTemplate"> </ng-container>
+    </div>
+  </div>
 </div>
+
+<p-button
+*ngIf="currentUrl === '/home'"
+  icon="pi pi-plus"
+  class="floating-button"
+  (onClick)="menu.toggle($event)"
+  rounded="true"
+></p-button>

@@ -30,8 +30,18 @@ export class EvaluationMasterService {
     return this.http.get(this.apiUrl, this.getHeaders());
   }
 
+  getAllEvaluationMasterDetails(): Observable<any> {
+    const url = `${this.apiUrl}/details`;
+    return this.http.get(url, this.getHeaders());
+  }
+
   getEvaluationMasterByEvaluationID(evaluationMasterID: number): Observable<any> {
     const url = `${this.apiUrl}/eval/${evaluationMasterID}`;
+    return this.http.get(url, this.getHeaders());
+  }
+
+  getEvaluationMasterDetailsByID(evaluationMasterID: number): Observable<any> {
+    const url = `${this.apiUrl}/master-details/${evaluationMasterID}`;
     return this.http.get(url, this.getHeaders());
   }
 

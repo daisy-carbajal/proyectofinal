@@ -85,8 +85,8 @@ export class EvaluationParameterComponent implements OnInit {
 
   openNew() {
     this.parameter = {
-      Description: '',
-      CreatedBy: this.loggedUserId,
+      Name: '',
+      Description: ''
     };
     this.submitted = false;
     this.parameterDialog = true;

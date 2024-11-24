@@ -1,0 +1,138 @@
+<div class="surface-card p-4 shadow-2 border-round mt-3">
+  <div class="card flex content-left gap-3 mb-3">
+    <p-button
+      label="Regresar"
+      icon="pi pi-arrow-circle-left"
+      (click)="goBackToEvaluations()"
+    ></p-button>
+  </div>
+  <div class="font-medium text-3xl text-700 mb-5">
+    Detalles de Evaluación Existente
+  </div>
+  <form>
+    <ul class="list-none p-0 m-0">
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-800 text-lg w-8 md:w-3 font-medium">
+          Nombre de Evaluación
+        </div>
+
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
+          <input
+            type="text"
+            pInputText
+            id="name"
+            name="EvaluationName"
+            [(ngModel)]="evaluationSaved.EvaluationName"
+            required
+            class="w-full"
+          />
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-800 text-lg w-8 md:w-3 font-medium">
+          Tipo de Evaluación
+        </div>
+
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
+          <p-dropdown
+            [options]="evaluationTypes"
+            optionLabel="Name"
+            optionValue="EvaluationTypeID"
+            [(ngModel)]="evaluationSaved.EvaluationTypeID"
+            placeholder="Selecciona un tipo"
+            id="evaluationName"
+            name="EvaluationTypeName"
+            appendTo="body"
+            styleClass="w-full"
+          ></p-dropdown>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-800 text-lg w-8 md:w-3 font-medium">Departamento</div>
+
+        <div class="text-900 w-full md:w-6 md:flex-order-0 flex-order-1">
+          <p-dropdown
+            [options]="departments"
+            optionLabel="Name"
+            optionValue="DepartmentID"
+            [(ngModel)]="evaluationSaved.DepartmentID"
+            placeholder="Selecciona un departamento"
+            id="department"
+            name="department"
+            styleClass="w-full"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+      </li>
+      <li
+        class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-800 text-lg font-medium mb-4">Parámetros</div>
+        <div
+          *ngFor="
+            let parameter of evaluationSaved.Parameters;
+            let i = index;
+            trackBy: trackByParameter
+          "
+        >
+          <div class="formgrid grid">
+            <div class="field col-12 md:col-6">
+              <p-dropdown
+                [options]="parameters"
+                optionLabel="Name"
+                optionValue="EvaluationParameterID"
+                [(ngModel)]="parameter.EvaluationParameterID"
+                placeholder="Selecciona un parámetro"
+                id="parameter-{{ i }}"
+                name="parameter-{{ i }}"
+                appendTo="body"
+                styleClass="w-full"
+              ></p-dropdown>
+            </div>
+            <div class="field col-12 md:col-3">
+              <input
+                type="number"
+                pInputText
+                [(ngModel)]="parameter.ParameterWeight"
+                id="weight-{{ i }}"
+                name="weight-{{ i }}"
+                placeholder="Peso"
+                styleClass="w-full"
+              />
+            </div>
+            <div class="field col-12 md:col-3">
+              <p-button
+                (onClick)="removeParameter(i)"
+                [text]="true"
+                icon="pi pi-times"
+                severity="danger"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+      </li>
+      <button
+        type="button"
+        (click)="addParameter()"
+        pButton
+        label="Agregar Parámetro"
+      ></button>
+    </ul>
+    <div class="flex justify-content-end mt-3">
+      <button
+        type="button"
+        pButton
+        label="Actualizar"
+        icon="pi pi-refresh"
+        class="p-button-info"
+        (click)="updateEvaluation()"
+      ></button>
+    </div>
+  </form>
+</div>

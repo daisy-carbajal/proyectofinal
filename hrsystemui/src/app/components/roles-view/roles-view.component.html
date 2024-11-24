@@ -58,9 +58,6 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-        </th>
         <th pSortableColumn="Name">
           Nombre de Rol <p-sortIcon field="Title"></p-sortIcon>
         </th>
@@ -76,9 +73,6 @@
 
     <ng-template pTemplate="body" let-role>
       <tr>
-        <td>
-          <p-tableCheckbox [value]="role"></p-tableCheckbox>
-        </td>
         <td>{{ role.Name }}</td>
         <td>{{ role.Description }}</td>
         <td>

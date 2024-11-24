@@ -23,6 +23,13 @@ router.get(
 );
 
 router.get(
+  "/filtered",
+  verifyToken,
+  checkPermission("VIEW_USER"),
+  userController.getAllUsersWithoutLoggedUser
+);
+
+router.get(
   "/details",
   checkPermission("VIEW_USER"),
   userController.getAllUserDetails

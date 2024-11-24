@@ -40,9 +40,9 @@ export class DisciplinaryActionService {
     return this.http.put(url, updatedDisciplinaryAction, this.getHeaders());
   }
 
-  deactivateDisciplinaryAction(disciplinaryActionId: number, deactivatedDisciplinaryAction: any): Observable<any> {
+  deactivateDisciplinaryAction(disciplinaryActionId: number): Observable<any> {
     const url = `${this.apiUrl}/d/${disciplinaryActionId}`;
-    return this.http.patch(url, deactivatedDisciplinaryAction, this.getHeaders());
+    return this.http.patch(url, {}, this.getHeaders());
   }
 
   deleteDisciplinaryAction(disciplinaryActionId: number): Observable<any> {

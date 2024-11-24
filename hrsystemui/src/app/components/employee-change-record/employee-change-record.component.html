@@ -7,7 +7,7 @@
     <ul class="list-none p-0 m-0">
       <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
         <div class="text-500 w-6 md:w-2 font-medium">Nombre</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
           <p-dropdown
             [options]="users"
             [(ngModel)]="information.UserID"
@@ -19,6 +19,7 @@
             [showClear]="true"
             placeholder="Selecciona un Empleado"
             (onChange)="onUserSelected($event)"
+            styleClass="w-full"
             appendTo="body"
           >
             <ng-template pTemplate="selectedItem" let-selectedOption>
@@ -36,7 +37,7 @@
       </li>
       <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
         <div class="text-500 w-6 md:w-2 font-medium">Departamento</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
           <p-dropdown
             [options]="departments"
             optionLabel="Name"
@@ -44,13 +45,14 @@
             id="department"
             placeholder="Selecciona un departamento"
             [(ngModel)]="information.DepartmentID"
+            styleClass="w-full"
             (onChange)="onDepartmentSelect($event)"
           ></p-dropdown>
         </div>
       </li>
       <li *ngIf="jobTitles.length > 0" class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
         <div class="text-500 w-6 md:w-2 font-medium">Puestos de Trabajo</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
           <p-dropdown
             [options]="jobTitles"
             optionLabel="Title"
@@ -58,24 +60,26 @@
             id="jobTitle"
             name="jobTitle"
             placeholder="Selecciona un puesto de trabajo"
+            styleClass="w-full"
             [(ngModel)]="information.JobPositionID"
           ></p-dropdown>
         </div>
       </li>
       <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
         <div class="text-500 w-6 md:w-2 font-medium">Fecha de Inicio</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
           <p-calendar
             name="startDate"
             appendTo="body"
             [(ngModel)]="information.StartDate"
+            styleClass="w-full"
             [showIcon]="true"
           ></p-calendar>
         </div>
       </li>
       <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
         <div class="text-500 w-6 md:w-2 font-medium">Razón</div>
-        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
           <p-dropdown
             [options]="reasonOptions"
             name="reason"
@@ -83,6 +87,7 @@
             optionValue="ChangeReasonID"
             [(ngModel)]="information.ReasonID"
             placeholder="Selecciona una Razón"
+            styleClass="w-full"
             appendTo="body"
           ></p-dropdown>
         </div>

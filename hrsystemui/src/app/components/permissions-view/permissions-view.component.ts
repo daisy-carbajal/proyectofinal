@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
@@ -69,9 +69,8 @@ import { PermissionCategoryService } from '../../services/permission-category.se
   styleUrls: ['./permissions-view.component.css']
 })
 export class PermissionsViewComponent implements OnInit {
-  filterGlobal(value: string) {
-    // Implementa la lógica de filtrado si es necesario
-  }
+
+  @ViewChild('dt') dt: any;
 
   permissions: any[] = [];
   selectedPermissions: any[] = [];
@@ -102,6 +101,12 @@ export class PermissionsViewComponent implements OnInit {
     this.loggedUserId = this.authService.getUserId();
     this.loadPermissionCategories();
   }
+
+  onFilterGlobal(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.dt.filterGlobal(input.value, 'contains');
+  }
+
 
   openNew() {
     this.permission = {

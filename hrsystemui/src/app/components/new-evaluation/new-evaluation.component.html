@@ -1,165 +1,178 @@
 <div class="surface-card p-4 shadow-2 border-round mt-3">
-    <div class="card flex content-left gap-3 mb-3">
-      <p-button label="Regresar" icon="pi pi-arrow-circle-left"></p-button>
-    </div>
-    <div class="font-medium text-3xl text-700 mb-3">Nueva Evaluación</div>
-    <div class="text-500 mb-5">
-      Ingresar los detalles de la evaluación.
-    </div>
-    <form >
-      <ul class="list-none p-0 m-0">
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Empleado Evaluado</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Evaluador</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Fecha de Evaluación</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Fecha de Revisión</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Asistencia</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Puntualidad</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Trabajo en Equipo</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Responsabilidad</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Proactividad</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Nota Final</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-        <li
-          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
-        >
-          <div class="text-500 w-6 md:w-2 font-medium">Revisión</div>
-          <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-            <input
-              type="text"
-              pInputText
-              name="campo"
-              placeholder=""
-            />
-          </div>
-        </li>
-      </ul>
-      <div class="flex justify-content-end mt-3">
-        <button
-          type="submit"
-          pButton
-          label="Guardar"
-          icon="pi pi-check"
-          class="p-button-success"
-        ></button>
-      </div>
-    </form>
+  <div class="card flex content-left gap-3 mb-3">
+    <p-button label="Regresar" icon="pi pi-arrow-circle-left" (onClick)="goBackToHome()"></p-button>
   </div>
+  <div class="font-medium text-3xl text-700 mb-3">Nueva Evaluación</div>
+  <div class="text-500 mb-5">Ingresar los detalles de la evaluación.</div>
+  <form>
+    <ul class="list-none p-0 m-0">
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Empleado Evaluado</div>
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
+          <p-dropdown
+            [options]="users"
+            name="user"
+            optionLabel="FullName"
+            optionValue="UserID"
+            [(ngModel)]="evaluateeUserID"
+            [filter]="true"
+            filterBy="FullName"
+            [showClear]="true"
+            placeholder="Quien es evaluado"
+            (onChange)="onUserSelected($event)"
+            styleClass="w-full"
+            appendTo="body"
+          >
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-items-center gap-2">
+                <div>{{ selectedOption?.FullName }}</div>
+              </div>
+            </ng-template>
+            <ng-template let-user pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <div>{{ user.FullName }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Evaluador</div>
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
+          <p-dropdown
+            [options]="users"
+            name="user"
+            optionLabel="FullName"
+            optionValue="UserID"
+            [(ngModel)]="evaluatorUserID"
+            [filter]="true"
+            filterBy="FullName"
+            [showClear]="true"
+            placeholder="Quien evalúa"
+            (onChange)="onUserSelected($event)"
+            styleClass="w-full"
+            appendTo="body"
+          >
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-items-center gap-2">
+                <div>{{ selectedOption?.FullName }}</div>
+              </div>
+            </ng-template>
+            <ng-template let-user pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <div>{{ user.FullName }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Evaluación A Aplicar</div>
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
+          <p-dropdown
+            [options]="evaluationSaved"
+            name="evaluationname"
+            optionLabel="EvaluationName"
+            optionValue="EvaluationSavedID"
+            [(ngModel)]="selectedEvaluationSavedID"
+            [showClear]="true"
+            placeholder="Selecciona una Evaluación"
+            (onChange)="onEvaluationSelected($event.value)"
+            styleClass="w-full"
+            appendTo="body"
+          >
+          </p-dropdown>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Fecha</div>
+        <div class="text-900 w-full md:w-4 md:flex-order-0 flex-order-1">
+          <p-calendar
+            name="date"
+            appendTo="body"
+            [showIcon]="true"
+            [(ngModel)]="selectedDate"
+            placeholder="Fecha de Evaluación"
+            styleClass="w-full"
+          ></p-calendar>
+        </div>
+      </li>
+      <li
+        *ngIf="showAreasAEvaluar"
+        class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-800 text-lg font-medium mb-4">Áreas a Evaluar</div>
+        <div
+          *ngFor="
+            let parameter of evaluation?.Parameters || [];
+            let i = index;
+            trackBy: trackByParameter
+          "
+        >
+          <div class="formgrid grid">
+            <div class="field col-12 md:col-6">
+              <p-dropdown
+                [options]="parameters"
+                optionLabel="Name"
+                optionValue="EvaluationParameterID"
+                [(ngModel)]="parameter.EvaluationParameterID"
+                placeholder="Selecciona un parámetro"
+                id="parameter-{{ i }}"
+                name="parameter-{{ i }}"
+                appendTo="body"
+                [disabled]="true"
+                styleClass="w-full"
+              ></p-dropdown>
+            </div>
+            <div class="field col-12 md:col-4">
+              <p-dropdown
+                [options]="califications"
+                optionLabel="Calification"
+                optionValue="EvaluationCalificationID"
+                [(ngModel)]="parameter.CalificationID"
+                placeholder="Selecciona una calificación"
+                id="calification-{{ i }}"
+                name="calification-{{ i }}"
+                appendTo="body"
+                styleClass="w-full"
+                [showClear]="true"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 md:w-2 font-medium">Comentarios</div>
+        <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+          <div class="card">
+            <p-editor
+              name="comments"
+              [(ngModel)]="editorContent"
+              [style]="{ height: '320px' }"
+            />
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="flex justify-content-end mt-3">
+      <button
+        type="button"
+        pButton
+        label="Guardar"
+        icon="pi pi-check"
+        class="p-button-success"
+        (click)="saveEvaluation()"
+      ></button>
+    </div>
+  </form>
+</div>

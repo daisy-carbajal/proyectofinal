@@ -191,6 +191,25 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getAllUsersWithoutLoggedUser = async (req, res) => {
+  try {
+    const RequesterID = req.userId;
+
+    const result = await pool.request()
+    .input("RequesterID", sql.Int, RequesterID)
+    .execute("GetAllUsersWithoutLoggedUser");
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ message: "No se encontraron usuarios" });
+    }
+
+    res.status(200).json(result.recordset);
+  } catch (err) {
+    console.error("Error al obtener los usuarios:", err);
+    res.status(500).send("Error al obtener los usuarios");
+  }
+};
+
 const getAllUserDetails = async (req, res) => {
   try {
     const RequesterID = req.userId;
@@ -510,4 +529,5 @@ module.exports = {
   deactivateUser,
   deleteUser,
   importUsersFromCSV,
+  getAllUsersWithoutLoggedUser
 };

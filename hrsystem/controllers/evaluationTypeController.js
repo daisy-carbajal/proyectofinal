@@ -40,14 +40,14 @@ const getAllEvaluationTypes = async (req, res) => {
 
 const updateEvaluationType = async (req, res) => {
     try {
-        const { EvaluationTypeID, Description, UpdatedBy } = req.body;
+        const { EvaluationTypeID, Name, Description } = req.body;
         const RequesterID = req.userId;
         const pool = await poolPromise;
 
         await pool.request()
             .input('EvaluationTypeID', sql.Int, EvaluationTypeID)
-            .input('Description', sql.VarChar(50), Description)
-            .input('UpdatedBy', sql.Int, UpdatedBy)
+            .input('Name', sql.NVarChar, Name)
+            .input('Description', sql.NVarChar, Description)
             .input('RequesterID', sql.Int, RequesterID)
             .execute('UpdateEvaluationType');
         
@@ -60,13 +60,11 @@ const updateEvaluationType = async (req, res) => {
 const deactivateEvaluationType = async (req, res) => {
     try {
         const { id } = req.params;
-        const { DeletedBy } = req.body;
         const RequesterID = req.userId;
         const pool = await poolPromise;
 
         await pool.request()
             .input('EvaluationTypeID', sql.Int, id)
-            .input('DeletedBy', sql.Int, DeletedBy)
             .input('RequesterID', sql.Int, RequesterID)
             .execute('DeactivateEvaluationType');
 

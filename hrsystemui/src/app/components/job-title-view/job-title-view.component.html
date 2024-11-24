@@ -8,21 +8,6 @@
         class="mr-2"
         (onClick)="openNew()"
       ></p-button>
-      <!--<p-button
-        severity="warning"
-        label="Desactivar"
-        icon="pi pi-eye-slash"
-        class="mr-2"
-        (onClick)="deactivateJobTitle(jobTitle.JobTitleID)"
-        [disabled]="!selectedJobTitles || !selectedJobTitles.length"
-      ></p-button>
-      <p-button
-        severity="danger"
-        label="Borrar"
-        icon="pi pi-trash"
-        (onClick)="deleteSelectedJobTitles()"
-        [disabled]="!selectedJobTitles || !selectedJobTitles.length"
-      ></p-button>-->
     </ng-template>
 
     <ng-template pTemplate="right">
@@ -66,9 +51,6 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-        </th>
         <th pSortableColumn="Title">
           Puesto Laboral <p-sortIcon field="Title"></p-sortIcon>
         </th>
@@ -96,9 +78,6 @@
 
     <ng-template pTemplate="body" let-jobTitle>
       <tr>
-        <td>
-          <p-tableCheckbox [value]="jobTitle"></p-tableCheckbox>
-        </td>
         <td>{{ jobTitle.Title }}</td>
         <td>{{ jobTitle.Description }}</td>
         <td>{{ jobTitle.Department }}</td>
@@ -233,7 +212,7 @@
           type="text"
           pInputText
           id="title"
-          [(ngModel)]="jobTitle.JobTitle"
+          [(ngModel)]="jobTitle.Title"
           required
           autofocus
         />

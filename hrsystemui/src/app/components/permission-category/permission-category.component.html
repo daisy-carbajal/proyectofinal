@@ -23,9 +23,6 @@
 >
   <ng-template pTemplate="header">
     <tr>
-      <th style="width: 4rem">
-        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-      </th>
       <th pSortableColumn="PermissionName">
         <div class="flex flex-shrink-0">
           Nombre<p-sortIcon field="PermissionName"></p-sortIcon>
@@ -42,9 +39,6 @@
 
   <ng-template pTemplate="body" let-permissionCategory>
     <tr>
-      <td>
-        <p-tableCheckbox [value]="permissionCategory"></p-tableCheckbox>
-      </td>
       <td>{{ permissionCategory.Name }}</td>
       <td>
         <p-tag
