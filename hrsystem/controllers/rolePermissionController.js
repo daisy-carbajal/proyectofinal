@@ -180,7 +180,6 @@ const manageRolePermissions = async (req, res) => {
         .request()
         .input("RoleID", sql.Int, RoleID)
         .input("PermissionID", sql.Int, permissionId)
-        .input("UpdatedBy", sql.Int, RequesterID)
         .input("RequesterID", sql.Int, RequesterID)
         .execute("ActivateRolePermission");
     }

@@ -31,6 +31,8 @@ import { NewDAComponent } from './components/new-da/new-da.component';
 import { NewActionPlanComponent } from './components/new-action-plan/new-action-plan.component';
 import { DaConfigurationComponent } from './components/da-configuration/da-configuration.component';
 import { DisciplinaryActionViewComponent } from './components/disciplinary-action-view/disciplinary-action-view.component';
+import { FeedbackDetailViewComponent } from './components/feedback-detail-view/feedback-detail-view.component';
+import { FeedbackViewComponent } from './components/feedback-view/feedback-view.component';
 
 export const routes: Routes = [
   {
@@ -111,6 +113,13 @@ export const routes: Routes = [
           { path: 'new', component: NewActionPlanComponent },
          // { path: 'details/:id', component: ActionPlanDetailViewComponent },
           ],
+      },
+      {
+        path:'feedback',
+        children: [
+          { path: '', component: FeedbackViewComponent },
+          { path: ':id', component: FeedbackDetailViewComponent}
+          ]
       },
       {
         path: 'settings',

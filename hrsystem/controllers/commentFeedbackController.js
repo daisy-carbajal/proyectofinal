@@ -26,15 +26,22 @@ const createCommentFeedback = async (req, res) => {
 
 const getCommentFeedbackByFeedbackID = async (req, res) => {
   try {
-    const { FeedbackID } = req.params;
+    const { id } = req.params;
     const RequesterID = req.userId;
+
+    console.log("FeedbackID recibido desde Postman:", id);
+    console.log("RequesterID recibido desde middleware:", RequesterID);
+
     const pool = await poolPromise;
+    console.log("Conexión al pool exitosa");
 
     const result = await pool
       .request()
-      .input("FeedbackID", sql.Int, FeedbackID)
+      .input("FeedbackID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("GetCommentFeedbackByFeedbackID");
+
+    console.log("Resultado del stored procedure:", result.recordset);
 
     if (result.recordset.length === 0) {
       return res
@@ -44,11 +51,13 @@ const getCommentFeedbackByFeedbackID = async (req, res) => {
 
     res.status(200).json(result.recordset);
   } catch (error) {
+    console.error("Error al obtener comentarios:", error);
     res
       .status(500)
       .json({ message: "Error al obtener comentarios del feedback", error });
   }
 };
+
 
 const updateCommentFeedback = async (req, res) => {
   try {

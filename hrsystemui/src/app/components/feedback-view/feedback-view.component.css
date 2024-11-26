@@ -1,0 +1,20 @@
+.comment {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limita a 3 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Agrega "..." si el texto se recorta */
+  }
+
+  .d-flex {
+    display: flex; /* Activa el diseño en línea */
+    gap: 10px; /* Espaciado entre los elementos */
+  }
+  
+  .align-center {
+    align-items: center; /* Centra verticalmente los elementos */
+  }
+  
+  .justify-center {
+    justify-content: center; /* Centra horizontalmente los elementos */
+  }
