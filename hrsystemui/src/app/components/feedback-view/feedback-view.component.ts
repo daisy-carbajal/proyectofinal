@@ -18,6 +18,8 @@ import { SidebarModule } from 'primeng/sidebar';
 import { DividerModule } from 'primeng/divider';
 import { CommentFeedbackService } from '../../services/comment-feedback.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-feedback-view',
@@ -36,14 +38,13 @@ import { ChangeDetectorRef } from '@angular/core';
     TagModule,
     BadgeModule,
     SidebarModule,
-    DividerModule
+    DividerModule,
   ],
-  providers: [UserService],
+  providers: [UserService, MessageService],
   templateUrl: './feedback-view.component.html',
   styleUrl: './feedback-view.component.css',
 })
 export class FeedbackViewComponent implements OnInit {
-
   feedbackDialog: boolean = false;
   commentDialog: boolean = false;
   users: any[] = [];
@@ -56,21 +57,33 @@ export class FeedbackViewComponent implements OnInit {
   comments: any[] = [];
   selectedFeedback: any = null;
   selectedComment: any = null;
+  numberOfComments: number = 0;
+  showDetalles: boolean = false;
+  showDetallesFeedback: boolean = false;
+  newComment: string = '';
+  editFeedbackDialog: boolean = false;
 
   feedback: any = {
     UserID: null,
     TypeID: null,
     Subject: '',
     Comment: '',
-  }
+  };
 
-  constructor (
+  comment: any = {
+    FeedbackID: null,
+    Comment: '',
+  };
+
+  constructor(
     private userService: UserService,
     private typeFeedbackService: TypeFeedbackService,
     private feedbackService: FeedbackService,
     private commentFeedbackService: CommentFeedbackService,
     private cdr: ChangeDetectorRef,
-  ) { }
+    private messageService: MessageService,
+    private sanitizer: DomSanitizer,
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -91,34 +104,32 @@ export class FeedbackViewComponent implements OnInit {
     console.log('Feedback seleccionado:', feedback); // Verifica que FeedbackID exista
     this.selectedFeedback = { ...feedback };
     this.comments = []; // Limpia el array de comentarios
-  
+
     if (feedback.FeedbackID > 0) {
       // Usa FeedbackID exactamente como está en el JSON
       this.loadComments(feedback.FeedbackID);
     } else {
       console.log('No hay comentarios disponibles para este feedback.');
     }
-  
-    this.commentDialog = true; // Abre el sidebar
-  }
-  
-  loadComments(feedbackID: number): void {
-    console.log('Cargando comentarios para FeedbackID:', feedbackID);
-    this.commentFeedbackService.getCommentFeedbackByFeedbackID(feedbackID).subscribe(
-      (dataComment) => {
-        console.log('Comentarios cargados:', dataComment); // Verifica que la respuesta sea correcta
-        this.comments = dataComment || [];
-      },
-      (error) => {
-        console.error('Error al cargar comentarios:', error);
-        this.comments = [];
-      }
-    );
+
+    this.commentDialog = true;
   }
 
   hideCommentDialog() {
+    console.log("cerrando sidebar.");
     this.commentDialog = false;
     this.submittedComment = false;
+  }
+
+  editComment(feedback: any) {
+    this.feedback = { ...feedback }; // Clona el feedback seleccionado
+    this.editFeedbackDialog = true;
+  }
+
+  cancelEdit() {
+    this.newComment = ''; // Limpiar el editor
+    this.editFeedbackDialog = false; // Ocultar el editor
+    this.selectedComment = null; // Limpiar el comentario seleccionado
   }
 
   loadUsers(): void {
@@ -157,15 +168,125 @@ export class FeedbackViewComponent implements OnInit {
 
   loadFeedback(): void {
     this.feedbackService.getAllFeedbacks().subscribe(
-  (dataFeedback) => {
-    this.feedbacks = dataFeedback.map((fb: any) => ({
-      ...fb,
-      NumberOfComments: fb.NumberOfComments || 0 // Asegura que siempre haya un valor numérico
-    }));
-  },
-  (error) => {
-    console.error('Error al cargar feedbacks:', error);
+      (dataFeedback) => {
+        this.feedbacks = dataFeedback;
+        this.feedback.Comment = dataFeedback.Comment;
+      },
+      (error) => {
+        console.error('Error al cargar feedbacks:', error);
+      }
+    );
   }
-);
+
+  loadComments(feedbackID: number): void {
+    console.log('Cargando comentarios para FeedbackID:', feedbackID);
+    this.commentFeedbackService
+      .getCommentFeedbackByFeedbackID(feedbackID)
+      .subscribe(
+        (dataComment) => {
+          console.log('Comentarios cargados:', dataComment); // Verifica que la respuesta sea correcta
+          this.comments = dataComment || [];
+        },
+        (error) => {
+          console.error('Error al cargar comentarios:', error);
+          this.comments = [];
+        }
+      );
+  }
+
+  addNewComment() {
+    this.comment.Comment = '';
+    this.showDetalles = true; // Esto muestra el editor
+  }
+
+  removeNewComment(index: number) {
+    this.comment.Comment.splice(index, 1);
+
+    if (this.comment.Comment.length === 0) {
+      this.showDetalles = false;
+    }
+  }
+
+  saveFeedback() {
+    this.submitted = true;
+  
+    if (this.feedback.Subject?.trim() && this.feedback.Comment?.trim()) {
+      if (this.feedback.FeedbackID) {
+        // Actualizar feedback existente
+        this.feedbackService
+          .updateFeedback(this.feedback.FeedbackID, this.feedback)
+          .subscribe(() => {
+            const index = this.feedbacks.findIndex(
+              (feedback) => feedback.FeedbackID === this.feedback.FeedbackID
+            );
+            this.feedbacks[index] = this.feedback;
+  
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Retroalimentación actualizada',
+              life: 3000,
+            });
+  
+            this.resetDialog();
+          });
+      } else {
+        // Crear nueva retroalimentación
+        this.feedbackService
+          .postFeedback(this.feedback)
+          .subscribe((newFeedback) => {
+            this.feedbacks.push(newFeedback);
+  
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Retroalimentación creada',
+              life: 3000,
+            });
+  
+            this.resetDialog();
+          });
+      }
+  
+      // Actualizar lista de feedbacks
+      this.feedbacks = [...this.feedbacks];
+    }
+  }
+  
+  // Método auxiliar para resetear el formulario y cerrar el diálogo
+  resetDialog() {
+    this.feedbackDialog = false;
+    this.feedback = {};
+    this.submitted = false;
+  }
+  
+
+  saveNewComment() {
+    if (this.newComment.trim()) {
+      // Lógica para guardar el nuevo comentario
+      const commentToSave = {
+        FeedbackID: this.selectedFeedback.FeedbackID,
+        Comment: this.newComment,
+      };
+      this.commentFeedbackService.postCommentFeedback(commentToSave).subscribe(
+        () => {
+          this.loadComments(this.selectedFeedback.FeedbackID); // Recargar comentarios
+          this.newComment = ''; // Limpiar el editor
+          this.showDetalles = false; // Ocultar el editor
+        },
+        (error) => {
+          console.error('Error al guardar el comentario:', error);
+        }
+      );
+    }
+  }
+  
+  cancelNewComment() {
+    this.newComment = ''; // Limpiar el editor
+    this.showDetalles = false; // Ocultar el editor
+  }
+
+  sanitizeComment(feedback: any): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(feedback);
   }
 }

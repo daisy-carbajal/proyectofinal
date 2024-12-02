@@ -98,12 +98,7 @@ export class PermissionCategoryComponent implements OnInit {
 
   openNew() {
     this.permissionCategory = {
-      IncidentTypeID: null,
-      UserID: null,
-      Reason: '',
-      Date: null,
-      Duration: null,
-      Comments: '',
+      Name: ''
     };
     this.submitted = false;
     this.permissionCategoryDialog = true;
@@ -187,7 +182,7 @@ export class PermissionCategoryComponent implements OnInit {
     this.submitted = true;
 
     if (this.permissionCategory.Name?.trim()) {
-      console.log('Datos del incidente antes de actualizar:', this.permissionCategory);
+      console.log('Datos de la categoría antes de actualizar:', this.permissionCategory);
 
       if (this.permissionCategory.IncidentID) {
         this.permissionCategoryService
@@ -218,8 +213,6 @@ export class PermissionCategoryComponent implements OnInit {
             });
           });
       }
-
-      this.permissionCategories = [...this.permissionCategory];
       this.permissionCategoryDialog = false;
       this.permissionCategory = {};
     }

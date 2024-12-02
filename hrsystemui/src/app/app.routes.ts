@@ -20,7 +20,6 @@ import { RolePermissionDetailViewComponent } from './components/role-permission-
 import { ProfileViewComponent } from './components/profile-view/profile-view.component';
 import { PermissionsConfigComponent } from './components/permissions-config/permissions-config.component';
 import { EvaluationSavedComponent } from './components/evaluation-saved/evaluation-saved.component';
-import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { EmployeeChangeManagementComponent } from './components/employee-change-management/employee-change-management.component';
 import { EmployeeChangeDetailViewComponent } from './components/employee-change-detail-view/employee-change-detail-view.component';
 import { IncidentDetailViewComponent } from './components/incident-detail-view/incident-detail-view.component';
@@ -31,8 +30,12 @@ import { NewDAComponent } from './components/new-da/new-da.component';
 import { NewActionPlanComponent } from './components/new-action-plan/new-action-plan.component';
 import { DaConfigurationComponent } from './components/da-configuration/da-configuration.component';
 import { DisciplinaryActionViewComponent } from './components/disciplinary-action-view/disciplinary-action-view.component';
-import { FeedbackDetailViewComponent } from './components/feedback-detail-view/feedback-detail-view.component';
 import { FeedbackViewComponent } from './components/feedback-view/feedback-view.component';
+import { FeedbackDetailViewComponent } from './components/feedback-detail-view/feedback-detail-view.component';
+import { ActionPlanViewComponent } from './components/action-plan-view/action-plan-view.component';
+import { OrganizationChartComponent } from './components/organization-chart/organization-chart.component';
+import { JobTitleConfigComponent } from './components/job-title-config/job-title-config.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 export const routes: Routes = [
   {
@@ -62,15 +65,24 @@ export const routes: Routes = [
         path: 'user',
         children: [
           { path: '', component: UserViewComponent },
-          { path: 'change',
+          {
+            path: 'change',
             children: [
               { path: '', component: EmployeeChangeManagementComponent },
-              { path: ':id', component: EmployeeChangeDetailViewComponent }
-            ]},
+              { path: ':id', component: EmployeeChangeDetailViewComponent },
+            ],
+          },
+          { path: 'org-chart', component: OrganizationChartComponent },
           { path: ':id', component: UserDetailViewComponent },
         ],
       },
-      { path: 'jobtitle', component: JobTitleViewComponent },
+      {
+        path: 'jobtitle',
+        children: [
+          { path: '', component: JobTitleViewComponent },
+          { path: 'config', component: JobTitleConfigComponent },
+        ],
+      },
       { path: 'department', component: DepartmentViewComponent },
       {
         path: 'roles',
@@ -80,21 +92,26 @@ export const routes: Routes = [
           { path: ':id', component: RolePermissionDetailViewComponent },
         ],
       },
-      { path: 'incident', 
+      {
+        path: 'incident',
         children: [
           { path: '', component: IncidentViewComponent },
           { path: 'new', component: NewIncidentComponent },
           { path: 'details/:id', component: IncidentDetailViewComponent },
-        ]
+        ],
       },
-      { path: 'evaluation', 
+      {
+        path: 'evaluation',
         children: [
           { path: 'saved', component: EvaluationSavedComponent },
           { path: 'config', component: EvaluationConfigurationComponent },
-          { path: 'saved/:id', component: EvaluationSavedDetailViewComponent },
-          { path: 'records', component: EvaluationViewComponent},
+          { path: 'records', component: EvaluationViewComponent },
           { path: 'new', component: NewEvaluationComponent },
-          { path: 'details/:id', component: EvaluationRecordDetailEditComponent },
+          { path: 'saved/:id', component: EvaluationSavedDetailViewComponent },
+          {
+            path: 'details/:id',
+            component: EvaluationRecordDetailEditComponent,
+          },
         ],
       },
       {
@@ -104,27 +121,26 @@ export const routes: Routes = [
           { path: 'new', component: NewDAComponent },
           { path: 'config', component: DaConfigurationComponent },
           //{ path: 'details/:id', component: DaDetailViewComponent },
-          ],
+        ],
       },
       {
         path: 'action-plan',
         children: [
-         // { path: '', component: ActionPlanViewComponent },
+          { path: '', component: ActionPlanViewComponent },
           { path: 'new', component: NewActionPlanComponent },
-         // { path: 'details/:id', component: ActionPlanDetailViewComponent },
-          ],
+          // { path: 'details/:id', component: ActionPlanDetailViewComponent },
+        ],
       },
       {
-        path:'feedback',
+        path: 'feedback',
         children: [
           { path: '', component: FeedbackViewComponent },
-          { path: ':id', component: FeedbackDetailViewComponent}
-          ]
+          { path: ':id', component: FeedbackDetailViewComponent },
+        ],
       },
       {
-        path: 'settings',
-        component: NotificationSettingsComponent
-      }
+        path: 'settings', component: SettingsComponent
+      },
     ],
   },
   {

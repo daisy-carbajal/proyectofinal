@@ -2,16 +2,14 @@ const { poolPromise, sql } = require("../database/db");
 
 const createCommentFeedback = async (req, res) => {
   try {
-    const { FeedbackID, UserID, Comment, CreatedBy } = req.body;
+    const { FeedbackID, Comment } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("FeedbackID", sql.Int, FeedbackID)
-      .input("UserID", sql.Int, UserID)
       .input("Comment", sql.Text, Comment)
-      .input("CreatedBy", sql.Int, CreatedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddCommentFeedback");
     res

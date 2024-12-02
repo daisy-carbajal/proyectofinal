@@ -2,14 +2,13 @@ const { poolPromise, sql } = require("../database/db");
 
 const createPermissionCategory = async (req, res) => {
   try {
-    const { Name, CreatedBy } = req.body;
+    const { Name } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("Name", sql.VarChar(50), Name)
-      .input("CreatedBy", sql.Int, CreatedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddPermissionCategory");
 

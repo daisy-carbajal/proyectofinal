@@ -40,9 +40,9 @@ export class ActionPlanService {
     return this.http.put(url, updatedActionPlan, this.getHeaders());
   }
 
-  deactivateActionPlan(actionPlanID: number, deletedBy: any): Observable<any> {
+  deactivateActionPlan(actionPlanID: number, ): Observable<any> {
     const url = `${this.apiUrl}/deactivate/${actionPlanID}`;
-    return this.http.patch(url, { DeletedBy: deletedBy }, this.getHeaders());
+    return this.http.patch(url, { }, this.getHeaders());
   }
 
   deleteActionPlan(actionPlanID: number): Observable<any> {

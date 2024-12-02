@@ -34,7 +34,10 @@ const routes = [
   { path: "/action-plan-task", route: require("./routes/actionPlanTaskRoutes") },
   { path: "/action-plan-param", route: require("./routes/actionPlanParameterRoutes") },
   { path: "/permission-category", route: require("./routes/permissionCategoryRoutes") },
-  { path: "/change-reason", route: require("./routes/changeReasonRoutes")}
+  { path: "/change-reason", route: require("./routes/changeReasonRoutes")},
+  { path: "/user-hierarchy", route: require("./routes/userHierarchyRoutes")},
+  { path: "/job-level", route: require("./routes/jobLevelRoutes")},
+  { path: "/jobb-title-level", route: require("./routes/jobTitleLevelRoutes")}
 ];
 
 const cors = require("cors");
@@ -44,6 +47,9 @@ app.use(
     credentials: true,
   })
 );
+
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 app.use(express.json());
 

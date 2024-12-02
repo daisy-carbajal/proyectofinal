@@ -1,0 +1,99 @@
+<div class="surface-card p-4 shadow-2 border-round">
+    <p-table
+      #dt
+      [value]="das"
+      [rows]="10"
+      [paginator]="true"
+      [(selection)]="selectedDAs"
+      [rowHover]="true"
+      dataKey="daID"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+      [showCurrentPageReport]="true"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          <h2 class="text-700 m-0">Planes de Mejora</h2>
+          <!--<span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input
+                  pInputText
+                  type="text"
+                  (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                  placeholder=" Search"
+                />
+              </span>-->
+        </div>
+      </ng-template>
+  
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="Reason">
+            Empleado <p-sortIcon field="Reason"></p-sortIcon>
+          </th>
+          <th pSortableColumn="FullName">
+            Supervisor <p-sortIcon field="FullName"></p-sortIcon>
+          </th>
+          <th pSortableColumn="FocusArea">
+            Area de Mejora <p-sortIcon field="FocusArea"></p-sortIcon>
+          </th>
+          <th pSortableColumn="ActionPlanStatus">
+            Estado del Plan <p-sortIcon field="ActionPlanStatus"></p-sortIcon>
+          </th>
+          <th pSortableColumn="Acknowledgement">
+            Firmado <p-sortIcon field="Acknowledgement"></p-sortIcon>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="body" let-da>
+        <tr>
+          <td>{{ da.EmployeeName }}</td>
+          <td>{{ da.AppliedByName }}</td>
+          <td>{{ da.FocusArea }}</td>
+          <td>{{ da.ActionPlanStatus }}</td>
+          <td>
+            <p-tag
+              [rounded]="true"
+              [value]="da.Acknowledgement ? 'Revisado' : 'Pendiente'"
+              [severity]="da.Acknowledgement ? 'success' : 'warning'"
+            ></p-tag>
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-pencil"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="success"
+              (onClick)="editDA(da)"
+            ></p-button>
+            <p-button
+              icon="pi pi-eye-slash"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="warning"
+              (onClick)="deactivateDA(da)"
+            >
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+              (onClick)="deleteDA(da.daID)"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          En total hay {{ das ? das.length : 0 }} registros.
+        </div>
+      </ng-template>
+    </p-table>
+  
+    <p-confirmDialog [style]="{ width: '500px' }" />
+  </div>  

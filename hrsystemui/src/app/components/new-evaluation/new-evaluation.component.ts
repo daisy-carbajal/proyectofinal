@@ -114,10 +114,6 @@ export class NewEvaluationComponent implements OnInit {
     });
   }
 
-  trackByParameter(index: number, parameter: any): number {
-    return parameter.EvaluationParameterID || index;
-  }
-
   onEvaluationSelected(evaluationId: number) {
     this.loadEvaluationById(evaluationId);
     if (evaluationId) {
@@ -163,6 +159,10 @@ export class NewEvaluationComponent implements OnInit {
         console.log('Calificaciones:', dataCalif);
         this.califications = dataCalif;
       });
+  }
+
+  trackByParameter(index: number, parameter: any): number {
+    return parameter.EvaluationParameterID || index;
   }
 
   trackByCalification(index: number, calification: any): number {

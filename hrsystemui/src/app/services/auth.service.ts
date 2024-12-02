@@ -50,28 +50,32 @@ export class AuthService {
       Authorization: `Bearer ${this.getToken()}`
     };
     const url = `${this.apiUrl}/login`;
+  
     return this.http.post(url, credentials, { headers, withCredentials: true }).pipe(
       tap((response: any) => {
-        if (response.token && typeof localStorage !== 'undefined') {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('userId', response.userId.toString());
-          localStorage.setItem('roleId', response.roleId.toString());
-
+        if (response.token) {
+          const storage = credentials.rememberMe ? localStorage : sessionStorage;
+  
+          // Guarda los datos en localStorage o sessionStorage según la preferencia
+          storage.setItem('token', response.token);
+          storage.setItem('userId', response.userId.toString());
+          storage.setItem('roleId', response.roleId.toString());
+  
           const expiresIn = credentials.rememberMe
-            ? 30 * 24 * 60 * 60 * 1000
-            : 60 * 60 * 1000; // 30 días o 1 hora
-          localStorage.setItem(
+            ? 30 * 24 * 60 * 60 * 1000 // 30 días
+            : 60 * 60 * 1000; // 1 hora
+          storage.setItem(
             'tokenExpiry',
             (Date.now() + expiresIn).toString()
           );
-
+  
           console.log('UserID en login:', response.userId);
-          this.createSession(Number(response.userId), response.token).subscribe(
-            {
-              next: (res) => console.log('Sesión creada:', res),
-              error: (err) => console.error('Error al crear la sesión:', err),
-            }
-          );
+  
+          // Crea la sesión
+          this.createSession(Number(response.userId), response.token).subscribe({
+            next: (res) => console.log('Sesión creada:', res),
+            error: (err) => console.error('Error al crear la sesión:', err),
+          });
         }
       })
     );
@@ -111,26 +115,43 @@ export class AuthService {
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('token');
       const tokenExpiry = localStorage.getItem('tokenExpiry');
+  
       if (token && tokenExpiry) {
-        return Date.now() < Number(tokenExpiry);
+        const isTokenValid = Date.now() < Number(tokenExpiry);
+        
+        if (!isTokenValid) {
+          // Si el token ha expirado, limpia los datos relacionados
+          localStorage.removeItem('token');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('roleId');
+          localStorage.removeItem('tokenExpiry');
+        }
+  
+        return isTokenValid; // Devuelve si el token sigue siendo válido
       }
     }
-    return false;
+  
+    return false; // No hay token o no hay expiración almacenada
   }
 
   logout(): Observable<any> {
     const url = `${this.apiUrl}/logout`;
     const userId = this.getUserId();
     const token = this.getToken();
-
+  
     const body = { userId: Number(userId), token };
-
+  
     return this.http.post(url, body, { withCredentials: true }).pipe(
       tap(() => {
+        // Limpia ambas memorias para evitar problemas con sesiones múltiples
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
         localStorage.removeItem('roleId');
         localStorage.removeItem('tokenExpiry');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('roleId');
+        sessionStorage.removeItem('tokenExpiry');
       })
     );
   }
@@ -163,5 +184,9 @@ export class AuthService {
     };
 
     return this.http.post(url, body);
+  }
+
+  validateSession(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/validate-token`, { withCredentials: true });
   }
 }

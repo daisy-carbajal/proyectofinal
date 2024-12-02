@@ -17,9 +17,10 @@
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-dropdown
                 [options]="users"
-                name="evaluatoruser"
+                name="employee"
                 optionLabel="FullName"
                 optionValue="UserID"
+                [(ngModel)]="actionPlan.EmployeeUserID"
                 [filter]="true"
                 filterBy="FullName"
                 [showClear]="true"
@@ -47,7 +48,8 @@
                 type="text"
                 pInputText
                 id="weight"
-                name="ParameterWeight"
+                name="jobTitle"
+                [(ngModel)]="userDetails.JobTitle"
                 [disabled]="true"
                 required
                 class="w-full"
@@ -61,7 +63,8 @@
                 type="text"
                 pInputText
                 id="weight"
-                name="ParameterWeight"
+                name="department"
+                [(ngModel)]="userDetails.Department"
                 [disabled]="true"
                 required
                 class="w-full"
@@ -82,10 +85,10 @@
                 name="evaluatoruser"
                 optionLabel="FullName"
                 optionValue="UserID"
+                [(ngModel)]="actionPlan.AppliedByUserID"
                 [filter]="true"
                 filterBy="FullName"
                 [showClear]="true"
-                (onChange)="onUserSelected($event)"
                 styleClass="w-full"
                 appendTo="body"
               >
@@ -105,39 +108,38 @@
           <div class="col-12 md:col-3">
             <div class="text-500 w-6 font-medium mb-2">Fecha de Inicio</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
-              <input
-                type="text"
-                pInputText
-                id="weight"
-                name="ParameterWeight"
-                [disabled]="true"
-                required
-                class="w-full"
-              />
+              <p-calendar
+                name="StartDate"
+                appendTo="body"
+                [showIcon]="true"
+                [(ngModel)]="actionPlan.StartDate"
+                (ngModelChange)="calculateDuration()"
+                styleClass="w-full"
+              ></p-calendar>
             </div>
           </div>
           <div class="col-12 md:col-3">
             <div class="text-500 w-6 font-medium mb-2">Fecha de Inicio</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
-              <input
-                type="text"
-                pInputText
-                id="weight"
-                name="ParameterWeight"
-                [disabled]="true"
-                required
-                class="w-full"
-              />
+              <p-calendar
+                name="EndDate"
+                appendTo="body"
+                [showIcon]="true"
+                [(ngModel)]="actionPlan.EndDate"
+                (ngModelChange)="calculateDuration()"
+                styleClass="w-full"
+              ></p-calendar>
             </div>
           </div>
           <div class="col-12 md:col-3 font">
-            <div class="text-500 w-6 font-medium mb-2"></div>
+            <div class="text-500 w-6 font-medium mb-2">Duración</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <input
                 type="text"
                 pInputText
                 id="weight"
-                name="ParameterWeight"
+                name="duration"
+                [value]="duration + ' días'"
                 [disabled]="true"
                 required
                 class="w-full"
@@ -157,25 +159,41 @@
                 type="text"
                 pInputText
                 id="weight"
-                name="ParameterWeight"
-                [disabled]="true"
+                name="focusArea"
+                [(ngModel)]="actionPlan.FocusArea"
                 required
                 class="w-full"
               />
             </div>
           </div>
           <div class="col-12 md:col-6">
-            <div class="text-500 w-6 font-medium mb-2">Estado de Plan de Acción</div>
+            <div class="text-500 w-6 font-medium mb-2">
+              Estado de Plan de Acción
+            </div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
-              <input
-                type="text"
-                pInputText
-                id="weight"
-                name="ParameterWeight"
-                [disabled]="true"
-                required
-                class="w-full"
-              />
+              <p-dropdown
+                name="optionActionPlan"
+                [options]="options"
+                optionLabel="name"
+                optionValue="name"
+                [(ngModel)]="actionPlan.ActionPlanStatus"
+                styleClass="w-full"
+                [showClear]="true"
+                appendTo="body"
+              >
+                <ng-template pTemplate="selectedItem" let-selectedOption>
+                  <div class="flex align-items-center gap-2">
+                    <i [class]="selectedOption?.icon"></i>
+                    <div>{{ selectedOption?.name }}</div>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="item" let-option>
+                  <div class="flex align-items-center gap-2">
+                    <i [class]="option.icon"></i>
+                    <div>{{ option.name }}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
             </div>
           </div>
         </div>
@@ -186,7 +204,11 @@
         <div class="w-12 col-12">
           <div class="text-500 w-6 font-medium mb-2">Descripción</div>
           <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.Summary"
+            />
           </div>
         </div>
       </li>
@@ -196,7 +218,11 @@
         <div class="w-12 col-12">
           <div class="text-500 w-6 font-medium mb-2">Objetivos</div>
           <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.Goal"
+            />
           </div>
         </div>
       </li>
@@ -206,13 +232,21 @@
         <div class="w-6 col-12">
           <div class="text-500 w-6 font-medium mb-2">Areas de Exito</div>
           <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.SuccessArea"
+            />
           </div>
         </div>
         <div class="w-6 col-12">
           <div class="text-500 w-6 font-medium mb-2">Areas de Oportunidad</div>
           <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.OpportunityArea"
+            />
           </div>
         </div>
       </li>
@@ -222,13 +256,21 @@
         <div class="w-6 col-12">
           <div class="text-500 w-6 font-medium mb-2">Impacto</div>
           <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.Impact"
+            />
           </div>
         </div>
         <div class="w-6 col-12">
           <div class="text-500 w-6 font-medium mb-2">Análisis del Problema</div>
           <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.RootCauseAnalysis"
+            />
           </div>
         </div>
       </li>
@@ -237,8 +279,12 @@
       >
         <div class="w-12 col-12">
           <div class="text-500 w-6 font-medium mb-2">Estrategias</div>
-          <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+          <div class="w-full md:flex-order-0 flex-order-1">
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.Strategies"
+            />
           </div>
         </div>
       </li>
@@ -248,69 +294,109 @@
         <div class="w-12 col-12">
           <div class="text-500 w-6 font-medium mb-2">Comentarios</div>
           <div class="text-900 w-full md:flex-order-0 flex-order-1">
-            <p-editor name="comments" [style]="{ height: '150px' }" />
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="actionPlan.Comments"
+            />
           </div>
         </div>
       </li>
     </ul>
     <h4>Areas A Desarrollar</h4>
-    <div class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+    <div
+      class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+    >
       <div *ngIf="showDetallesParameters" class="flex flex-shrink-0 mb-2">
-        <div class="text-400 col-12 md:col-4 font-medium">Parametro</div>
-        <div class="text-400 col-12 md:col-2 font-medium">Nota Actual</div>
-        <div class="text-400 col-12 md:col-2 font-medium">Nota Objetivo</div>
-        <div class="text-400 col-12 md:col-3 font-medium">Estado</div>
-    </div>
+        <div class="text-400 col-12 md:col-3 font-medium">Parametro</div>
+        <div class="text-400 col-12 md:col-3 font-medium">Nota Actual</div>
+        <div class="text-400 col-12 md:col-3 font-medium">Nota Objetivo</div>
+        <div class="text-400 col-12 md:col-2 font-medium">Estado</div>
+      </div>
       <div
-        *ngFor="let parameter of actionPlan.Parameters; let i = index"
+        *ngFor="
+          let parameter of actionPlan.Parameters;
+          let i = index;
+          trackBy: trackByParameter
+        "
         class="formgrid grid mb-3"
       >
-          <div class="field col-12 md:col-4">
-            <input
-              name="Task"
-              type="text"
-              pInputText
-              [(ngModel)]="parameter.ParameterID"
-              class="w-full"
-            />
-          </div>
-          <div class="field col-12 md:col-2">
-            <p-calendar
-              name="FollowUpDate"
-              appendTo="body"
-              [(ngModel)]="parameter.CurrentScore"
-              [showIcon]="true"
-              styleClass="w-full"
-            ></p-calendar>
-          </div>
-          <div class="field col-12 md:col-2">
-            <input
-              name="Status"
-              type="text"
-              pInputText
-              [(ngModel)]="parameter.GoalScore"
-              class="w-full"
-            />
-          </div>
-          <div class="field col-12 md:col-3">
-            <input
-              name="Status"
-              type="text"
-              pInputText
-              [(ngModel)]="parameter.GoalStatus"
-              class="w-full"
-            />
-          </div>
-          <div class="field col-12 md:col-1">
-            <p-button
-              (onClick)="removeParameter(i)"
-              [text]="true"
-              icon="pi pi-times"
-              severity="danger"
-              size="small"
-            ></p-button>
-          </div>
+        <div class="field col-12 md:col-3">
+          <p-dropdown
+            [options]="parameters"
+            optionLabel="Name"
+            optionValue="EvaluationParameterID"
+            [(ngModel)]="parameter.EvaluationParameterID"
+            placeholder="Selecciona un parámetro"
+            id="parameter-{{ i }}"
+            name="parameter-{{ i }}"
+            appendTo="body"
+            styleClass="w-full"
+          ></p-dropdown>
         </div>
+        <div class="field col-12 md:col-3">
+          <p-dropdown
+            [options]="califications"
+            optionLabel="Calification"
+            optionValue="EvaluationCalificationID"
+            [(ngModel)]="parameter.CurrentCalificationID"
+            placeholder="Selecciona una calificación"
+            id="calification-{{ i }}"
+            name="calification-{{ i }}"
+            appendTo="body"
+            styleClass="w-full"
+            [showClear]="true"
+          ></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-3">
+          <p-dropdown
+            [options]="califications"
+            optionLabel="Calification"
+            optionValue="EvaluationCalificationID"
+            [(ngModel)]="parameter.GoalCalificationID"
+            placeholder="Selecciona una calificación"
+            id="calification-{{ i }}"
+            name="calification-{{ i }}"
+            appendTo="body"
+            styleClass="w-full"
+            [showClear]="true"
+          ></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-2">
+          <p-dropdown
+            name="option"
+            [options]="paramOptions"
+            optionLabel="name"
+            optionValue="name"
+            [(ngModel)]="parameter.GoalStatus"
+            styleClass="w-full"
+            [showClear]="true"
+            appendTo="body"
+          >
+            <ng-template pTemplate="selectedItem" let-paramSelectedOption>
+              <div class="flex align-items-center gap-2">
+                <i [class]="paramSelectedOption?.icon"></i>
+                <div>{{ paramSelectedOption?.name }}</div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="item" let-paramOption>
+              <div class="flex align-items-center gap-2">
+                <i [class]="paramOption.icon"></i>
+                <div>{{ paramOption.name }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="field col-12 md:col-1">
+          <p-button
+            (onClick)="removeParameter(i)"
+            [text]="true"
+            icon="pi pi-times"
+            severity="danger"
+            size="small"
+          ></p-button>
+        </div>
+      </div>
     </div>
     <button
       type="button"
@@ -320,53 +406,77 @@
       class="mb-2"
     ></button>
     <h4>Tareas A Completar</h4>
-    <div class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+    <div
+      class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+    >
       <div *ngIf="showDetallesTasks" class="flex flex-shrink-0 mb-2">
         <div class="text-400 col-12 md:col-6 font-medium">Tarea</div>
-        <div class="text-400 col-12 md:col-2 font-medium">Fecha de Seguimiento</div>
+        <div class="text-400 col-12 md:col-2 font-medium">
+          Fecha de Seguimiento
+        </div>
         <div class="text-400 col-12 md:col-3 font-medium">Estado</div>
-    </div>
+      </div>
       <div
-        *ngFor="let task of actionPlan.Tasks; let i = index"
+        *ngFor="
+          let task of actionPlan.Tasks;
+          let i = index;
+          trackBy: trackByParameter
+        "
         class="formgrid grid mb-3"
       >
-          <div class="field col-12 md:col-6">
-            <input
-              name="Task"
-              type="text"
-              pInputText
-              [(ngModel)]="task.Task"
-              class="w-full"
-            />
-          </div>
-          <div class="field col-12 md:col-2">
-            <p-calendar
-              name="FollowUpDate"
-              appendTo="body"
-              [(ngModel)]="task.FollowUpDate"
-              [showIcon]="true"
-              styleClass="w-full"
-            ></p-calendar>
-          </div>
-          <div class="field col-12 md:col-3">
-            <input
-              name="Status"
-              type="text"
-              pInputText
-              [(ngModel)]="task.Status"
-              class="w-full"
-            />
-          </div>
-          <div class="field col-12 md:col-1">
-            <p-button
-              (onClick)="removeTask(i)"
-              [text]="true"
-              icon="pi pi-times"
-              severity="danger"
-              size="small"
-            ></p-button>
-          </div>
+        <div class="field col-12 md:col-6">
+          <input
+            name="Task"
+            type="text"
+            pInputText
+            [(ngModel)]="task.Task"
+            class="w-full"
+          />
         </div>
+        <div class="field col-12 md:col-2">
+          <p-calendar
+            name="FollowUpDate"
+            appendTo="body"
+            [(ngModel)]="task.FollowUpDate"
+            [showIcon]="true"
+            styleClass="w-full"
+          ></p-calendar>
+        </div>
+        <div class="field col-12 md:col-3">
+          <p-dropdown
+            name="taskStatus"
+            [options]="options"
+            optionLabel="name"
+            optionValue="name"
+            [(ngModel)]="task.Status"
+            styleClass="w-full"
+            [showClear]="true"
+            appendTo="body"
+          >
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-items-center gap-2">
+                <i [class]="selectedOption?.icon"></i>
+                <div>{{ selectedOption?.name }}</div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="item" let-option>
+              <div class="flex align-items-center gap-2">
+                <i [class]="option.icon"></i>
+                <div>{{ option.name }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="field col-12 md:col-1">
+          <p-button
+            (onClick)="removeTask(i)"
+            [text]="true"
+            icon="pi pi-times"
+            severity="danger"
+            size="small"
+          ></p-button>
+        </div>
+      </div>
     </div>
     <button
       type="button"
@@ -376,11 +486,12 @@
     ></button>
     <div class="flex justify-content-end mt-3">
       <button
-        type="submit"
+        type="button"
         pButton
         label="Guardar"
         icon="pi pi-check"
         class="p-button-success"
+        (click)="saveActionPlan()"
       ></button>
     </div>
   </form>

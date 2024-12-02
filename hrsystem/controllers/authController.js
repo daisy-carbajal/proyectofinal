@@ -37,7 +37,7 @@ const login = async (req, res) => {
 
     const tokenExpiration = rememberMe ? "30d" : "1h";
     const token = jwt.sign(
-      { id: result.output.UserID, roleId: result.output.RoleID }, // Incluye el RoleID en el payload del token
+      { id: result.output.UserID, roleId: result.output.RoleID }, // Payload
       process.env.JWT_SECRET,
       { expiresIn: tokenExpiration }
     );
@@ -45,9 +45,10 @@ const login = async (req, res) => {
     await createSessionToken(result.output.UserID, token);
 
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
+      httpOnly: true, // Protege contra ataques XSS
+      secure: process.env.NODE_ENV === "production", // Solo usa HTTPS en producción
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000, // 30 días o 1 hora
+      sameSite: "strict", // Previene ataques CSRF
     });
 
     res.json({
@@ -111,10 +112,11 @@ const logoutUser = async (req, res) => {
     .input("Token", sql.NVarChar, token)
     .execute("LogoutUser");
 
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-  });
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
 
   res.status(200).json({ message: "Sesión cerrada correctamente" });
 };
@@ -211,6 +213,24 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const validateToken = (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res
+      .status(401)
+      .json({ valid: false, message: "Token no encontrado" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res
+        .status(403)
+        .json({ valid: false, message: "Token inválido o expirado" });
+    }
+    res.status(200).json({ valid: true, user });
+  });
+};
+
 module.exports = {
   login,
   getUserFirstandLastName,
@@ -218,4 +238,5 @@ module.exports = {
   requestPasswordReset,
   resetPassword,
   logoutUser,
+  validateToken,
 };

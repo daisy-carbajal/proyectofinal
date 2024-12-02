@@ -1,0 +1,6 @@
+.node-container {
+    width: 200px; /* Ancho fijo */
+    height: 75px; /* Alto fijo */
+    justify-content: center; /* Centrar horizontalmente el contenido */
+    align-items: center; /* Centrar verticalmente el contenido */
+  }

@@ -11,9 +11,8 @@ const createDisciplinaryAction = async (req, res) => {
       JobTitleID,
       WarningID,
       Description,
-      EsignatureUser,
-      EsignatureManager,
-      CreatedBy,
+      ActionTaken,
+      DateApplied,
       Tasks // Lista de tareas
     } = req.body;
     const RequesterID = req.userId;
@@ -26,13 +25,10 @@ const createDisciplinaryAction = async (req, res) => {
       .input("DisciplinaryActionReasonID", sql.Int, DisciplinaryActionReasonID)
       .input("UserID", sql.Int, UserID)
       .input("ReportedByUserID", sql.Int, ReportedByUserID)
-      .input("DepartmentID", sql.Int, DepartmentID)
-      .input("JobTitleID", sql.Int, JobTitleID)
       .input("WarningID", sql.Int, WarningID)
       .input("Description", sql.Text, Description)
-      .input("EsignatureUser", sql.VarBinary, EsignatureUser)
-      .input("EsignatureManager", sql.VarBinary, EsignatureManager)
-      .input("CreatedBy", sql.Int, CreatedBy)
+      .input("ActionTaken", sql.Text, ActionTaken)
+      .input("DateApplied", sql.DateTime, DateApplied)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddDisciplinaryAction");
 
@@ -46,7 +42,6 @@ const createDisciplinaryAction = async (req, res) => {
         .input("Task", sql.VarChar(255), task.Task)
         .input("FollowUpDate", sql.Date, task.FollowUpDate)
         .input("TaskStatus", sql.VarChar(255), task.TaskStatus)
-        .input("CreatedBy", sql.Int, CreatedBy)
         .input("RequesterID", sql.Int, RequesterID)
         .execute("AddDisciplinaryActionTask");
     }

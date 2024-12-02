@@ -1,0 +1,63 @@
+<div class="surface-card p-4 shadow-2 border-round mt-3">
+  <div class="card flex content-left gap-3 mb-3">
+    <p-button label="Regresar" icon="pi pi-arrow-circle-left"></p-button>
+  </div>
+
+  <div class="font-bold text-3xl text-700 pt-2 mb-3">Configuración</div>
+  <div class="text-600 mb-5">
+    Administre las opciones de configuración y preferencias.
+  </div>
+
+  <ul class="list-none p-0 m-0">
+    <li class="flex py-4 px-3 border-top-1 surface-border flex-wrap right-0">
+      <div class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2">
+        Notificaciones
+      </div>
+
+      <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
+        <div class="field-checkbox">
+          <p-checkbox
+            label="Recibir notificaciones push en la aplicación."
+          ></p-checkbox>
+        </div>
+        <div class="field-checkbox">
+          <p-checkbox
+            label="Recibir notificaciones por correo electrónico."
+          ></p-checkbox>
+        </div>
+      </div>
+    </li>
+    <li class="flex py-4 px-3 border-top-1 surface-border flex-wrap right-0">
+        <div class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2">
+          Apariencia
+        </div>
+  
+        <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
+          <div class="field-checkbox">
+            <div class="card flex justify-content-center">
+              <p-selectButton
+              [options]="stateOptions"
+              [(ngModel)]="value"
+              optionLabel="label"
+              optionValue="value"
+              (ngModelChange)="toggleTheme($event)"
+            ></p-selectButton>
+            </div>
+          </div>
+        </div>
+      </li>
+    <li class="flex py-4 px-3 border-top-1 surface-border flex-wrap right-0">
+      <div class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2">
+        Contraseña
+      </div>
+
+      <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
+        <div class="field-checkbox">
+          <div class="card flex justify-content-center">
+            <p-button label="Cambiar Contraseña" icon="pi pi-lock" severity="danger" />
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

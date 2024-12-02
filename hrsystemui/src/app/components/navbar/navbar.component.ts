@@ -75,6 +75,13 @@ export class NavbarComponent implements OnInit {
               this.router.navigate(['/home','da','new']);
             },
           },
+          {
+            label: 'Retroalimentación',
+            icon: 'pi pi-comments',
+            command: () => {
+              this.router.navigate(['/home','feedback']);
+            },
+          },
         ],
       },
     ];
