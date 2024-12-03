@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -7,27 +7,36 @@ import { DOCUMENT } from '@angular/common';
 export class ThemeService {
   private defaultTheme = 'assets/themes/viva-light.css';
 
-  constructor(@Inject(DOCUMENT) private document: Document) {}
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: Object // Inyectar el ID de la plataforma
+  ) {}
 
   initializeTheme(): void {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
+      // Verificar si está en el navegador antes de acceder a localStorage
       const savedTheme =
-        (typeof localStorage !== 'undefined' &&
-          localStorage.getItem('app-theme')) ||
-        'assets/themes/viva-light.css';
+        localStorage.getItem('app-theme') || 'assets/themes/viva-light.css';
       this.applyTheme(savedTheme);
     } else {
-      console.warn('localStorage no está disponible.');
+      console.warn('SSR detectado: localStorage no está disponible.');
     }
   }
 
   setTheme(theme: string): void {
-    localStorage.setItem('app-theme', theme);
-    this.applyTheme(theme);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('app-theme', theme);
+      this.applyTheme(theme);
+    } else {
+      console.warn('SSR detectado: no se puede guardar el tema en localStorage.');
+    }
   }
 
   getCurrentTheme(): string {
-    return localStorage.getItem('app-theme') || this.defaultTheme;
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('app-theme') || this.defaultTheme;
+    }
+    return this.defaultTheme; // Devolver el tema predeterminado si no está en el navegador
   }
 
   private applyTheme(theme: string): void {

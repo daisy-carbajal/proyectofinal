@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { OrganizationChartModule } from 'primeng/organizationchart';
 import { TreeNode } from 'primeng/api';
 import { OrganizationChartService } from '../../services/organization-chart.service';
+import { AuthService } from '../../services/auth.service';
 
 interface TreeNodeInfo {
   label?: string;
@@ -25,11 +26,13 @@ interface TreeNodeInfo {
 export class OrganizationChartComponent {
   userHierarchies: any[] = [];
   data: TreeNode[] = [];
+  loggedUserId: number | null = null;
 
-  constructor(private orgChartService: OrganizationChartService, private cdr: ChangeDetectorRef) {}
+  constructor(private orgChartService: OrganizationChartService, private cdr: ChangeDetectorRef, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.fetchUserHierarchies();
+    this.loggedUserId = this.authService.getUserId();
   }
 
   fetchUserHierarchies(): void {
@@ -47,8 +50,14 @@ export class OrganizationChartComponent {
   }
 
   mapToTreeNodes(hierarchies: any[]): TreeNodeInfo[] {
-    const currentUserId = 86; // UserID del usuario actual, reemplazar con valor dinámico si es necesario
+    const currentUserId = this.loggedUserId; // UserID del usuario actual, reemplazar con valor dinámico si es necesario
   
+    if (currentUserId === null) {
+      console.warn('No hay usuario logueado (currentUserId es null).');
+      // Aquí puedes mostrar un mensaje en tu componente en lugar de los datos
+      throw new Error('No se encontró un usuario logueado.');
+    }
+    
     const mapNode = (node: any): TreeNodeInfo => ({
       label: `${node.FirstName} ${node.LastName}`,
       type: 'person',

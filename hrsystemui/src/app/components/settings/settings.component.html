@@ -9,43 +9,50 @@
   </div>
 
   <ul class="list-none p-0 m-0">
-    <li class="flex py-4 px-3 border-top-1 surface-border flex-wrap right-0">
+    <li class="flex py-4 px-3 border-top-1 surface-border flex-wrap">
       <div class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2">
         Notificaciones
       </div>
-
       <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
         <div class="field-checkbox">
           <p-checkbox
             label="Recibir notificaciones push en la aplicación."
+            [(ngModel)]="enablePushNotifications"
+            [value]="enablePushNotifications"
+            [binary]="true"
+            (onChange)="onPushNotificationChange()"
           ></p-checkbox>
         </div>
         <div class="field-checkbox">
           <p-checkbox
             label="Recibir notificaciones por correo electrónico."
+            [(ngModel)]="enableEmailNotifications"
+            [value]="enableEmailNotifications"
+            [binary]="true"
+            (onChange)="onEmailNotificationChange()"
           ></p-checkbox>
         </div>
       </div>
     </li>
     <li class="flex py-4 px-3 border-top-1 surface-border flex-wrap right-0">
-        <div class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2">
-          Apariencia
-        </div>
-  
-        <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
-          <div class="field-checkbox">
-            <div class="card flex justify-content-center">
-              <p-selectButton
+      <div class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2">
+        Apariencia
+      </div>
+
+      <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
+        <div class="field-checkbox">
+          <div class="card flex justify-content-center">
+            <p-selectButton
               [options]="stateOptions"
               [(ngModel)]="value"
               optionLabel="label"
               optionValue="value"
               (ngModelChange)="toggleTheme($event)"
             ></p-selectButton>
-            </div>
           </div>
         </div>
-      </li>
+      </div>
+    </li>
     <li class="flex py-4 px-3 border-top-1 surface-border flex-wrap right-0">
       <div class="text-400 font-semibold text-lg w-6 md:w-2 font-medium mb-2">
         Contraseña
@@ -54,7 +61,12 @@
       <div class="w-full md:w-8 md:flex-order-0 flex-order-1 ml-5">
         <div class="field-checkbox">
           <div class="card flex justify-content-center">
-            <p-button label="Cambiar Contraseña" icon="pi pi-lock" severity="danger" />
+            <p-button
+              label="Cambiar Contraseña"
+              icon="pi pi-lock"
+              severity="danger"
+              (onClick)="goToChangePassword()"
+            />
           </div>
         </div>
       </div>

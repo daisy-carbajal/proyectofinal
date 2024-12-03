@@ -2,6 +2,7 @@ const { poolPromise, sql } = require("../database/db");
 
 const createEvaluationMaster = async (req, res) => {
   const transaction = new sql.Transaction(await poolPromise);
+
   try {
     const {
       EvaluatorUserID,
@@ -11,10 +12,12 @@ const createEvaluationMaster = async (req, res) => {
       Comments,
       Details,
     } = req.body;
+
     const RequesterID = req.userId;
 
-    // Iniciar una transacción
+    // Iniciar la transacción
     await transaction.begin();
+    console.log("Transacción iniciada");
 
     // Insertar el registro en EvaluationMaster
     const result = await transaction
@@ -27,10 +30,9 @@ const createEvaluationMaster = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddEvaluationMaster");
 
-    // Obtener el ID de la evaluación recién creada
     const EvaluationMasterID = result.recordset[0].EvaluationMasterID;
 
-    // Insertar múltiples registros en EvaluationDetail
+    // Insertar detalles
     for (const detail of Details) {
       await transaction
         .request()
@@ -41,19 +43,49 @@ const createEvaluationMaster = async (req, res) => {
         .execute("AddEvaluationDetail");
     }
 
-    // Confirmar la transacción
-    await transaction.commit();
+    // Crear y guardar notificación
+    const notificationMessage = `Se ha aplicado una nueva evaluación al usuario con ID ${EvaluateeUserID}.`;
+    await transaction.request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .input("UserID", sql.Int, EvaluateeUserID)
+      .input("Title", sql.NVarChar, "Nueva Evaluación")
+      .input("Message", sql.NVarChar, notificationMessage)
+      .execute("AddNotification");
 
-    res
-      .status(201)
-      .json({ message: "Evaluación y detalles creados exitosamente" });
+    // Emitir la notificación en tiempo real
+    const io = req.app.get("socketio");
+    if (!io) {
+      console.error("Socket.IO no está configurado en el servidor.");
+      return res.status(500).json({ message: "Error interno: Socket.IO no configurado." });
+    }
+
+    io.to(`user_${RequesterID}`).emit("new_notification", {
+      title: "Nueva Evaluación",
+      message: notificationMessage,
+    });
+
+    await transaction.commit();
+    console.log("Transacción confirmada");
+
+    // Responder al cliente
+    res.status(201).json({
+      message: "Evaluación, detalles y notificación creados exitosamente",
+      evaluationMasterID: EvaluationMasterID,
+    });
+
   } catch (error) {
-    // Revertir la transacción en caso de error
-    await transaction.rollback();
-    console.error("Error al crear la evaluación y los detalles:", error);
-    res
-      .status(500)
-      .json({ message: "Error al crear la evaluación y los detalles" });
+    console.error("Error al crear la evaluación:", error);
+
+    // Revertir la transacción si ocurrió un error
+    if (transaction._aborted === false) {
+      await transaction.rollback();
+      console.log("Transacción revertida");
+    }
+
+    res.status(500).json({
+      message: "Error al crear la evaluación y los detalles",
+      error: error.message,
+    });
   }
 };
 
@@ -99,9 +131,10 @@ const getAllEvaluationMasterDetails = async (req, res) => {
 
     res.status(200).json(result.recordset);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener las evaluaciones con detalle", error });
+    res.status(500).json({
+      message: "Error al obtener las evaluaciones con detalle",
+      error,
+    });
   }
 };
 
@@ -118,11 +151,9 @@ const getEvaluationMasterByEvaluationID = async (req, res) => {
       .execute("GetEvaluationMasterByEvaluationID");
 
     if (result.recordset.length === 0) {
-      return res
-        .status(404)
-        .json({
-          message: "No se encontró la evaluación con el ID proporcionado",
-        });
+      return res.status(404).json({
+        message: "No se encontró la evaluación con el ID proporcionado",
+      });
     }
 
     res.status(200).json(result.recordset[0]);
@@ -146,12 +177,10 @@ const getEvaluationMasterByUserID = async (req, res) => {
       .execute("GetEvaluationMasterByUserID");
 
     if (result.recordset.length === 0) {
-      return res
-        .status(404)
-        .json({
-          message:
-            "No se encontraron evaluaciones para el usuario con el ID proporcionado",
-        });
+      return res.status(404).json({
+        message:
+          "No se encontraron evaluaciones para el usuario con el ID proporcionado",
+      });
     }
 
     res.status(200).json(result.recordset);
@@ -186,11 +215,16 @@ const getEvaluationMasterDetailsByID = async (req, res) => {
       if (evaluation.ParametersAndCalifications) {
         try {
           // Verificar si ParametersAndCalifications es una cadena JSON (en caso de no serlo)
-          if (typeof evaluation.ParametersAndCalifications === 'string') {
-            evaluation.ParametersAndCalifications = JSON.parse(evaluation.ParametersAndCalifications);
+          if (typeof evaluation.ParametersAndCalifications === "string") {
+            evaluation.ParametersAndCalifications = JSON.parse(
+              evaluation.ParametersAndCalifications
+            );
           }
         } catch (parseError) {
-          console.error("Error al parsear ParametersAndCalifications:", parseError);
+          console.error(
+            "Error al parsear ParametersAndCalifications:",
+            parseError
+          );
         }
       }
       return evaluation;
@@ -198,7 +232,7 @@ const getEvaluationMasterDetailsByID = async (req, res) => {
 
     res.status(200).json(processedRecord[0]); // Enviar solo el primer registro
   } catch (error) {
-    console.error('Error en la consulta:', error);
+    console.error("Error en la consulta:", error);
     res
       .status(500)
       .json({ message: "Error al filtrar las evaluaciones guardadas", error });

@@ -15,7 +15,7 @@ const login = async (req, res) => {
       .input("WorkEmail", sql.NVarChar, workEmail)
       .output("Password", sql.NVarChar)
       .output("UserID", sql.Int)
-      .output("RoleID", sql.Int) // Agrega el RoleID como output
+      .output("RoleID", sql.Int)
       .output("Status", sql.Bit)
       .execute("LogInUser");
 
@@ -35,33 +35,49 @@ const login = async (req, res) => {
         .json({ message: "Usuario o contraseña incorrectos" });
     }
 
-    const tokenExpiration = rememberMe ? "30d" : "1h";
     const token = jwt.sign(
-      { id: result.output.UserID, roleId: result.output.RoleID }, // Payload
+      { userId: result.output.UserID, roleId: result.output.RoleID },
       process.env.JWT_SECRET,
-      { expiresIn: tokenExpiration }
+      { expiresIn: "1h" }
     );
 
-    await createSessionToken(result.output.UserID, token);
+    const refreshToken = jwt.sign(
+      { userId: result.output.UserID, roleId: result.output.RoleID },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "30d" }
+    );
 
-    res.cookie("token", token, {
-      httpOnly: true, // Protege contra ataques XSS
-      secure: process.env.NODE_ENV === "production", // Solo usa HTTPS en producción
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000, // 30 días o 1 hora
-      sameSite: "strict", // Previene ataques CSRF
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: "None",
     });
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
+      sameSite: "None",
+    });
+
+    // Llama a createSessionToken pero no intentes enviar otra respuesta después
+    await createSessionToken(result.output.UserID, token);
+
+    // Solo envía una respuesta aquí
     res.json({
       message: "Login exitoso",
       token,
+      refreshToken,
       userId: result.output.UserID,
-      roleId: result.output.RoleID, // Incluye el RoleID en la respuesta
+      roleId: result.output.RoleID,
     });
   } catch (err) {
-    res.status(500).send("Error en el login");
-    console.error(err);
+    console.error("Error en login:", err);
+    res.status(500).json({ message: "Error en el servidor" });
   }
 };
+
 
 const getUserFirstandLastName = async (req, res) => {
   try {
@@ -115,8 +131,15 @@ const logoutUser = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "None",
     });
+    
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+    });
+    
 
   res.status(200).json({ message: "Sesión cerrada correctamente" });
 };
@@ -214,8 +237,10 @@ const resetPassword = async (req, res) => {
 };
 
 const validateToken = (req, res) => {
-  const token = req.cookies.token;
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
   if (!token) {
+    console.log("Token no encontrado en cookies ni en headers");
     return res
       .status(401)
       .json({ valid: false, message: "Token no encontrado" });
@@ -223,10 +248,13 @@ const validateToken = (req, res) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
+      console.log("Error al verificar el token:", err.message);
       return res
         .status(403)
         .json({ valid: false, message: "Token inválido o expirado" });
     }
+
+    console.log("Token válido, usuario:", user);
     res.status(200).json({ valid: true, user });
   });
 };
