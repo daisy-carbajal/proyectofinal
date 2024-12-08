@@ -7,21 +7,18 @@ const createDisciplinaryAction = async (req, res) => {
       DisciplinaryActionReasonID,
       UserID,
       ReportedByUserID,
-      DepartmentID,
-      JobTitleID,
       WarningID,
       Description,
       ActionTaken,
       DateApplied,
-      Tasks // Lista de tareas
+      Tasks,
     } = req.body;
     const RequesterID = req.userId;
 
-    // Iniciar una transacción
     await transaction.begin();
 
-    // Insertar la acción disciplinaria
-    const result = await transaction.request()
+    const result = await transaction
+      .request()
       .input("DisciplinaryActionReasonID", sql.Int, DisciplinaryActionReasonID)
       .input("UserID", sql.Int, UserID)
       .input("ReportedByUserID", sql.Int, ReportedByUserID)
@@ -32,12 +29,11 @@ const createDisciplinaryAction = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddDisciplinaryAction");
 
-    // Obtener el ID de la acción disciplinaria recién creada
     const DisciplinaryActionID = result.recordset[0].DisciplinaryActionID;
 
-    // Insertar cada tarea asociada
     for (const task of Tasks) {
-      await transaction.request()
+      await transaction
+        .request()
         .input("DisciplinaryActionID", sql.Int, DisciplinaryActionID)
         .input("Task", sql.VarChar(255), task.Task)
         .input("FollowUpDate", sql.Date, task.FollowUpDate)
@@ -46,15 +42,17 @@ const createDisciplinaryAction = async (req, res) => {
         .execute("AddDisciplinaryActionTask");
     }
 
-    // Confirmar la transacción
     await transaction.commit();
 
-    res.status(201).json({ message: "Acción disciplinaria y tareas creadas exitosamente" });
+    res
+      .status(201)
+      .json({ message: "Acción disciplinaria y tareas creadas exitosamente" });
   } catch (err) {
-    // Revertir la transacción en caso de error
     await transaction.rollback();
     console.error("Error al crear la acción disciplinaria y sus tareas:", err);
-    res.status(500).json({ message: "Error al crear la acción disciplinaria y sus tareas" });
+    res
+      .status(500)
+      .json({ message: "Error al crear la acción disciplinaria y sus tareas" });
   }
 };
 
@@ -62,9 +60,10 @@ const getAllDisciplinaryActions = async (req, res) => {
   try {
     const pool = await poolPromise;
     const RequesterID = req.userId;
-    const result = await pool.request()
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("GetAllDisciplinaryActions");
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetAllDisciplinaryActions");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -104,18 +103,8 @@ const getDisciplinaryActionByUserId = async (req, res) => {
 const updateDisciplinaryAction = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      DisciplinaryActionReasonID,
-      UserID,
-      ReportedByUserID,
-      DepartmentID,
-      JobTitleID,
-      WarningID,
-      Description,
-      EsignatureUser,
-      EsignatureManager,
-      UpdatedBy,
-    } = req.body;
+    const { DisciplinaryActionReasonID, Description, ActionTaken, Tasks } =
+      req.body;
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
@@ -123,17 +112,25 @@ const updateDisciplinaryAction = async (req, res) => {
       .request()
       .input("DisciplinaryActionID", sql.Int, id)
       .input("DisciplinaryActionReasonID", sql.Int, DisciplinaryActionReasonID)
-      .input("UserID", sql.Int, UserID)
-      .input("ReportedByUserID", sql.Int, ReportedByUserID)
-      .input("DepartmentID", sql.Int, DepartmentID)
-      .input("JobTitleID", sql.Int, JobTitleID)
-      .input("WarningID", sql.Int, WarningID)
       .input("Description", sql.Text, Description)
-      .input("EsignatureUser", sql.VarBinary, EsignatureUser)
-      .input("EsignatureManager", sql.VarBinary, EsignatureManager)
-      .input("UpdatedBy", sql.Int, UpdatedBy)
+      .input("ActionTaken", sql.Text, ActionTaken)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateDisciplinaryAction");
+
+    for (const task of Tasks) {
+      await pool
+        .request()
+        .input(
+          "DisciplinaryActionTaskID",
+          sql.Int,
+          task.DisciplinaryActionTaskID
+        )
+        .input("Task", sql.VarChar(255), task.Task)
+        .input("FollowUpDate", sql.Date, task.FollowUpDate)
+        .input("TaskStatus", sql.VarChar(255), task.TaskStatus)
+        .input("RequesterID", sql.Int, RequesterID)
+        .execute("UpdateDisciplinaryActionTask");
+    }
 
     res
       .status(200)
@@ -194,6 +191,71 @@ const deleteDisciplinaryAction = async (req, res) => {
   }
 };
 
+const getDisciplinaryActionWithTasksByID = async (req, res) => {
+  try {
+    const { id } = req.params; // ID de la acción disciplinaria
+    const RequesterID = req.userId; // ID del usuario solicitante
+    const pool = await poolPromise;
+
+    const result = await pool
+      .request()
+      .input("DisciplinaryActionID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetDisciplinaryActionWithTasksByID");
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({
+        message: "No se encontraron acciones disciplinarias con ese ID.",
+      });
+    }
+
+    // Procesar el registro devuelto (si Tasks está en formato JSON, asegúrate de parsearlo)
+    const processedRecord = result.recordset.map((disciplinaryAction) => {
+      if (disciplinaryAction.Tasks) {
+        try {
+          // Verificar si Tasks es una cadena JSON y parsearla
+          if (typeof disciplinaryAction.Tasks === "string") {
+            disciplinaryAction.Tasks = JSON.parse(disciplinaryAction.Tasks);
+          }
+        } catch (parseError) {
+          console.error("Error al parsear Tasks:", parseError);
+        }
+      }
+      return disciplinaryAction;
+    });
+
+    res.status(200).json(processedRecord[0]); // Enviar solo el primer registro
+  } catch (error) {
+    console.error("Error en la consulta:", error);
+    res
+      .status(500)
+      .json({ message: "Error al obtener la acción disciplinaria", error });
+  }
+};
+
+const acknowledgeDisciplinaryAction = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const RequesterID = req.userId;
+    const pool = await poolPromise;
+
+    await pool
+      .request()
+      .input("DisciplinaryActionID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("AcknowledgeDisciplinaryAction");
+
+    res
+      .status(200)
+      .json({ message: "Acción disciplinaria aceptada exitosamente" });
+  } catch (err) {
+    console.error("Error al desactivar la acción disciplinaria:", err);
+    res
+      .status(500)
+      .json({ message: "Error al aceptar la acción disciplinaria" });
+  }
+};
+
 module.exports = {
   createDisciplinaryAction,
   getAllDisciplinaryActions,
@@ -201,4 +263,6 @@ module.exports = {
   updateDisciplinaryAction,
   deactivateDisciplinaryAction,
   deleteDisciplinaryAction,
+  getDisciplinaryActionWithTasksByID,
+  acknowledgeDisciplinaryAction,
 };

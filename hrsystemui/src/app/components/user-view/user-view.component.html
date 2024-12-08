@@ -143,7 +143,7 @@
   <p-dialog
     [(visible)]="userDialog"
     [style]="{ width: '450px' }"
-    header="User Details"
+    header="Detalles de Usuario"
     [modal]="true"
     styleClass="p-fluid"
   >
@@ -204,6 +204,19 @@
           placeholder="Selecciona un puesto de trabajo"
           [(ngModel)]="user.JobTitleID"
         ></p-dropdown>
+      </div>
+
+      <div class="field">
+        <label for="manager">Jefe Directo</label>
+        <p-dropdown
+          [options]="managers"
+          optionLabel="UserName"
+          optionValue="UserID"
+          id="manager"
+          placeholder="Selecciona jefe directo"
+          [(ngModel)]="user.ManagerID"
+        >
+        </p-dropdown>
       </div>
 
       <div class="field">

@@ -7,19 +7,24 @@
         <div class="flex justify-content-between mb-3">
           <div>
             <span class="block text-500 font-medium mb-3"
-              >Nuevos Empleados</span
+              >Evaluaciones Pendientes</span
             >
-            <div class="text-900 font-medium text-xl">152</div>
+            <div class="text-900 font-medium text-xl">
+              {{ unreviewedEvaluationsCount }}
+            </div>
           </div>
           <div
             class="flex align-items-center justify-content-center bg-blue-100 border-round"
             style="width: 2.5rem; height: 2.5rem"
           >
-            <i class="pi pi-user-plus text-blue-500 text-xl"></i>
+            <i class="pi pi-file-edit text-blue-500 text-xl"></i>
           </div>
         </div>
-        <span class="text-green-500 font-medium">24 nuevos </span>
-        <span class="text-500">desde la última visita</span>
+        <span
+          [routerLink]="['/home', 'evaluation', 'records']"
+          class="no-underline text-green-500 font-medium"
+          ><i class="pi pi-arrow-right" style="color: rgb(255, 255, 255)"></i> Ver Evaluaciones</span
+        >
       </div>
     </div>
     <div class="col-12 md:col-6 lg:col-3">
@@ -27,9 +32,9 @@
         <div class="flex justify-content-between mb-3">
           <div>
             <span class="block text-500 font-medium mb-3"
-              >Horas Trabajadas</span
+              >Incidentes Por Revisar</span
             >
-            <div class="text-900 font-medium text-xl">2100 hrs</div>
+            <div class="text-900 font-medium text-xl">{{ activeIncidentsCount }}</div>
           </div>
           <div
             class="flex align-items-center justify-content-center bg-orange-100 border-round"
@@ -38,8 +43,11 @@
             <i class="pi pi-clock text-orange-500 text-xl"></i>
           </div>
         </div>
-        <span class="text-green-500 font-medium">+52% </span>
-        <span class="text-500">en la última semana</span>
+        <span
+          [routerLink]="['/home', 'incident']"
+          class="no-underline text-green-500 font-medium"
+          ><i class="pi pi-arrow-right" style="color: rgb(255, 255, 255)"></i> Ver Incidentes</span
+        >
       </div>
     </div>
     <div class="col-12 md:col-6 lg:col-3">
@@ -47,19 +55,22 @@
         <div class="flex justify-content-between mb-3">
           <div>
             <span class="block text-500 font-medium mb-3"
-              >Empleados Activos</span
+              >Nuevos Comentarios</span
             >
-            <div class="text-900 font-medium text-xl">28441</div>
+            <div class="text-900 font-medium text-xl">{{ todayCommentsCount }}</div>
           </div>
           <div
             class="flex align-items-center justify-content-center bg-cyan-100 border-round"
             style="width: 2.5rem; height: 2.5rem"
           >
-            <i class="pi pi-users text-cyan-500 text-xl"></i>
+            <i class="pi pi-comments text-cyan-500 text-xl"></i>
           </div>
         </div>
-        <span class="text-green-500 font-medium">520 </span>
-        <span class="text-500">nuevos registros</span>
+        <span
+          [routerLink]="['/home', 'feedback']"
+          class="no-underline text-green-500 font-medium"
+          ><i class="pi pi-arrow-right" style="color: rgb(255, 255, 255)"></i> Ver Retroalimentación</span
+        >
       </div>
     </div>
     <div class="col-12 md:col-6 lg:col-3">
@@ -67,19 +78,22 @@
         <div class="flex justify-content-between mb-3">
           <div>
             <span class="block text-500 font-medium mb-3"
-              >Evaluaciones Pendientes</span
+              >Acciones Disciplinarias</span
             >
-            <div class="text-900 font-medium text-xl">152 Sin Leer</div>
+            <div class="text-900 font-medium text-xl">{{ unacknowledgedActionsCount }}</div>
           </div>
           <div
-            class="flex align-items-center justify-content-center bg-100 border-round"
+            class="flex align-items-center justify-content-center bg-purple-100 border-round"
             style="width: 2.5rem; height: 2.5rem"
           >
-            <i class="pi pi-envelope text-500 text-xl"></i>
+            <i class="pi pi-flag text-purple-500 text-xl"></i>
           </div>
         </div>
-        <span class="text-green-500 font-medium">85 </span>
-        <span class="text-500">respondidas</span>
+        <span
+          [routerLink]="['/home', 'da']"
+          class="no-underline text-green-500 font-medium"
+          ><i class="pi pi-arrow-right" style="color: rgb(255, 255, 255)"></i> Ver Acciones ...</span
+        >
       </div>
     </div>
   </div>

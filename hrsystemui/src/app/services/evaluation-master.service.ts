@@ -50,6 +50,16 @@ export class EvaluationMasterService {
     return this.http.get(url, this.getHeaders());
   }
 
+  updateEvaluationMaster(id: number, updatedEvaluation: any): Observable<any> {
+    const url = `${this.apiUrl}/u/${id}`;
+    return this.http.put(url, updatedEvaluation, this.getHeaders());
+  }
+
+  acknowledgeEvaluationMaster(id: number, updatedEvaluation: any): Observable<any> {
+    const url = `${this.apiUrl}/a/${id}`;
+    return this.http.patch(url, updatedEvaluation, this.getHeaders());
+  }
+
   deactivateEvaluationMaster(evaluationMasterID: number, deletedBy: any): Observable<any> {
     const url = `${this.apiUrl}/d/${evaluationMasterID}`;
     return this.http.put(url, { DeletedBy: deletedBy }, this.getHeaders());

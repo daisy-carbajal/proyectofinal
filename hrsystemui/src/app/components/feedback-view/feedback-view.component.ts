@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { FormsModule } from '@angular/forms';
@@ -17,9 +17,10 @@ import { BadgeModule } from 'primeng/badge';
 import { SidebarModule } from 'primeng/sidebar';
 import { DividerModule } from 'primeng/divider';
 import { CommentFeedbackService } from '../../services/comment-feedback.service';
-import { ChangeDetectorRef } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-feedback-view',
@@ -39,8 +40,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
     BadgeModule,
     SidebarModule,
     DividerModule,
+    ConfirmDialogModule,
   ],
-  providers: [UserService, MessageService],
+  providers: [UserService, MessageService, ConfirmationService],
   templateUrl: './feedback-view.component.html',
   styleUrl: './feedback-view.component.css',
 })
@@ -83,6 +85,7 @@ export class FeedbackViewComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     private sanitizer: DomSanitizer,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -116,7 +119,7 @@ export class FeedbackViewComponent implements OnInit {
   }
 
   hideCommentDialog() {
-    console.log("cerrando sidebar.");
+    console.log('cerrando sidebar.');
     this.commentDialog = false;
     this.submittedComment = false;
   }
@@ -170,6 +173,7 @@ export class FeedbackViewComponent implements OnInit {
     this.feedbackService.getAllFeedbacks().subscribe(
       (dataFeedback) => {
         this.feedbacks = dataFeedback;
+        console.log('Feedbacks:', dataFeedback);
         this.feedback.Comment = dataFeedback.Comment;
       },
       (error) => {
@@ -209,7 +213,7 @@ export class FeedbackViewComponent implements OnInit {
 
   saveFeedback() {
     this.submitted = true;
-  
+
     if (this.feedback.Subject?.trim() && this.feedback.Comment?.trim()) {
       if (this.feedback.FeedbackID) {
         // Actualizar feedback existente
@@ -220,14 +224,14 @@ export class FeedbackViewComponent implements OnInit {
               (feedback) => feedback.FeedbackID === this.feedback.FeedbackID
             );
             this.feedbacks[index] = this.feedback;
-  
+
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Retroalimentación actualizada',
               life: 3000,
             });
-  
+
             this.resetDialog();
           });
       } else {
@@ -236,30 +240,32 @@ export class FeedbackViewComponent implements OnInit {
           .postFeedback(this.feedback)
           .subscribe((newFeedback) => {
             this.feedbacks.push(newFeedback);
-  
+
+            this.loadFeedback();
+
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Retroalimentación creada',
               life: 3000,
             });
-  
+
             this.resetDialog();
           });
       }
-  
+
       // Actualizar lista de feedbacks
       this.feedbacks = [...this.feedbacks];
+      this.editFeedbackDialog = false;
     }
   }
-  
+
   // Método auxiliar para resetear el formulario y cerrar el diálogo
   resetDialog() {
     this.feedbackDialog = false;
     this.feedback = {};
     this.submitted = false;
   }
-  
 
   saveNewComment() {
     if (this.newComment.trim()) {
@@ -280,7 +286,7 @@ export class FeedbackViewComponent implements OnInit {
       );
     }
   }
-  
+
   cancelNewComment() {
     this.newComment = ''; // Limpiar el editor
     this.showDetalles = false; // Ocultar el editor
@@ -288,5 +294,111 @@ export class FeedbackViewComponent implements OnInit {
 
   sanitizeComment(feedback: any): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(feedback);
+  }
+
+  deleteFeedback(FeedbackID: number) {
+    const confirmed = confirm(
+      '¿Estás seguro de que deseas eliminar esta retroalimentación?'
+    );
+    if (confirmed) {
+      this.feedbackService.deleteFeedback(FeedbackID).subscribe(
+        (response) => {
+          console.log('ID de retroalimentación eliminada:', FeedbackID);
+          console.log('Retroalimentación eliminado exitosamente', response);
+
+          this.feedbacks = this.feedbacks.filter(
+            (feedback) => feedback.FeedbackID !== FeedbackID
+          );
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Retroalimentación eliminada correctamente.',
+            life: 3000,
+          });
+        },
+        (error) => {
+          console.error('Error al eliminar retroalimentación', error);
+        }
+      );
+    }
+  }
+
+  deactivateFeedback(FeedbackID: number) {
+    const feedback = this.feedbacks.find((fb) => fb.JobTitleID === FeedbackID);
+
+    if (!feedback) {
+      console.error('Retroalimentación no encontrada');
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `¿Está seguro de borrar la retroalimentación: ${this.feedback.Subject}?`,
+      header: 'Confirmar Borrado',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.feedbackService.deactivateFeedback(FeedbackID).subscribe(() => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Retroalimentación borrada.',
+            life: 3000,
+          });
+        });
+      },
+    });
+  }
+
+  acknowledgeFeedback(FeedbackID: number): void {
+    console.log('Intentando aceptar retroalimentación');
+
+    if (!FeedbackID) {
+      console.error('ID de retroalimentación no proporcionado.');
+      return;
+    }
+
+    // Busca el feedback relacionado para mostrar detalles en el mensaje
+    const feedback = this.feedbacks.find((fb) => fb.FeedbackID === FeedbackID);
+
+    if (!feedback) {
+      console.error('Retroalimentación no encontrada.');
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `¿Está seguro de aceptar la retroalimentación acerca de: "${feedback.Subject}"?`,
+      header: 'Confirmar Aceptación',
+      icon: 'pi pi-question-circle',
+      accept: () => {
+        console.log('Aceptando retroalimentación...');
+        this.feedbackService.acknowledgeFeedback(FeedbackID).subscribe(
+          () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Retroalimentación aceptada correctamente.',
+              life: 3000,
+            });
+
+            this.loadFeedback();
+            this.commentDialog = false;
+          },
+          (error) => {
+            console.error('Error al aceptar retroalimentación:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo aceptar la retroalimentación.',
+              life: 3000,
+            });
+          }
+        );
+      },
+      reject: () => {
+        console.log(
+          'El usuario canceló la aceptación de la retroalimentación.'
+        );
+      },
+    });
   }
 }

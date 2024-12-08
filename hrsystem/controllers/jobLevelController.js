@@ -2,7 +2,7 @@ const { poolPromise, sql } = require("../database/db");
 
 const createJobLevel = async (req, res) => {
   try {
-    const { Name, Description, Status } = req.body;
+    const { Name, Description } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
@@ -10,7 +10,6 @@ const createJobLevel = async (req, res) => {
       .request()
       .input("Name", sql.NVarChar, Name)
       .input("Description", sql.NVarChar, Description)
-      .input("Status", sql.Bit, Status)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobLevel");
 

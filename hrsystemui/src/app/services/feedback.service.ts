@@ -40,13 +40,18 @@ export class FeedbackService {
     return this.http.put(url, updatedFeedback, this.getHeaders());
   }
 
-  deactivateFeedback(feedbackId: number, deactivatedFeedback: any): Observable<any> {
+  deactivateFeedback(feedbackId: number): Observable<any> {
     const url = `${this.apiUrl}/d/${feedbackId}`;
-    return this.http.patch(url, deactivatedFeedback, this.getHeaders());
+    return this.http.patch(url, {}, this.getHeaders());
   }
 
   deleteFeedback(feedbackId: number): Observable<any> {
     const url = `${this.apiUrl}/${feedbackId}`;
     return this.http.delete(url, this.getHeaders());
+  }
+
+  acknowledgeFeedback(feedbackId: number): Observable<any> {
+    const url = `${this.apiUrl}/a/${feedbackId}`;
+    return this.http.patch(url, {}, this.getHeaders());
   }
 }

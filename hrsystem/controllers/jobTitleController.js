@@ -2,10 +2,11 @@ const { poolPromise, sql } = require("../database/db");
 
 const createJobTitle = async (req, res) => {
   try {
-    const { Title, Description, DepartmentID, RoleID } = req.body;
+    const { Title, Description, DepartmentID, RoleID, LevelID } = req.body;
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
+    // Crear el JobTitle
     const result = await pool
       .request()
       .input("Title", sql.NVarChar, Title)
@@ -16,6 +17,7 @@ const createJobTitle = async (req, res) => {
 
     const jobTitleId = result.output.JobTitleID;
 
+    // Asociar el JobTitle con un Departamento
     await pool
       .request()
       .input("JobTitleID", sql.Int, jobTitleId)
@@ -23,6 +25,7 @@ const createJobTitle = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleDepartment");
 
+    // Asociar el JobTitle con un Rol
     await pool
       .request()
       .input("JobTitleID", sql.Int, jobTitleId)
@@ -30,12 +33,21 @@ const createJobTitle = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleRole");
 
+    // Crear un JobLevel
+    await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .input("JobID", sql.Int, jobTitleId)
+      .input("LevelID", sql.Int, LevelID)
+      .execute("AddJobTitleLevel");
+
     res.status(201).json({
-      message: "JobTitle creado exitosamente y asociado a Departamento y Rol",
+      message:
+        "JobTitle y JobLevel creados exitosamente y asociados a Departamento y Rol",
     });
   } catch (err) {
-    console.error("Error al crear JobTitle:", err);
-    res.status(500).json({ message: "Error al crear JobTitle" });
+    console.error("Error al crear JobTitle o JobLevel:", err);
+    res.status(500).json({ message: "Error al crear JobTitle o JobLevel" });
   }
 };
 
@@ -44,9 +56,10 @@ const getAllJobTitles = async (req, res) => {
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
-    const result = await pool.request()
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("GetAllJobTitles");
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetAllJobTitles");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron JobTitles" });
@@ -64,9 +77,10 @@ const getAllJobTitleDetails = async (req, res) => {
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
-    const result = await pool.request()
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("GetJobTitleDetails");
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetJobTitleDetails");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron JobTitles" });

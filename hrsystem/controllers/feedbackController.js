@@ -68,10 +68,7 @@ const updateFeedback = async (req, res) => {
 
     await pool.request()
       .input("FeedbackID", sql.Int, id)
-      .input("TypeID", sql.Int, TypeID)
-      .input("Subject", sql.NVarChar, Subject)
       .input("Comment", sql.Text, Comment)
-      .input("UpdatedBy", sql.Int, UpdatedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateFeedback");
 
@@ -85,13 +82,11 @@ const updateFeedback = async (req, res) => {
 const deleteFeedback = async (req, res) => {
   try {
     const { id } = req.params;
-    const { DeletedBy } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool.request()
       .input("FeedbackID", sql.Int, id)
-      .input("DeletedBy", sql.Int, DeletedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteFeedback");
 
@@ -120,11 +115,30 @@ const deactivateFeedback = async (req, res) => {
   }
 };
 
+const acknowledgeFeedback = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const RequesterID = req.userId;
+    const pool = await poolPromise;
+    
+    await pool.request()
+      .input("FeedbackID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("AcknowledgeFeedback");
+
+    res.status(200).json({ message: "Feedback revisado exitosamente" });
+  } catch (err) {
+    console.error("Error al revisar el feedback:", err);
+    res.status(500).json({ message: "Error al revisar el feedback" });
+  }
+};
+
 module.exports = {
   createFeedback,
   getAllFeedbacks,
   getFeedbackById,
   updateFeedback,
   deleteFeedback,
-  deactivateFeedback
+  deactivateFeedback,
+  acknowledgeFeedback
 };

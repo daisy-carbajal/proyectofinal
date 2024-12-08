@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -24,6 +24,14 @@ export class DisciplinaryActionWarningLevelService {
 
   getAllWarningLevels(): Observable<any> {
     return this.http.get(this.apiUrl, this.getHeaders());
+  }
+
+  getWarningLevelFiltered(newUserID: number, newReasonID: number): Observable<any> {
+    const params = new HttpParams()
+      .set('NewUserID', newUserID.toString())
+      .set('NewReasonID', newReasonID.toString());
+    const url = `${this.apiUrl}/filtered/`;
+    return this.http.get(url, { ...this.getHeaders(), params });
   }
 
   postWarningLevel(warningLevel: any): Observable<any> {

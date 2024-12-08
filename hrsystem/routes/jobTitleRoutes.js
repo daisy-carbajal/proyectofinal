@@ -30,20 +30,20 @@ router.get(
 
 router.get(
   "/:id",
-  checkPermission("EDIT_SETTINGS"),
+  checkPermission("VIEW_SETTINGS"),
   jobTitleController.getJobTitleById
 );
 
 router.put(
   "/u/:id",
-  checkPermission("DELETE_SETTINGS"),
+  checkPermission("EDIT_SETTINGS"),
   jobTitleValidations,
   validateFields,
   jobTitleController.updateJobTitle
 );
 
-router.patch("/d/:id", jobTitleController.deactivateJobTitle);
+router.patch("/d/:id", checkPermission("EDIT_SETTINGS"), jobTitleController.deactivateJobTitle);
 
-router.delete("/:id", jobTitleController.deleteJobTitle);
+router.delete("/:id", checkPermission("DELETE_SETTINGS"), jobTitleController.deleteJobTitle);
 
 module.exports = router;

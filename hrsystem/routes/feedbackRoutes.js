@@ -30,6 +30,12 @@ router.put(
   feedbackController.updateFeedback
 );
 
+router.patch(
+  "/a/:id",
+  checkPermission("EDIT_FEEDBACK"),
+  feedbackController.acknowledgeFeedback
+);
+
 router.delete(
   "/:id",
   checkPermission("DELETE_FEEDBACK"),

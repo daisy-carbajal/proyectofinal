@@ -1,0 +1,504 @@
+<div class="surface-card p-4 shadow-2 border-round mt-3">
+    <div class="card flex content-left gap-3 mb-3">
+      <p-button label="Regresar" icon="pi pi-arrow-circle-left" (onClick)="goBackToActionPlans()" ></p-button>
+    </div>
+    <div class="font-medium text-3xl text-700 mb-3">Nuevo Plan de Mejora</div>
+    <div class="text-500 mb-5">
+      Ingresar los detalles del plan de mejora de rendimiento.
+    </div>
+    <form>
+      <ul class="list-none p-0 m-0">
+        <li
+          class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="formgrid grid mb-2">
+            <div class="col-12 md:col-4">
+              <div class="text-500 w-6 font-medium mb-2">Empleado</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <p-dropdown
+                  [options]="users"
+                  name="employee"
+                  optionLabel="FullName"
+                  optionValue="UserID"
+                  [(ngModel)]="actionPlanInfo.EmployeeUserID"
+                  [filter]="true"
+                  filterBy="FullName"
+                  [showClear]="true"
+                  [disabled]="true"
+                  (onChange)="onUserSelected(actionPlanInfo.EmployeeUserID)"
+                  styleClass="w-full"
+                  appendTo="body"
+                >
+                  <ng-template pTemplate="selectedItem" let-selectedOption>
+                    <div class="flex align-items-center gap-2">
+                      <div>{{ selectedOption?.FullName }}</div>
+                    </div>
+                  </ng-template>
+                  <ng-template let-user pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                      <div>{{ user.FullName }}</div>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="text-500 w-6 font-medium mb-2">Puesto Laboral</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <input
+                  type="text"
+                  pInputText
+                  id="weight"
+                  name="jobTitle"
+                  [(ngModel)]="userDetails.JobTitle"
+                  [disabled]="true"
+                  required
+                  class="w-full"
+                />
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="text-500 w-6 font-medium mb-2">Departamento</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <input
+                  type="text"
+                  pInputText
+                  id="weight"
+                  name="department"
+                  [(ngModel)]="userDetails.Department"
+                  [disabled]="true"
+                  required
+                  class="w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+        <li
+          class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="formgrid grid mb-2">
+            <div class="col-12 md:col-3">
+              <div class="text-500 w-6 font-medium mb-2">Supervisor</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <p-dropdown
+                  [options]="users"
+                  name="evaluatoruser"
+                  optionLabel="FullName"
+                  optionValue="UserID"
+                  [(ngModel)]="actionPlanInfo.AppliedByUserID"
+                  [filter]="true"
+                  filterBy="FullName"
+                  [showClear]="true"
+                  [disabled]="true"
+                  styleClass="w-full"
+                  appendTo="body"
+                >
+                  <ng-template pTemplate="selectedItem" let-selectedOption>
+                    <div class="flex align-items-center gap-2">
+                      <div>{{ selectedOption?.FullName }}</div>
+                    </div>
+                  </ng-template>
+                  <ng-template let-user pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                      <div>{{ user.FullName }}</div>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="col-12 md:col-3">
+              <div class="text-500 w-6 font-medium mb-2">Fecha de Inicio</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <p-calendar
+                  name="StartDate"
+                  appendTo="body"
+                  [showIcon]="true"
+                  [(ngModel)]="actionPlanInfo.StartDate"
+                  [disabled]="true"
+                  styleClass="w-full"
+                ></p-calendar>
+              </div>
+            </div>
+            <div class="col-12 md:col-3">
+              <div class="text-500 w-6 font-medium mb-2">Fecha de Fin</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <p-calendar
+                  name="EndDate"
+                  appendTo="body"
+                  [showIcon]="true"
+                  [(ngModel)]="actionPlanInfo.EndDate"
+                  styleClass="w-full"
+                ></p-calendar>
+              </div>
+            </div>
+            <div class="col-12 md:col-3 font">
+              <div class="text-500 w-6 font-medium mb-2">Duración</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <input
+                  type="text"
+                  pInputText
+                  id="weight"
+                  name="duration"
+                  [value]="duration + ' días'"
+                  [disabled]="true"
+                  required
+                  class="w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </li>
+        <li
+          class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="formgrid grid mb-2">
+            <div class="text-500 col-12 md:col-6 font-medium">
+              <div class="text-500 w-6 font-medium mb-2">Area de Mejora</div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <input
+                  type="text"
+                  pInputText
+                  id="weight"
+                  name="focusArea"
+                  [(ngModel)]="actionPlanInfo.FocusArea"
+                  [disabled]="true"
+                  required
+                  class="w-full"
+                />
+              </div>
+            </div>
+            <div class="col-12 md:col-6">
+              <div class="text-500 w-6 font-medium mb-2">
+                Estado de Plan de Acción
+              </div>
+              <div class="text-900 w-full md:flex-order-0 flex-order-1">
+                <p-dropdown
+                  name="optionActionPlan"
+                  [options]="options"
+                  optionLabel="name"
+                  optionValue="name"
+                  [(ngModel)]="actionPlanInfo.ActionPlanStatus"
+                  styleClass="w-full"
+                  [showClear]="true"
+                  appendTo="body"
+                >
+                  <ng-template pTemplate="selectedItem" let-selectedOption>
+                    <div class="flex align-items-center gap-2">
+                      <i [class]="selectedOption?.icon"></i>
+                      <div>{{ selectedOption?.name }}</div>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-option>
+                    <div class="flex align-items-center gap-2">
+                      <i [class]="option.icon"></i>
+                      <div>{{ option.name }}</div>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li
+        *ngIf="actionPlanInfo.Acknowledgement; else notAcknowledged"
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 mb-2">
+          Plan de Mejora Firmado por: {{ userDetails.FirstName }}
+          {{ userDetails.LastName }}
+        </div>
+      </li>
+      <ng-template #notAcknowledged>
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <div class="text-500 mb-2">
+            Plan de Mejora sin firmar.
+          </div>
+        </li>
+      </ng-template>
+        <li
+          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="w-12 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Descripción</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.Summary"
+                [readonly]="true"
+              />
+            </div>
+          </div>
+        </li>
+        <li
+          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="w-12 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Objetivos</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.Goal"
+                [readonly]="true"
+              />
+            </div>
+          </div>
+        </li>
+        <li
+          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="w-6 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Areas de Exito</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.SuccessArea"
+                [readonly]="true"
+              />
+            </div>
+          </div>
+          <div class="w-6 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Areas de Oportunidad</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.OpportunityArea"
+                [readonly]="true"
+              />
+            </div>
+          </div>
+        </li>
+        <li
+          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="w-6 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Impacto</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.Impact"
+                [readonly]="true"
+              />
+            </div>
+          </div>
+          <div class="w-6 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Análisis del Problema</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.RootCauseAnalysis"
+                [readonly]="true"
+              />
+            </div>
+          </div>
+        </li>
+        <li
+          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="w-12 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Estrategias</div>
+            <div class="w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.Strategies"
+              />
+            </div>
+          </div>
+        </li>
+        <li
+          class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+        >
+          <div class="w-12 col-12">
+            <div class="text-500 w-6 font-medium mb-2">Comentarios</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-editor
+                name="comments"
+                [style]="{ height: '150px' }"
+                [(ngModel)]="actionPlanInfo.Comments"
+              />
+            </div>
+          </div>
+        </li>
+      </ul>
+      <h4>Areas A Desarrollar</h4>
+      <div
+        class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div *ngIf="showDetallesParameters" class="flex flex-shrink-0 mb-2">
+          <div class="text-400 col-12 md:col-3 font-medium">Parametro</div>
+          <div class="text-400 col-12 md:col-3 font-medium">Nota Actual</div>
+          <div class="text-400 col-12 md:col-3 font-medium">Nota Objetivo</div>
+          <div class="text-400 col-12 md:col-2 font-medium">Estado</div>
+        </div>
+        <div
+          *ngFor="
+            let parameter of actionPlanInfo.Parameters;
+            let i = index;
+            trackBy: trackByParameter
+          "
+          class="formgrid grid mb-3"
+        >
+          <div class="field col-12 md:col-3">
+            <p-dropdown
+              [options]="parameters"
+              optionLabel="Name"
+              optionValue="EvaluationParameterID"
+              [(ngModel)]="parameter.ParameterID"
+              placeholder="Selecciona un parámetro"
+              id="parameter-{{ i }}"
+              name="parameter-{{ i }}"
+              [disabled]="true"
+              appendTo="body"
+              styleClass="w-full"
+            ></p-dropdown>
+          </div>
+          <div class="field col-12 md:col-3">
+            <p-dropdown
+              [options]="califications"
+              optionLabel="Calification"
+              optionValue="EvaluationCalificationID"
+              [(ngModel)]="parameter.CurrentCalificationID"
+              placeholder="Selecciona una calificación"
+              id="currentcalification-{{ i }}"
+              name="currentcalification-{{ i }}"
+              [disabled]="true"
+              appendTo="body"
+              styleClass="w-full"
+              [showClear]="true"
+            ></p-dropdown>
+          </div>
+          <div class="field col-12 md:col-3">
+            <p-dropdown
+              [options]="califications"
+              optionLabel="Calification"
+              optionValue="EvaluationCalificationID"
+              [(ngModel)]="parameter.GoalCalificationID"
+              placeholder="Selecciona una calificación"
+              id="goalcalification-{{ i }}"
+              name="goalcalification-{{ i }}"
+              appendTo="body"
+              styleClass="w-full"
+              [showClear]="true"
+            ></p-dropdown>
+          </div>
+          <div class="field col-12 md:col-2">
+            <p-dropdown
+            id="goalstatus-{{ i }}"
+            name="goalstatus-{{ i }}"
+              [options]="paramOptions"
+              optionLabel="name"
+              optionValue="name"
+              [(ngModel)]="parameter.GoalStatus"
+              styleClass="w-full"
+              [showClear]="true"
+              appendTo="body"
+            >
+              <ng-template pTemplate="selectedItem" let-paramSelectedOption>
+                <div class="flex align-items-center gap-2">
+                  <i [class]="paramSelectedOption?.icon"></i>
+                  <div>{{ paramSelectedOption?.name }}</div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="item" let-paramOption>
+                <div class="flex align-items-center gap-2">
+                  <i [class]="paramOption.icon"></i>
+                  <div>{{ paramOption.name }}</div>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+      <h4>Tareas A Completar</h4>
+      <div
+        class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div *ngIf="showDetallesTasks" class="flex flex-shrink-0 mb-2">
+          <div class="text-400 col-12 md:col-6 font-medium">Tarea</div>
+          <div class="text-400 col-12 md:col-2 font-medium">
+            Fecha de Seguimiento
+          </div>
+          <div class="text-400 col-12 md:col-3 font-medium">Estado</div>
+        </div>
+        <div
+          *ngFor="
+            let task of actionPlanInfo.Tasks;
+            let i = index;
+            trackBy: trackByTask
+          "
+          class="formgrid grid mb-3"
+        >
+          <div class="field col-12 md:col-6">
+            <input
+            id="task-{{ i }}"
+            name="task-{{ i }}"
+              type="text"
+              pInputText
+              [(ngModel)]="task.Task"
+              class="w-full"
+            />
+          </div>
+          <div class="field col-12 md:col-2">
+            <p-calendar
+            id="followupdate-{{ i }}"
+            name="followupdate-{{ i }}"
+              appendTo="body"
+              [(ngModel)]="task.FollowUpDate"
+              [showIcon]="true"
+              styleClass="w-full"
+            ></p-calendar>
+          </div>
+          <div class="field col-12 md:col-3">
+            <p-dropdown
+            id="taskStatus-{{ i }}"
+            name="taskStatus-{{ i }}"
+              [options]="options"
+              optionLabel="name"
+              optionValue="name"
+              [(ngModel)]="task.TaskStatus"
+              styleClass="w-full"
+              [showClear]="true"
+              appendTo="body"
+            >
+              <ng-template pTemplate="selectedItem" let-selectedOption>
+                <div class="flex align-items-center gap-2">
+                  <i [class]="selectedOption?.icon"></i>
+                  <div>{{ selectedOption?.name }}</div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="item" let-option>
+                <div class="flex align-items-center gap-2">
+                  <i [class]="option.icon"></i>
+                  <div>{{ option.name }}</div>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-content-end mt-3">
+        <button
+        pButton
+        label="Aceptar"
+        icon="pi pi-check-circle"
+        class="p-button-success mr-2"
+        (click)="acknowledgeActionPlan(actionPlanInfo.ActionPlanID)"
+      ></button>
+        <button
+          pButton
+          label="Actualizar"
+          icon="pi pi-refresh"
+          class="p-button-info"
+          (click)="updateActionPlan()"
+        ></button>
+      </div>
+    </form>
+    <p-confirmDialog></p-confirmDialog>
+  </div>  

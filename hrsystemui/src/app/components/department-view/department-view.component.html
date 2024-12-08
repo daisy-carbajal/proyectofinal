@@ -9,18 +9,6 @@
         (onClick)="openNew()"
       ></p-button>
     </ng-template>
-
-    <ng-template pTemplate="right">
-      <!--<p-fileUpload
-          mode="basic"
-          accept="image/*"
-          [maxFileSize]="1000000"
-          label="Importar"
-          chooseLabel="Importar"
-          class="mr-2 inline-block"
-        />
-        <p-button severity="help" label="Export" icon="pi pi-upload" />-->
-    </ng-template>
   </p-toolbar>
 
   <p-table
@@ -37,15 +25,6 @@
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
         <h2 class="text-700 m-0">Departamentos</h2>
-        <!--<span class="p-input-icon-left">
-            <i class="pi pi-search"></i>
-            <input
-              pInputText
-              type="text"
-              (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-              placeholder=" Search"
-            />
-          </span>-->
       </div>
     </ng-template>
 

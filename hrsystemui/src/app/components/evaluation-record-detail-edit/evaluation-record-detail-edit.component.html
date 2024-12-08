@@ -116,9 +116,9 @@
       >
         <div class="text-800 text-lg font-medium mb-4">Áreas a Evaluar</div>
         <div class="flex flex-shrink-0 mb-2">
-            <div class="text-400 w-6 md:w-4 font-medium">Parametro</div>
-            <div class="text-400 w-6 md:w-2 font-medium">Peso</div>
-            <div class="text-400 w-6 md:w-4 font-medium">Calificación</div>
+          <div class="text-400 w-6 md:w-4 font-medium">Parametro</div>
+          <div class="text-400 w-6 md:w-2 font-medium">Peso</div>
+          <div class="text-400 w-6 md:w-4 font-medium">Calificación</div>
         </div>
         <div
           *ngFor="
@@ -206,9 +206,18 @@
       <button
         type="button"
         pButton
-        label="Guardar"
-        icon="pi pi-check"
-        class="p-button-success"
+        label="Aceptar"
+        icon="pi pi-check-circle"
+        class="p-button-success mr-2"
+        (click)="acknowledgeEvaluationMaster()"
+      ></button>
+      <button
+        type="button"
+        pButton
+        label="Actualizar"
+        icon="pi pi-refresh"
+        class="p-button-info"
+        (click)="updateEvaluationMaster()"
       ></button>
     </div>
   </form>

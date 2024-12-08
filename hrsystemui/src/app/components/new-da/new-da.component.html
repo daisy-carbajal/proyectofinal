@@ -19,7 +19,7 @@
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-dropdown
                 [options]="users"
-                name="evaluatoruser"
+                name="evaluateeuser"
                 optionLabel="FullName"
                 optionValue="UserID"
                 [(ngModel)]="da.UserID"
@@ -128,6 +128,7 @@
                 optionLabel="Description"
                 optionValue="DisciplinaryActionReasonID"
                 [(ngModel)]="da.DisciplinaryActionReasonID"
+                (onChange)="onReasonSelected($event)"
                 styleClass="w-full"
                 appendTo="body"
               >

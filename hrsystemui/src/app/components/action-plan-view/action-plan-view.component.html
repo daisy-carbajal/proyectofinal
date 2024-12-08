@@ -1,10 +1,10 @@
 <div class="surface-card p-4 shadow-2 border-round">
     <p-table
       #dt
-      [value]="das"
+      [value]="actionPlans"
       [rows]="10"
       [paginator]="true"
-      [(selection)]="selectedDAs"
+      [(selection)]="selectedActionPlans"
       [rowHover]="true"
       dataKey="daID"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
@@ -13,15 +13,6 @@
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           <h2 class="text-700 m-0">Planes de Mejora</h2>
-          <!--<span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input
-                  pInputText
-                  type="text"
-                  (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                  placeholder=" Search"
-                />
-              </span>-->
         </div>
       </ng-template>
   
@@ -46,17 +37,17 @@
         </tr>
       </ng-template>
   
-      <ng-template pTemplate="body" let-da>
+      <ng-template pTemplate="body" let-actionPlan>
         <tr>
-          <td>{{ da.EmployeeName }}</td>
-          <td>{{ da.AppliedByName }}</td>
-          <td>{{ da.FocusArea }}</td>
-          <td>{{ da.ActionPlanStatus }}</td>
+          <td>{{ actionPlan.EmployeeName }}</td>
+          <td>{{ actionPlan.AppliedByName }}</td>
+          <td>{{ actionPlan.FocusArea }}</td>
+          <td>{{ actionPlan.ActionPlanStatus }}</td>
           <td>
             <p-tag
               [rounded]="true"
-              [value]="da.Acknowledgement ? 'Revisado' : 'Pendiente'"
-              [severity]="da.Acknowledgement ? 'success' : 'warning'"
+              [value]="actionPlan.Acknowledgement ? 'Revisado' : 'Pendiente'"
+              [severity]="actionPlan.Acknowledgement ? 'success' : 'warning'"
             ></p-tag>
           </td>
           <td>
@@ -66,7 +57,7 @@
               [rounded]="true"
               [outlined]="true"
               severity="success"
-              (onClick)="editDA(da)"
+              (onClick)="goToActionPlanDetails(actionPlan.ActionPlanID)"
             ></p-button>
             <p-button
               icon="pi pi-eye-slash"
@@ -74,7 +65,7 @@
               [rounded]="true"
               [outlined]="true"
               severity="warning"
-              (onClick)="deactivateDA(da)"
+              (onClick)="deactivateActionPlan(actionPlan)"
             >
             </p-button>
             <p-button
@@ -82,7 +73,7 @@
               severity="danger"
               [rounded]="true"
               [outlined]="true"
-              (onClick)="deleteDA(da.daID)"
+              (onClick)="deleteActionPlan(actionPlan.ActionPlanID)"
             ></p-button>
           </td>
         </tr>
@@ -90,7 +81,7 @@
   
       <ng-template pTemplate="summary">
         <div class="flex align-items-center justify-content-between">
-          En total hay {{ das ? das.length : 0 }} registros.
+          En total hay {{ actionPlans ? actionPlans.length : 0 }} registros.
         </div>
       </ng-template>
     </p-table>

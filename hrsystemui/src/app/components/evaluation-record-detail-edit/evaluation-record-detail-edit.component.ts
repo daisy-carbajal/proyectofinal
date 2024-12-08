@@ -70,6 +70,7 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
   evaluatorUserID: number | null = null;
   evaluateeUserID: number | null = null;
   evaluationDetails: any[] = [];
+  evaluationMasterID: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -85,9 +86,9 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
-      const evalMasterID = params.get('id'); // Extrae el ID del incidente desde la URL
-      if (evalMasterID) {
-        this.loadEvaluationDetails(+evalMasterID); // Convierte a número y carga los datos
+      this.evaluationMasterID = params.get('id'); // Extrae el ID del incidente desde la URL
+      if (this.evaluationMasterID) {
+        this.loadEvaluationDetails(+this.evaluationMasterID); // Convierte a número y carga los datos
       } else {
         this.messageService.add({
           severity: 'warn',
@@ -129,33 +130,45 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
   }
 
   loadEvaluationDetails(EvaluationMasterID: number) {
-    this.evaluationService.getEvaluationMasterDetailsByID(EvaluationMasterID).subscribe(
-      (dataEval) => {
-        console.log('Evaluación con Detalle:', dataEval);
-        this.evaluationInfo = { ...dataEval }; // Copiamos los datos de la evaluación
-        this.evaluationDetails = dataEval.ParametersAndCalifications || []; // Asignamos los parámetros y calificaciones
-        if (this.evaluationInfo.DateCreated) {
-          this.evaluationInfo.DateCreated = new Date(this.evaluationInfo.DateCreated);
+    this.evaluationService
+      .getEvaluationMasterDetailsByID(EvaluationMasterID)
+      .subscribe(
+        (dataEval) => {
+          console.log('Evaluación con Detalle:', dataEval);
+          this.evaluationInfo = { ...dataEval }; // Copiamos los datos de la evaluación
+          this.evaluationDetails = dataEval.ParametersAndCalifications || []; // Asignamos los parámetros y calificaciones
+          if (this.evaluationInfo.DateCreated) {
+            this.evaluationInfo.DateCreated = new Date(
+              this.evaluationInfo.DateCreated
+            );
+          }
+          if (this.evaluationInfo.DateReviewed) {
+            this.evaluationInfo.DateReviewed = new Date(
+              this.evaluationInfo.DateReviewed
+            );
+          }
+          // Activa la vista de parámetros si existen
+          if (this.evaluationDetails.length > 0) {
+            this.showAreasAEvaluar = this.evaluationDetails.length > 0;
+            this.cdr.detectChanges();
+          } else {
+            console.warn('No se encontraron parámetros y calificaciones');
+          }
+
+          this.cdr.detectChanges(); // Forzamos actualización del DOM
+        },
+        (error) => {
+          console.error(
+            'Error al cargar los detalles de la evaluación:',
+            error
+          );
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo cargar los detalles de la evaluación.',
+          });
         }
-        // Activa la vista de parámetros si existen
-        if (this.evaluationDetails.length > 0) {
-          this.showAreasAEvaluar = this.evaluationDetails.length > 0; 
-          this.cdr.detectChanges();
-        } else {
-          console.warn('No se encontraron parámetros y calificaciones');
-        }
-  
-        this.cdr.detectChanges(); // Forzamos actualización del DOM
-      },
-      (error) => {
-        console.error('Error al cargar los detalles de la evaluación:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo cargar los detalles de la evaluación.',
-        });
-      }
-    );
+      );
   }
 
   trackByParameter(index: number, parameter: any): number {
@@ -196,10 +209,12 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
     this.parameterService.getAllEvaluationParameters().subscribe(
       (dataParam) => {
         console.log('Parámetros:', dataParam);
-        this.parameters = dataParam.map((param: { Name: any; EvaluationParameterID: any; }) => ({
-          ParameterName: param.Name, // Nombre del parámetro
-          EvaluationParameterID: param.EvaluationParameterID // ID del parámetro
-        }));
+        this.parameters = dataParam.map(
+          (param: { Name: any; EvaluationParameterID: any }) => ({
+            ParameterName: param.Name, // Nombre del parámetro
+            EvaluationParameterID: param.EvaluationParameterID, // ID del parámetro
+          })
+        );
       },
       (error) => {
         console.error('Error al cargar parámetros:', error);
@@ -211,10 +226,12 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
     this.calificationService.getAllEvaluationCalifications().subscribe(
       (dataCalif) => {
         console.log('Calificaciones:', dataCalif);
-        this.califications = dataCalif.map((calif: { Calification: any; EvaluationCalificationID: any; }) => ({
-          CalificationDescription: calif.Calification, // Descripción de la calificación
-          EvaluationCalificationID: calif.EvaluationCalificationID // ID de la calificación
-        }));
+        this.califications = dataCalif.map(
+          (calif: { Calification: any; EvaluationCalificationID: any }) => ({
+            CalificationDescription: calif.Calification, // Descripción de la calificación
+            EvaluationCalificationID: calif.EvaluationCalificationID, // ID de la calificación
+          })
+        );
       },
       (error) => {
         console.error('Error al cargar calificaciones:', error);
@@ -225,7 +242,7 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
   onParameterChange(parameter: any, index: number) {
     console.log(`Parámetro actualizado [${index}]:`, parameter);
   }
-  
+
   onCalificationChange(parameter: any, index: number) {
     console.log(`Calificación actualizada [${index}]:`, parameter);
   }
@@ -244,68 +261,103 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
       : '';
   }
 
-  saveEvaluation(): void {
-    if (
-      !this.evaluatorUserID ||
-      !this.evaluateeUserID ||
-      !this.selectedEvaluationSavedID ||
-      !this.selectedDate
-    ) {
+  updateEvaluationMaster() {
+    console.log('Se llamó a la función updateEvaluationMaster');
+  
+    // Verifica que evaluationInfo tenga datos válidos antes de continuar
+    if (!this.evaluationInfo) {
+      console.error('No hay información de evaluación para actualizar.');
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Por favor completa todos los campos requeridos.',
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'No hay información de evaluación disponible.',
       });
       return;
     }
-
-    const details =
-      this.evaluation?.Parameters?.map((parameter) => ({
-        ParameterID: parameter.EvaluationParameterID,
-        CalificationID: parameter.CalificationID,
-      })) || [];
-
-    const formattedDate = this.selectedDate?.toISOString();
-
-    const evaluationMaster = {
-      EvaluatorUserID: this.evaluatorUserID,
-      EvaluateeUserID: this.evaluateeUserID,
-      EvaluationSavedID: this.selectedEvaluationSavedID,
+  
+    // Construir los detalles de la evaluación
+    const details = Array.isArray(this.evaluationInfo.ParametersAndCalifications)
+      ? this.evaluationInfo.ParametersAndCalifications.map((parameter: any) => ({
+          EvaluationDetailID: parameter.EvaluationDetailID || null,
+          ParameterID: parameter.EvaluationParameterID || null,
+          CalificationID: parameter.EvaluationCalificationID || null,
+        }))
+      : [];
+  
+    // Validar detalles
+    if (details.length === 0) {
+      console.error('No se encontraron detalles para enviar.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'No hay detalles para enviar en la evaluación.',
+      });
+      return;
+    }
+  
+    // Formatear fecha
+    const formattedDate = this.evaluationInfo.DateCreated
+      ? new Date(this.evaluationInfo.DateCreated).toISOString()
+      : null;
+  
+    // Construir el cuerpo de la solicitud
+    const requestBody = {
+      EvaluatorUserID: this.evaluationInfo.EvaluatorUserID,
       DateCreated: formattedDate,
-      Comments: this.editorContent,
+      Comments: this.evaluationInfo.Comments || '',
       Details: details,
     };
-
-    console.log('Datos Enviados:', evaluationMaster);
-
-    this.evaluationService.postEvaluationMaster(evaluationMaster).subscribe(
-      (response) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: response.message,
-        });
-        this.clearForm();
-      },
-      (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo guardar la evaluación.',
-        });
-      }
-    );
+  
+    console.log('Datos que se enviarán al backend:', requestBody);
+  
+    // Enviar la solicitud al servicio
+    this.evaluationService.updateEvaluationMaster(this.evaluationMasterID, requestBody)
+      .subscribe(
+        (response) => {
+          console.log('Respuesta del backend:', response);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Evaluación actualizada correctamente.',
+          });
+          this.router.navigate(['/home/evaluation/records'], { replaceUrl: true });
+        },
+        (error) => {
+          console.error('Error al actualizar la evaluación:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo actualizar la evaluación. Intenta nuevamente.',
+          });
+        }
+      );
   }
 
-  clearForm() {
-    this.evaluatorUserID = null;
-    this.evaluateeUserID = null;
-    this.selectedEvaluationSavedID = null;
-    this.selectedDate = null;
-    this.editorContent = '';
-    this.evaluationDetails = [];
-    this.evaluation = null;
-    this.userSelected = null;
-    this.selectedEvaluateeUserID = null;
+  acknowledgeEvaluationMaster() {
+    const requestBody = {
+      Comments: this.evaluationInfo.Comments || ''
+    };
+
+    this.evaluationService.acknowledgeEvaluationMaster(this.evaluationMasterID, requestBody)
+      .subscribe(
+        (response) => {
+          console.log('Respuesta del backend:', response);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Evaluación aceptada correctamente.',
+          });
+          this.router.navigate(['/home/evaluation/records'], { replaceUrl: true });
+        },
+        (error) => {
+          console.error('Error al aceptar la evaluación:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo aceptar la evaluación. Intenta nuevamente.',
+          });
+        }
+      );
   }
+   
 }

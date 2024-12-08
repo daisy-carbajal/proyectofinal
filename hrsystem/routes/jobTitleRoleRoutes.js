@@ -16,4 +16,6 @@ router.put("/u/:id", checkPermission("EDIT_SETTINGS"), jobTitleRoleController.up
 
 router.patch("/d/:id", checkPermission("DELETE_SETTINGS"), jobTitleRoleController.deactivateJobTitleRole);
 
+
+
 module.exports = router;

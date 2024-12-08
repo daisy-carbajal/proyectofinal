@@ -35,10 +35,13 @@ const login = async (req, res) => {
         .json({ message: "Usuario o contraseña incorrectos" });
     }
 
+    // Ajustar la duración del token basado en rememberMe
+    const tokenExpiration = rememberMe ? "30d" : "1h";
+
     const token = jwt.sign(
       { userId: result.output.UserID, roleId: result.output.RoleID },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: tokenExpiration }
     );
 
     const refreshToken = jwt.sign(
@@ -49,14 +52,15 @@ const login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" ? true : false,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "None",
     });
 
+    // Cambiar maxAge del token según rememberMe
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" ? true : false,
       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
       sameSite: "None",
     });
@@ -128,18 +132,17 @@ const logoutUser = async (req, res) => {
     .input("Token", sql.NVarChar, token)
     .execute("LogoutUser");
 
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
-    });
-    
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
-    });
-    
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
+  });
 
   res.status(200).json({ message: "Sesión cerrada correctamente" });
 };
@@ -241,23 +244,23 @@ const validateToken = (req, res) => {
 
   if (!token) {
     console.log("Token no encontrado en cookies ni en headers");
-    return res
-      .status(401)
-      .json({ valid: false, message: "Token no encontrado" });
+    return res.status(401).json({ valid: false, message: "Token no encontrado" });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       console.log("Error al verificar el token:", err.message);
-      return res
-        .status(403)
-        .json({ valid: false, message: "Token inválido o expirado" });
+      if (err.name === "jwt expired") {
+        return res.status(401).json({ valid: false, message: "Token expirado" });
+      }
+      return res.status(403).json({ valid: false, message: "Token inválido" });
     }
 
     console.log("Token válido, usuario:", user);
     res.status(200).json({ valid: true, user });
   });
 };
+
 
 module.exports = {
   login,

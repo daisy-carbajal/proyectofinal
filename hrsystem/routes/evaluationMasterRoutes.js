@@ -42,6 +42,18 @@ router.get(
   evaluationMasterController.getEvaluationMasterByUserID
 );
 
+router.put(
+  "/u/:id",
+  checkPermission("EDIT_EVALUATION"),
+  evaluationMasterController.updateEvaluationMaster
+);
+
+router.patch(
+  "/a/:id",
+  checkPermission("EDIT_EVALUATION"),
+  evaluationMasterController.acknowledgeEvaluationMaster
+);
+
 router.patch(
   "/d/:id",
   checkPermission("EDIT_EVALUATION"),

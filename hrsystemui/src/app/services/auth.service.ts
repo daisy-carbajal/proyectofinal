@@ -121,25 +121,28 @@ export class AuthService {
   }
 
   getToken(): string | null {
-  if (isPlatformBrowser(this.platformId)) {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    const tokenExpiry = localStorage.getItem('tokenExpiry') || sessionStorage.getItem('tokenExpiry');
+    if (isPlatformBrowser(this.platformId)) {
+      const token =
+        localStorage.getItem('token') || sessionStorage.getItem('token');
+      const tokenExpiry =
+        localStorage.getItem('tokenExpiry') ||
+        sessionStorage.getItem('tokenExpiry');
 
-    if (token && tokenExpiry) {
-      const isTokenValid = Date.now() < Number(tokenExpiry);
-      if (isTokenValid) {
-        return token;
-      } else {
-        localStorage.removeItem('token');
-        localStorage.removeItem('tokenExpiry');
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('tokenExpiry');
-        return null;
+      if (token && tokenExpiry) {
+        const isTokenValid = Date.now() < Number(tokenExpiry);
+        if (isTokenValid) {
+          return token;
+        } else {
+          localStorage.removeItem('token');
+          localStorage.removeItem('tokenExpiry');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('tokenExpiry');
+          return null;
+        }
       }
     }
+    return null;
   }
-  return null;
-}
 
   getUserFirstandLastName(): Observable<UserNameResponse> {
     const userId = this.getUserId();
@@ -229,9 +232,25 @@ export class AuthService {
       Authorization: `Bearer ${token}`,
     });
 
+    console.log('headers:', headers);
+
     return this.http.get(`${this.apiUrl}/validate-token`, {
       headers,
       withCredentials: true,
-    });
+    }) .pipe(
+      catchError((error) => {
+        if (error.status === 401 || error.status === 403) {
+          localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('roleId');
+        localStorage.removeItem('tokenExpiry');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('roleId');
+        sessionStorage.removeItem('tokenExpiry');
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }

@@ -132,7 +132,7 @@ const deactivateJobTitleChange = async (req, res) => {
 
 const approveChanges = async (req, res) => {
   try {
-    const { UserID, DepartmentChangeID, JobTitleChangeID } = req.body;
+    const { UserID, DepartmentChangeID, JobTitleChangeID, HierarchyID } = req.body;
     const RequesterID = req.userId;
 
     const pool = await poolPromise;
@@ -153,10 +153,19 @@ const approveChanges = async (req, res) => {
         .execute("RevokeJobTitleChange");
     }
 
+    if (HierarchyID) {
+      await pool
+        .request()
+        .input("UserID", sql.Int, UserID)
+        .input("RequesterID", sql.Int, RequesterID)
+        .execute("RevokeUserHierarchy");
+    }
+
     await pool
       .request()
       .input("DepartmentChangeID", sql.Int, DepartmentChangeID || null) // Puede ser null
       .input("JobTitleChangeID", sql.Int, JobTitleChangeID || null) // Puede ser null
+      .input("HierarchyID", sql.Int, HierarchyID || null) // Puede ser null
       .input("UserID", sql.Int, UserID)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("ApproveChanges");
@@ -170,7 +179,7 @@ const approveChanges = async (req, res) => {
 
 const denyChanges = async (req, res) => {
   try {
-    const { UserID, DepartmentChangeID, JobTitleChangeID } = req.body;
+    const { UserID, DepartmentChangeID, JobTitleChangeID, HierarchyID } = req.body;
     const RequesterID = req.userId;
 
     const pool = await poolPromise;
@@ -179,6 +188,7 @@ const denyChanges = async (req, res) => {
       .request()
       .input("DepartmentChangeID", sql.Int, DepartmentChangeID || null) // Puede ser null
       .input("JobTitleChangeID", sql.Int, JobTitleChangeID || null) // Puede ser null
+      .input("HierarchyID", sql.Int, HierarchyID || null) // Puede ser null
       .input("UserID", sql.Int, UserID)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DenyChanges");

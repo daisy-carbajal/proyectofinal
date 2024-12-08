@@ -34,6 +34,7 @@ const createUser = async (req, res) => {
       JobTitleID,
       DepartmentID,
       CreatedBy,
+      ManagerID
     } = req.body;
     const RequesterID = req.userId;
 
@@ -67,23 +68,24 @@ const createUser = async (req, res) => {
       .input("UserID", sql.Int, userId)
       .input("JobTitleID", sql.Int, JobTitleID)
       .input("StartDate", sql.Date, new Date())
+      .input("ChangeReasonID", sql.Int, 4)
       .input("CreatedBy", sql.Int, CreatedBy)
       .input("RequesterID", sql.Int, RequesterID)
-      .execute("AddJobTitleChange");
+      .execute("AddNewJobTitleChange");
 
     await pool
       .request()
       .input("UserID", sql.Int, userId)
       .input("DepartmentID", sql.Int, DepartmentID)
       .input("StartDate", sql.Date, new Date())
+      .input("ChangeReasonID", sql.Int, 4)
       .input("CreatedBy", sql.Int, CreatedBy)
       .input("RequesterID", sql.Int, RequesterID)
-      .execute("AddDepartmentChange");
+      .execute("AddNewDepartmentChange");
 
     const roleResult = await pool
       .request()
       .input("JobTitleID", sql.Int, JobTitleID)
-      .input("RequesterID", sql.Int, RequesterID)
       .execute("GetRoleByJobTitle");
 
     const roleId = roleResult.recordset[0].RoleID;
@@ -92,8 +94,16 @@ const createUser = async (req, res) => {
       .request()
       .input("UserID", sql.Int, userId)
       .input("RoleID", sql.Int, roleId)
+      .input("CreatedBy", sql.Int, CreatedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddUserRole");
+
+    await pool
+      .request()
+      .input("UserID", sql.Int, userId)
+      .input("ManagerID", sql.Int,ManagerID )
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("AddNewUserHierarchy");
 
     await pool
       .request()
@@ -518,6 +528,27 @@ const getUserDetailsById = async (req, res) => {
   }
 };
 
+const getManagerUsers = async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const RequesterID = req.userId;
+
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetManagerUsers");
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.status(200).json(result.recordset);
+  } catch (err) {
+    console.error("Error al obtener detalles de usuario por ID:", err);
+    res.status(500).json({ message: "Error al obtener detalles de usuario" });
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
@@ -529,5 +560,6 @@ module.exports = {
   deactivateUser,
   deleteUser,
   importUsersFromCSV,
-  getAllUsersWithoutLoggedUser
+  getAllUsersWithoutLoggedUser,
+  getManagerUsers
 };

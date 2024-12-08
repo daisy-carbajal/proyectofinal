@@ -147,67 +147,69 @@ const getActionPlansByUserID = async (req, res) => {
 
 const updateActionPlan = async (req, res) => {
   try {
+    const { id } = req.params;
     const {
-      ActionPlanID,
-      TimePeriod,
-      FocusArea,
-      StartDate,
       EndDate,
       ActionPlanStatus,
-      Acknowledgement,
-      Summary,
-      Goal,
-      SuccessArea,
-      OpportunityArea,
-      Impact,
-      RootCauseAnalysis,
+      Strategies,
       Comments,
-      UpdatedBy,
+      Parameters,
+      Tasks,
     } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
-      .input("ActionPlanID", sql.Int, ActionPlanID)
-      .input("TimePeriod", sql.Int, TimePeriod)
-      .input("FocusArea", sql.VarChar(255), FocusArea)
-      .input("StartDate", sql.Date, StartDate)
+      .input("ActionPlanID", sql.Int, id)
       .input("EndDate", sql.Date, EndDate)
-      .input("ActionPlanStatus", sql.VarChar(50), ActionPlanStatus)
-      .input("Acknowledgement", sql.Bit, Acknowledgement)
-      .input("Summary", sql.Text, Summary)
-      .input("Goal", sql.Text, Goal)
-      .input("SuccessArea", sql.Text, SuccessArea)
-      .input("OpportunityArea", sql.Text, OpportunityArea)
-      .input("Impact", sql.Text, Impact)
-      .input("RootCauseAnalysis", sql.Text, RootCauseAnalysis)
+      .input("ActionPlanStatus", sql.NVarChar, ActionPlanStatus)
+      .input("Strategies", sql.Text, Strategies)
       .input("Comments", sql.Text, Comments)
-      .input("UpdatedBy", sql.Int, UpdatedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateActionPlan");
 
+    for (const parameter of Parameters) {
+      await pool
+        .request()
+        .input("ActionPlanID", sql.Int, id)
+        .input("ParameterID", sql.Int, parameter.ParameterID)
+        .input("GoalCalificationID", sql.Int, parameter.GoalCalificationID)
+        .input("GoalStatus", sql.NVarChar, parameter.GoalStatus)
+        .input("RequesterID", sql.Int, RequesterID)
+        .execute("UpdateActionPlanParameter");
+    }
+
+    for (const task of Tasks) {
+      await pool
+        .request()
+        .input("ActionPlanID", sql.Int, id)
+        .input("Task", sql.NVarChar, task.Task)
+        .input("FollowUpDate", sql.Date, task.FollowUpDate)
+        .input("TaskStatus", sql.NVarChar, task.TaskStatus)
+        .input("RequesterID", sql.Int, RequesterID)
+        .execute("UpdateActionPlanTask");
+    }
+
     res
       .status(200)
-      .json({ message: "Plan de acción actualizado exitosamente" });
+      .json({ message: "Plan de mejora actualizado exitosamente" });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error al actualizar el plan de acción", error });
+      .json({ message: "Error al actualizar el plan de mejora", error });
   }
 };
 
 const deactivateActionPlan = async (req, res) => {
   try {
     const { id } = req.params;
-    const { DeletedBy } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool
       .request()
       .input("ActionPlanID", sql.Int, id)
-      .input("DeletedBy", sql.Int, DeletedBy)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateActionPlan");
 
@@ -241,6 +243,79 @@ const deleteActionPlan = async (req, res) => {
   }
 };
 
+const getActionPlanWithDetailsByID = async (req, res) => {
+  try {
+    const { id } = req.params; // ID del Action Plan
+    const RequesterID = req.userId; // ID del usuario solicitante (obtenido del token o sesión)
+    const pool = await poolPromise; // Conexión al pool de la base de datos
+
+    // Llamar al stored procedure con los parámetros necesarios
+    const result = await pool
+      .request()
+      .input("ActionPlanID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetActionPlanInformationByID");
+
+    // Validar si se obtuvieron registros
+    if (result.recordset.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No se encontró ningún plan de acción con ese ID." });
+    }
+
+    // Procesar el registro devuelto (si Parameters o Tasks están en formato JSON, parsearlos)
+    const processedRecord = result.recordset.map((actionPlan) => {
+      if (actionPlan.Parameters) {
+        try {
+          if (typeof actionPlan.Parameters === "string") {
+            actionPlan.Parameters = JSON.parse(actionPlan.Parameters);
+          }
+        } catch (parseError) {
+          console.error("Error al parsear Parameters:", parseError);
+        }
+      }
+
+      if (actionPlan.Tasks) {
+        try {
+          if (typeof actionPlan.Tasks === "string") {
+            actionPlan.Tasks = JSON.parse(actionPlan.Tasks);
+          }
+        } catch (parseError) {
+          console.error("Error al parsear Tasks:", parseError);
+        }
+      }
+
+      return actionPlan;
+    });
+
+    res.status(200).json(processedRecord[0]); // Enviar solo el primer registro procesado
+  } catch (error) {
+    console.error("Error en la consulta:", error);
+    res
+      .status(500)
+      .json({ message: "Error al obtener el plan de acción", error });
+  }
+};
+
+const acknowledgeActionPlan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const RequesterID = req.userId;
+    const pool = await poolPromise;
+
+    await pool
+      .request()
+      .input("ActionPlanID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("AcknowledgeActionPlan");
+
+    res.status(200).json({ message: "Plan de Mejora aceptado exitosamente" });
+  } catch (err) {
+    console.error("Error al aceptar plan de mejora:", err);
+    res.status(500).json({ message: "Error al aceptar lplan de mejora." });
+  }
+};
+
 module.exports = {
   createActionPlan,
   getAllActionPlans,
@@ -248,4 +323,6 @@ module.exports = {
   updateActionPlan,
   deactivateActionPlan,
   deleteActionPlan,
+  getActionPlanWithDetailsByID,
+  acknowledgeActionPlan,
 };

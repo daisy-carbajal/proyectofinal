@@ -21,6 +21,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ActionPlanService } from '../../services/action-plan.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-action-plan-view',
@@ -47,44 +48,52 @@ import { ActionPlanService } from '../../services/action-plan.service';
     CalendarModule,
     InputGroupModule,
     InputGroupAddonModule,
+    ToastModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './action-plan-view.component.html',
   styleUrl: './action-plan-view.component.css'
 })
+
 export class ActionPlanViewComponent {
 
-  das: any[] = [];
-  selectedDAs: any[] = [];
+  actionPlans: any[] = [];
+  selectedActionPlans: any[] = [];
   da!: any;
   submitted: boolean = false;
 
   constructor(
     private actionPlanService: ActionPlanService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.actionPlanService.getAllActionPlans().subscribe((data: any[]) => {
       console.log('Datos de Planes de Accion:', data);
-      this.das = data;
+      this.actionPlans = data;
     });
   }
 
-  editDA(incident: any) {}
+  goToActionPlanDetails(ActionPlanID: number): void {
+    console.log('Navigating to DA ID:', ActionPlanID);
+    this.router.navigate(['/home/action-plan/details', ActionPlanID], {
+      replaceUrl: true,
+    });
+  }
 
-  deleteDA(daID: number) {
+  deleteActionPlan(actionPlanID: number) {
     const confirmed = confirm(
       '¿Estás seguro de que deseas eliminar este incident?'
     );
     if (confirmed) {
-      this.actionPlanService.deleteActionPlan(daID).subscribe(
+      this.actionPlanService.deleteActionPlan(actionPlanID).subscribe(
         (response) => {
-          console.log('ID de Acción Disciplinaria eliminado:', daID);
-          console.log('Acción Disciplinaria eliminado exitosamente', response);
+          console.log('ID de Plan de Mejora eliminado:', actionPlanID);
+          console.log('Plan de Mejora eliminado exitosamente', response);
 
-          this.das = this.das.filter((da) => da.daID !== daID);
+          this.actionPlans = this.actionPlans.filter((actionPlan) => actionPlan.actionPlanID !== actionPlanID);
 
           this.messageService.add({
             severity: 'success',
@@ -106,16 +115,16 @@ export class ActionPlanViewComponent {
     }
   }
 
-  deactivateDA(da: any) {
+  deactivateActionPlan(actionPlan: any) {
     this.confirmationService.confirm({
-      message: '¿Está seguro de borrar ' + da.Reason + '?',
+      message: '¿Está seguro de borrar plan de mejora de ' + actionPlan.Reason + '?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Acción Disciplinaria a Desactivar:' + da.daID);
+        console.log('Acción Disciplinaria a Desactivar:' + actionPlan.ActionPlanID);
 
         this.actionPlanService
-          .deactivateActionPlan(da.daID)
+          .deactivateActionPlan(actionPlan.ActionPlanID)
 
           .subscribe(() => {
             this.messageService.add({
@@ -128,5 +137,4 @@ export class ActionPlanViewComponent {
       },
     });
   }
-
 }

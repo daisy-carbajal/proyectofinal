@@ -1,4 +1,5 @@
 const { poolPromise, sql } = require("../database/db");
+const { sendNotificationEmail } = require("../services/sendNotificationEmail"); // Importa tu archivo de envío de correos
 
 const createEvaluationMaster = async (req, res) => {
   const transaction = new sql.Transaction(await poolPromise);
@@ -43,26 +44,48 @@ const createEvaluationMaster = async (req, res) => {
         .execute("AddEvaluationDetail");
     }
 
+    // Obtener el correo y las preferencias del RequesterID
+    const preferencesResult = await transaction
+      .request()
+      .input("UserID", sql.Int, RequesterID)
+      .execute("VerifyUserPreferences"); // Nuevo SP para obtener preferencias
+
+    const { Email: requesterEmail, EnableEmailNotifications, EnablePushNotifications } =
+      preferencesResult.recordset[0];
+
+    if (!requesterEmail) {
+      throw new Error("No se pudo obtener el correo del RequesterID");
+    }
+
+    // Crear mensaje para la notificación
+    const notificationMessage = `Se ha creado una nueva evaluación para el usuario con ID ${EvaluateeUserID}. Puede revisarla en el sistema.`;
+
     // Crear y guardar notificación
-    const notificationMessage = `Se ha aplicado una nueva evaluación al usuario con ID ${EvaluateeUserID}.`;
-    await transaction.request()
+    await transaction
+      .request()
       .input("RequesterID", sql.Int, RequesterID)
       .input("UserID", sql.Int, EvaluateeUserID)
       .input("Title", sql.NVarChar, "Nueva Evaluación")
       .input("Message", sql.NVarChar, notificationMessage)
       .execute("AddNotification");
 
-    // Emitir la notificación en tiempo real
-    const io = req.app.get("socketio");
-    if (!io) {
-      console.error("Socket.IO no está configurado en el servidor.");
-      return res.status(500).json({ message: "Error interno: Socket.IO no configurado." });
+    // Enviar correo solo si EnableEmailNotifications es TRUE
+    if (EnableEmailNotifications) {
+      await sendNotificationEmail(requesterEmail, notificationMessage);
+    } else {
+      console.log(`El usuario ${RequesterID} tiene deshabilitadas las notificaciones por correo.`);
     }
 
-    io.to(`user_${RequesterID}`).emit("new_notification", {
-      title: "Nueva Evaluación",
-      message: notificationMessage,
-    });
+    // Enviar notificación push solo si EnablePushNotifications es TRUE
+    const io = req.app.get("socketio");
+    if (EnablePushNotifications && io) {
+      io.to(`user_${RequesterID}`).emit("new_notification", {
+        title: "Nueva Evaluación",
+        message: notificationMessage,
+      });
+    } else {
+      console.log(`El usuario ${RequesterID} tiene deshabilitadas las notificaciones push o Socket.IO no está configurado.`);
+    }
 
     await transaction.commit();
     console.log("Transacción confirmada");
@@ -72,7 +95,6 @@ const createEvaluationMaster = async (req, res) => {
       message: "Evaluación, detalles y notificación creados exitosamente",
       evaluationMasterID: EvaluationMasterID,
     });
-
   } catch (error) {
     console.error("Error al crear la evaluación:", error);
 
@@ -279,6 +301,63 @@ const deleteEvaluationMaster = async (req, res) => {
   }
 };
 
+const updateEvaluationMaster = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { EvaluatorUserID, DateCreated, Comments, Details } = req.body;
+    const RequesterID = req.userId; // ID del usuario solicitante
+    const pool = await poolPromise;
+
+    // Actualizar EvaluationMaster
+    await pool
+      .request()
+      .input("EvaluationMasterID", sql.Int, id)
+      .input("EvaluatorUserID", sql.Int, EvaluatorUserID)
+      .input("DateCreated", sql.DateTime, DateCreated)
+      .input("Comments", sql.Text, Comments)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("UpdateEvaluationMaster");
+
+    // Actualizar los detalles de la evaluación
+    for (const detail of Details) {
+      await pool
+        .request()
+        .input("EvaluationMasterID", sql.Int, id)
+        .input("ParameterID", sql.Int, detail.ParameterID)
+        .input("CalificationID", sql.Int, detail.CalificationID)
+        .input("RequesterID", sql.Int, RequesterID)
+        .execute("UpdateEvaluationDetail");
+    }
+
+    res.status(200).json({ message: "Evaluación actualizada exitosamente" });
+  } catch (error) {
+    console.error("Error al actualizar evaluación:", error);
+    res.status(500).json({ message: "Error al actualizar evaluación", error });
+  }
+};
+
+const acknowledgeEvaluationMaster = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { Comments } = req.body;
+    const RequesterID = req.userId; // ID del usuario solicitante
+    const pool = await poolPromise;
+
+    // Actualizar EvaluationMaster
+    await pool
+      .request()
+      .input("EvaluationMasterID", sql.Int, id)
+      .input("Comments", sql.Text, Comments)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("AcknowledgeEvaluationMaster");
+
+    res.status(200).json({ message: "Evaluación aceptada exitosamente" });
+  } catch (error) {
+    console.error("Error al aceptar evaluación:", error);
+    res.status(500).json({ message: "Error al aceptar evaluación", error });
+  }
+};
+
 module.exports = {
   createEvaluationMaster,
   getAllEvaluationMaster,
@@ -288,4 +367,6 @@ module.exports = {
   getEvaluationMasterByUserID,
   deactivateEvaluationMaster,
   deleteEvaluationMaster,
+  updateEvaluationMaster,
+  acknowledgeEvaluationMaster,
 };

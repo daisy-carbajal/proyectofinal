@@ -1,0 +1,294 @@
+<div class="surface-card p-4 shadow-2 border-round mt-3">
+  <p-toast/>
+  <div class="card flex content-left gap-3 mb-3">
+    <p-button
+      label="Regresar"
+      icon="pi pi-arrow-circle-left"
+      (click)="goBackToDAs()"
+    ></p-button>
+  </div>
+  <div class="font-medium text-3xl text-700 mb-3">
+    Detalle de Acción Disciplinaria
+  </div>
+  <div class="text-500 mb-5">
+    Revisar los detalles de la acción disciplinaria.
+  </div>
+  <form>
+    <ul class="list-none p-0 m-0">
+      <li
+        class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="formgrid grid mb-2">
+          <div class="col-12 md:col-3">
+            <div class="text-500 w-6 font-medium mb-2">Empleado</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-dropdown
+                [options]="users"
+                name="employeeuser"
+                optionLabel="FullName"
+                optionValue="UserID"
+                [(ngModel)]="disciplinaryAction.UserID"
+                [filter]="true"
+                filterBy="FullName"
+                [showClear]="true"
+                (onChange)="onUserSelected(disciplinaryAction.UserID)"
+                [disabled]="true"
+                styleClass="w-full"
+                appendTo="body"
+              >
+                <ng-template pTemplate="selectedItem" let-selectedOption>
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ selectedOption?.FullName }}</div>
+                  </div>
+                </ng-template>
+                <ng-template let-user pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ user.FullName }}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="col-12 md:col-3">
+            <div class="text-500 w-6 font-medium mb-2">Puesto Laboral</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <input
+                type="text"
+                pInputText
+                id="jobTitle"
+                name="jobTitle"
+                [(ngModel)]="userDetails.JobTitle"
+                [disabled]="true"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+          <div class="col-12 md:col-3">
+            <div class="text-500 w-6 font-medium mb-2">Departamento</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <input
+                type="text"
+                pInputText
+                id="department"
+                name="department"
+                [(ngModel)]="userDetails.Department"
+                [disabled]="true"
+                required
+                class="w-full"
+              />
+            </div>
+          </div>
+          <div class="col-12 md:col-3">
+            <div class="text-500 font-medium mb-2">Fecha de Aplicación</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-calendar
+                name="date"
+                appendTo="body"
+                [showIcon]="true"
+                [(ngModel)]="disciplinaryAction.DateApplied"
+                styleClass="w-full"
+                [disabled]="true"
+              ></p-calendar>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li
+        class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="formgrid grid mb-2">
+          <div class="col-12 md:col-4">
+            <div class="text-500 w-6 font-medium mb-2">Aplicada Por</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-dropdown
+                [options]="users"
+                name="evaluatoruser"
+                optionLabel="FullName"
+                optionValue="UserID"
+                [(ngModel)]="disciplinaryAction.ReportedByUserID"
+                [filter]="true"
+                filterBy="FullName"
+                [showClear]="true"
+                [disabled]="true"
+                styleClass="w-full"
+                appendTo="body"
+              >
+                <ng-template pTemplate="selectedItem" let-selectedOption>
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ selectedOption?.FullName }}</div>
+                  </div>
+                </ng-template>
+                <ng-template let-user pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                    <div>{{ user.FullName }}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="col-12 md:col-4">
+            <div class="text-500 w-6 font-medium mb-2">Motivo</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-dropdown
+                name="reason"
+                [options]="reasons"
+                optionLabel="Description"
+                optionValue="DisciplinaryActionReasonID"
+                [(ngModel)]="disciplinaryAction.DisciplinaryActionReasonID"
+                styleClass="w-full"
+                appendTo="body"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="col-12 md:col-4">
+            <div class="text-500 font-medium mb-2">Tipo de Advertencia</div>
+            <div class="text-900 w-full md:flex-order-0 flex-order-1">
+              <p-dropdown
+                name="type"
+                [options]="warningLevels"
+                optionLabel="WarningLevel"
+                optionValue="WarningLevelID"
+                [(ngModel)]="disciplinaryAction.WarningID"
+                styleClass="w-full"
+                [disabled]="true"
+                appendTo="body"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li
+        *ngIf="disciplinaryAction.Acknowledgement; else notAcknowledged"
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 mb-2">
+          Acción Disciplinaria Firmada por: {{ userDetails.FirstName }}
+          {{ userDetails.LastName }}
+        </div>
+      </li>
+      <ng-template #notAcknowledged>
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <div class="text-500 mb-2">
+            Acción Disciplinaria sin firmar.
+          </div>
+        </li>
+      </ng-template>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 w-6 col-12 font-medium">Descripión</div>
+        <div class="text-900 w-full md:flex-order-0 flex-order-1">
+          <div class="card">
+            <p-editor
+              name="description"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="disciplinaryAction.Description"
+            />
+          </div>
+        </div>
+      </li>
+      <li
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-500 col-12 font-medium">Acciones Correctivas</div>
+        <div class="text-900 w-full md:flex-order-0 flex-order-1">
+          <div class="card">
+            <p-editor
+              name="comments"
+              [style]="{ height: '150px' }"
+              [(ngModel)]="disciplinaryAction.ActionTaken"
+            />
+          </div>
+        </div>
+      </li>
+    </ul>
+    <h4>Tareas Adicionales</h4>
+    <div
+      class="align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+    >
+      <div *ngIf="showDetalles" class="flex flex-shrink-0 mb-2">
+        <div class="text-400 col-12 md:col-6 font-medium">Tarea</div>
+        <div class="text-400 col-12 md:col-3 font-medium">
+          Fecha de Seguimiento
+        </div>
+        <div class="text-400 col-12 md:col-3 font-medium">Estado</div>
+      </div>
+      <div
+        *ngFor="
+          let task of disciplinaryAction.Tasks;
+          let i = index;
+          trackBy: trackByTask
+        "
+        class="formgrid grid mb-3"
+      >
+        <div class="field col-12 md:col-6">
+          <input
+            id="task-{{ i }}"
+            name="task-{{ i }}"
+            type="text"
+            pInputText
+            [(ngModel)]="task.Task"
+            class="w-full"
+          />
+        </div>
+        <div class="field col-12 md:col-3">
+          <p-calendar
+            id="followupdate-{{ i }}"
+            name="followupdate-{{ i }}"
+            name="FollowUpDate"
+            appendTo="body"
+            [(ngModel)]="task.FollowUpDate"
+            [showIcon]="true"
+            styleClass="w-full"
+          ></p-calendar>
+        </div>
+        <div class="field col-12 md:col-3">
+          <p-dropdown
+            id="option-{{ i }}"
+            name="option-{{ i }}"
+            [options]="options"
+            optionLabel="name"
+            optionValue="code"
+            [(ngModel)]="task.TaskStatus"
+            styleClass="w-full"
+            [showClear]="true"
+            appendTo="body"
+          >
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-items-center gap-2">
+                <i [class]="selectedOption?.icon"></i>
+                <div>{{ selectedOption?.name }}</div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="item" let-option>
+              <div class="flex align-items-center gap-2">
+                <i [class]="option.icon"></i>
+                <div>{{ option.name }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-content-end mt-3">
+      <button
+        pButton
+        label="Aceptar"
+        icon="pi pi-check-circle"
+        class="p-button-success mr-2"
+        (click)="acknowledgeDA(disciplinaryAction.DisciplinaryActionID)"
+      ></button>
+      <button
+        pButton
+        label="Actualizar"
+        icon="pi pi-refresh"
+        class="p-button-info"
+        (click)="updateDisciplinaryAction()"
+      ></button>
+    </div>
+  </form>
+  <p-confirmDialog></p-confirmDialog>
+</div>

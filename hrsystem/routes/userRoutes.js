@@ -30,6 +30,13 @@ router.get(
 );
 
 router.get(
+  "/manager",
+  verifyToken,
+  checkPermission("VIEW_USER"),
+  userController.getManagerUsers
+);
+
+router.get(
   "/details",
   checkPermission("VIEW_USER"),
   userController.getAllUserDetails

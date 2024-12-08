@@ -9,18 +9,6 @@
         (onClick)="openNew()"
       ></p-button>
     </ng-template>
-
-    <ng-template pTemplate="right">
-      <!-- <p-fileUpload
-        mode="basic"
-        accept="image/*"
-        [maxFileSize]="1000000"
-        label="Importar"
-        chooseLabel="Importar"
-        class="mr-2 inline-block"
-      />
-      <p-button severity="help" label="Export" icon="pi pi-upload" />-->
-    </ng-template>
   </p-toolbar>
 
   <p-table
@@ -67,6 +55,11 @@
             Rol <p-sortIcon field="Role"></p-sortIcon>
           </div>
         </th>
+        <th pSortableColumn="JobLevelName">
+          <div class="flex flex-shrink-0">
+            Nivel <p-sortIcon field="JobLevelName"></p-sortIcon>
+          </div>
+        </th>
         <th pSortableColumn="Status">
           <div class="flex flex-shrink-0">
             Estado <p-sortIcon field="Status"></p-sortIcon>
@@ -82,6 +75,7 @@
         <td>{{ jobTitle.Description }}</td>
         <td>{{ jobTitle.Department }}</td>
         <td>{{ jobTitle.Role }}</td>
+        <td>{{ jobTitle.JobLevelName }}</td>
         <td>
           <p-tag
             [rounded]="true"
@@ -177,6 +171,18 @@
           optionValue="RoleID"
           placeholder="Selecciona un rol"
           [(ngModel)]="jobTitle.RoleID"
+          appendTo="body"
+        >
+        </p-dropdown>
+      </div>
+      <div class="field">
+        <label for="role">Nivel de Puesto</label>
+        <p-dropdown
+          [options]="levels"
+          optionLabel="Name"
+          optionValue="JobLevelID"
+          placeholder="Selecciona un nivel"
+          [(ngModel)]="jobTitle.LevelID"
           appendTo="body"
         >
         </p-dropdown>

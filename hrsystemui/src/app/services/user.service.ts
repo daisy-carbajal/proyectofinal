@@ -31,6 +31,11 @@ export class UserService {
     return this.http.get(url, this.getHeaders());
   }
 
+  getManagerUsers(): Observable<any> {
+    const url = `${this.apiUrl}/manager`;
+    return this.http.get(url, this.getHeaders());
+  }
+
   getUserDetails(): Observable<any> {
     const url = `${this.apiUrl}/details`;
     return this.http.get(url, this.getHeaders());

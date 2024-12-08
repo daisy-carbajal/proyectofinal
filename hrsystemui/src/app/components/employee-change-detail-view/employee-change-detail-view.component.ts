@@ -46,9 +46,11 @@ export class EmployeeChangeDetailViewComponent implements OnInit {
   pendingJobTitleChangeID = 0;
   pendingDepartment = '';
   pendingDepartmentChangeID = 0;
+  pendingManagerName = '';
   changeStartDate: Date | null = null;
   pendingChange: any;
   changeReason = '';
+  managerName = '';
 
   constructor(
     private jobTitleChangeService: JobtitleChangeService,
@@ -81,6 +83,7 @@ export class EmployeeChangeDetailViewComponent implements OnInit {
           this.currentJobTitle = dataCurrent[0].JobTitleTitle;
           this.currentDepartment = dataCurrent[0].DepartmentName;
           this.employeeName = dataCurrent[0].UserName;
+          this.managerName = dataCurrent[0].ManagerName;
         }
       });
   }
@@ -98,6 +101,7 @@ export class EmployeeChangeDetailViewComponent implements OnInit {
           this.pendingDepartmentChangeID = dataPending[0].DepartmentChangeID;
           this.pendingJobTitleChangeID = dataPending[0].JobTitleChangeID;
           this.changeReason = dataPending[0].JobTitleChangeReason;
+          this.pendingManagerName = dataPending[0].ManagerName;
         }
       });
   }

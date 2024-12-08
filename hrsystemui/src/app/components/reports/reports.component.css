@@ -1,0 +1,9 @@
+.report-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  iframe {
+    display: block;
+  }

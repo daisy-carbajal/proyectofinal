@@ -43,15 +43,13 @@ const getEvaluationDetailsByEvaluationMasterID = async (req, res) => {
 
 const updateEvaluationDetail = async (req, res) => {
     try {
-        const { EvaluationDetailID, ParameterID, CalificationID, UpdatedBy } = req.body;
+        const { EvaluationDetailID, CalificationID } = req.body;
         const RequesterID = req.userId;
         const pool = await poolPromise;
 
         await pool.request()
             .input('EvaluationDetailID', sql.Int, EvaluationDetailID)
-            .input('ParameterID', sql.Int, ParameterID)
             .input('CalificationID', sql.Int, CalificationID)
-            .input('UpdatedBy', sql.Int, UpdatedBy)
             .input('RequesterID', sql.Int, RequesterID)
             .execute('UpdateEvaluationDetail');
         

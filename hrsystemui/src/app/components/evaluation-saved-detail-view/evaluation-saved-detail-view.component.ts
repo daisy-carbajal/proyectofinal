@@ -150,11 +150,6 @@ export class EvaluationSavedDetailViewComponent implements OnInit {
   }
 
   updateEvaluation() {
-    const parametersToDelete = this.evaluationSaved.Parameters.filter(
-      (param: { EvaluationParameterID: null }) =>
-        param.EvaluationParameterID === null
-    ).map((param: { ParameterID: any }) => param.ParameterID);
-
     const requestBody = {
       Name: this.evaluationSaved.EvaluationName,
       TypeID: this.evaluationSaved.EvaluationTypeID,

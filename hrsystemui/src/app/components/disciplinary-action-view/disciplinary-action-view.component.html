@@ -1,4 +1,5 @@
 <div class="surface-card p-4 shadow-2 border-round">
+  <p-toast/>
   <p-table
     #dt
     [value]="das"
@@ -13,15 +14,6 @@
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
         <h2 class="text-700 m-0">Acciones Disciplinarias</h2>
-        <!--<span class="p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                placeholder=" Search"
-              />
-            </span>-->
       </div>
     </ng-template>
 
@@ -60,8 +52,8 @@
         <td>
           <p-tag
             [rounded]="true"
-            [value]="da.Status ? 'Pendiente' : 'Revisado'"
-            [severity]="da.Status ? 'warning' : 'success'"
+            [value]="da.Acknowledgement ? 'Revisado' : 'Pendiente'"
+            [severity]="da.Acknowledgement ? 'success' : 'danger'"
           ></p-tag>
         </td>
         <td>
@@ -71,7 +63,7 @@
             [rounded]="true"
             [outlined]="true"
             severity="success"
-            (onClick)="editDA(da)"
+            (onClick)="goToDADetails(da.DisciplinaryActionID)"
           ></p-button>
           <p-button
             icon="pi pi-eye-slash"
@@ -87,7 +79,7 @@
             severity="danger"
             [rounded]="true"
             [outlined]="true"
-            (onClick)="deleteDA(da.daID)"
+            (onClick)="deleteDA(da.DisciplinaryActionID)"
           ></p-button>
         </td>
       </tr>
@@ -99,6 +91,5 @@
       </div>
     </ng-template>
   </p-table>
-
   <p-confirmDialog [style]="{ width: '500px' }" />
 </div>

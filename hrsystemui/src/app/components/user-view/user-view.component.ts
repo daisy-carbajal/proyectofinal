@@ -74,6 +74,7 @@ export class UserViewComponent implements OnInit {
   jobTitles: any[] = [];
   selectedFile: File | null = null;
   loggedUserId: number | null = null;
+  managers: any[] = [];
 
   constructor(
     private router: Router,
@@ -92,6 +93,7 @@ export class UserViewComponent implements OnInit {
     });
 
     this.loadDepartments();
+    this.loadManagers();
 
     this.loggedUserId = this.authService.getUserId();
     console.log('Logged User ID - :', this.loggedUserId);
@@ -101,6 +103,18 @@ export class UserViewComponent implements OnInit {
   onFilterGlobal(event: Event) {
     const input = event.target as HTMLInputElement;
     this.dt.filterGlobal(input.value, 'contains');
+  }
+
+  loadManagers(): void {
+    this.userService.getManagerUsers().subscribe(
+      (dataUser) => {
+        this.managers = dataUser;
+        console.log("managers:", this.managers);
+      },
+      (error) => {
+        console.error('Error al cargar managers:', error);
+      }
+    );
   }
 
   loadDepartments(): void {
@@ -152,6 +166,7 @@ export class UserViewComponent implements OnInit {
       BirthDate: '',
       DepartmentID: null,
       JobTitleID: null,
+      ManagerID: null,
       Gender: '',
       PhoneNumber: '',
       TaxID: '',

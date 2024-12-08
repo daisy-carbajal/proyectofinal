@@ -90,7 +90,8 @@ export class EmployeeChangeViewComponent implements OnInit {
             : null,
           JobTitleID: change.JobTitleID || 0,
           UserID: change.UserID || 0,
-          ChangeReason: change.JobTitleChangeReason
+          ChangeReason: change.JobTitleChangeReason,
+          ManagerName: change.ManagerName || 'No definido',
         }));
         console.log('Pending Changes:', this.pendingChanges);
       },
@@ -121,6 +122,7 @@ export class EmployeeChangeViewComponent implements OnInit {
       DepartmentChangeID: pendingChange.DepartmentChangeID,
       JobTitleChangeID: pendingChange.JobTitleChangeID,
       UserID: pendingChange.UserID,
+      HierarchyID: pendingChange.HierarchyID
     };
 
     console.log('Datos Enviados para aprobación:', JSON.stringify(infoChange));
@@ -159,6 +161,7 @@ export class EmployeeChangeViewComponent implements OnInit {
       DepartmentChangeID: pendingChange.DepartmentChangeID,
       JobTitleChangeID: pendingChange.JobTitleChangeID,
       UserID: pendingChange.UserID,
+      HierarchyID: pendingChange.HierarchyID
     };
 
     console.log('Datos Enviados para denegación:', JSON.stringify(infoChange));

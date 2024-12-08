@@ -17,6 +17,7 @@ import { RoleService } from '../../services/role.service';
 import { AuthService } from '../../services/auth.service';
 import { TagModule } from 'primeng/tag';
 import { DropdownModule } from 'primeng/dropdown';
+import { JobLevelService } from '../../services/job-level.service';
 
 @Component({
   selector: 'app-job-title-view',
@@ -36,7 +37,7 @@ import { DropdownModule } from 'primeng/dropdown';
     InputTextModule,
     FormsModule,
     InputTextareaModule,
-    DropdownModule,
+    DropdownModule
   ],
   providers: [MessageService, ConfirmationService, JobtitleService],
   styles: [
@@ -67,6 +68,8 @@ export class JobTitleViewComponent implements OnInit {
   roles: any[] = [];
   selectedRole: number | null = null;
   loggedUserId: number | null = null;
+  levels: any[] = [];
+  selectedLevel: number | null = null;
 
   constructor(
     private jobTitleService: JobtitleService,
@@ -74,7 +77,8 @@ export class JobTitleViewComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private departmentService: DepartmentService,
     private roleService: RoleService,
-    private authService: AuthService
+    private authService: AuthService,
+    private levelService: JobLevelService
   ) {}
 
   ngOnInit() {
@@ -86,6 +90,7 @@ export class JobTitleViewComponent implements OnInit {
     this.loadRoles();
     this.loggedUserId = this.authService.getUserId();
     console.log(this.loggedUserId);
+    this.loadLevels();
   }
 
   openNew() {
@@ -94,6 +99,7 @@ export class JobTitleViewComponent implements OnInit {
       Description: '',
       DepartmentID: null,
       RoleID: null,
+      LevelID: null,
       CreatedBy: this.loggedUserId,
     };
     this.submitted = false;
@@ -130,6 +136,23 @@ export class JobTitleViewComponent implements OnInit {
   onRoleSelect(event: any) {
     this.selectedRole = event.value;
     console.log('ID del Role seleccionado:', this.selectedRole);
+  }
+
+  loadLevels(): void {
+    this.levelService.getAllJobLevels().subscribe(
+      (dataLevel) => {
+        this.levels = dataLevel;
+        console.log(dataLevel);
+      },
+      (error) => {
+        console.error('Error al cargar niveles:', error);
+      }
+    );
+  }
+
+  onLevelSelected(event: any) {
+    this.selectedLevel = event.value;
+    console.log('ID del Nivel seleccionado:', this.selectedLevel);
   }
 
   deactivateJobTitle(jobTitleID: number) {
@@ -198,45 +221,6 @@ export class JobTitleViewComponent implements OnInit {
     }
   }
 
-  deleteSelectedJobTitles() {
-    this.confirmationService.confirm({
-      message: '¿Está seguro de eliminar los puestos seleccionados?',
-      header: 'Confirmar eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        const deleteRequests = this.selectedJobTitles.map((jobTitle) =>
-          this.jobTitleService.deleteJobTitle(jobTitle.JobTitleID)
-        );
-
-        Promise.all(deleteRequests).then(
-          () => {
-            this.jobtitles = this.jobtitles.filter(
-              (jobTitle) => !this.selectedJobTitles.includes(jobTitle)
-            );
-
-            this.selectedJobTitles = [];
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Puestos eliminados correctamente.',
-              life: 3000,
-            });
-          },
-          (error) => {
-            console.error('Error al eliminar puestos', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudieron eliminar algunos puestos.',
-              life: 3000,
-            });
-          }
-        );
-      },
-    });
-  }
-
   hideDialog() {
     this.jobTitleDialog = false;
     this.submitted = false;
@@ -267,6 +251,9 @@ export class JobTitleViewComponent implements OnInit {
             if (index !== -1) {
               this.jobtitles[index] = { ...this.jobTitle };
             }
+
+            this.jobTitleEditDialog = false;
+            
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',

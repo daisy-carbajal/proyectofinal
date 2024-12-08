@@ -34,6 +34,7 @@ module.exports = [
     { path: "/change-reason", route: require("./changeReasonRoutes")},
     { path: "/user-hierarchy", route: require("./userHierarchyRoutes")},
     { path: "/job-level", route: require("./jobLevelRoutes")},
-    { path: "/jobb-title-level", route: require("./jobTitleLevelRoutes")},
-    { path: "/user-preference", route: require("./userPreferencesRoutes")}
+    { path: "/job-title-level", route: require("./jobTitleLevelRoutes")},
+    { path: "/user-preference", route: require("./userPreferencesRoutes")},
+    { path: "/summary", route: require("./summaryRoutes")}
 ];

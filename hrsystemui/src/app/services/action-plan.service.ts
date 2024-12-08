@@ -35,13 +35,23 @@ export class ActionPlanService {
     return this.http.get(url, this.getHeaders());
   }
 
+  getActionPlanDetailsByID(id: number): Observable<any> {
+    const url = `${this.apiUrl}/details/${id}`;
+    return this.http.get(url, this.getHeaders());
+  }
+
   updateActionPlan(actionPlanID: number, updatedActionPlan: any): Observable<any> {
-    const url = `${this.apiUrl}/${actionPlanID}`;
+    const url = `${this.apiUrl}/u/${actionPlanID}`;
     return this.http.put(url, updatedActionPlan, this.getHeaders());
   }
 
   deactivateActionPlan(actionPlanID: number, ): Observable<any> {
-    const url = `${this.apiUrl}/deactivate/${actionPlanID}`;
+    const url = `${this.apiUrl}/d/${actionPlanID}`;
+    return this.http.patch(url, { }, this.getHeaders());
+  }
+
+  acknowledgeActionPlan(actionPlanID: number, ): Observable<any> {
+    const url = `${this.apiUrl}/a/${actionPlanID}`;
     return this.http.patch(url, { }, this.getHeaders());
   }
 

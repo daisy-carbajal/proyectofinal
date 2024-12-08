@@ -10,6 +10,8 @@ router.post("/", checkPermission("CREATE_OPTIONS"), disciplinaryActionWarningLev
 
 router.get("/", checkPermission("VIEW_OPTIONS"), disciplinaryActionWarningLevelController.getAllWarningLevels);
 
+router.get("/filtered/", checkPermission("VIEW_OPTIONS"), disciplinaryActionWarningLevelController.getWarningLevelFiltered);
+
 router.get("/:id", checkPermission("VIEW_OPTIONS"), disciplinaryActionWarningLevelController.getWarningLevelById);
 
 router.put("/u/:id", checkPermission("EDIT_OPTIONS"), disciplinaryActionWarningLevelController.updateWarningLevel);

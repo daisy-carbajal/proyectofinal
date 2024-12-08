@@ -2,7 +2,7 @@ const { poolPromise, sql } = require("../database/db");
 
 const createUserHierarchy = async (req, res) => {
   try {
-    const { UserID, ManagerID, StartDate, EndDate } = req.body;
+    const { UserID, ManagerID, StartDate } = req.body;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
@@ -11,7 +11,6 @@ const createUserHierarchy = async (req, res) => {
       .input("UserID", sql.Int, UserID)
       .input("ManagerID", sql.Int, ManagerID)
       .input("StartDate", sql.DateTime, StartDate)
-      .input("EndDate", sql.DateTime, EndDate)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddUserHierarchy");
 

@@ -80,6 +80,7 @@ export class EvaluationViewComponent {
   loggedUserId: number | null = null;
   users: any[] = [];
   userSelected: number | null = null;
+  evaluation: any = {};
 
   constructor(
     private messageService: MessageService,
@@ -91,12 +92,9 @@ export class EvaluationViewComponent {
   ) {}
 
   ngOnInit() {
-    this.evaluationService.getAllEvaluationMasterDetails().subscribe((data: any[]) => {
-      console.log('Datos de evaluaciones:', data);
-      this.evaluations = data;
-    });
     this.loggedUserId = this.authService.getUserId();
     this.loadUsers();
+    this.loadEvaluations();
   }
 
   goToEvaluationDetails(EvaluationMasterID: number): void {
@@ -118,8 +116,41 @@ export class EvaluationViewComponent {
     );
   }
 
+  loadEvaluations(): void {
+    this.evaluationService.getAllEvaluationMasterDetails().subscribe((data: any[]) => {
+      console.log('Datos de evaluaciones:', data);
+      this.evaluations = data;
+    });
+  }
+
   onUserSelected(event: any) {
     this.userSelected = event.value;
     console.log('ID del Usuario seleccionado:', this.userSelected);
+  }
+
+  deleteEvaluation(EvaluationMasterID: number) {
+    const confirmed = confirm(
+      '¿Estás seguro de que deseas eliminar esta evaluación?'
+    );
+    if (confirmed) {
+      this.evaluationService.deleteEvaluationMaster(EvaluationMasterID).subscribe(
+        (response) => {
+          console.log('ID de evaluación eliminada:', EvaluationMasterID);
+          console.log('Evaluación Eliminada exitosamente', response);
+
+          this.loadEvaluations();
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Evaluación correctamente.',
+            life: 3000,
+          });
+        },
+        (error) => {
+          console.error('Error al eliminar evaluación', error);
+        }
+      );
+    }
   }
 }

@@ -27,6 +27,7 @@ import { ChangeReasonService } from '../../services/change-reason.service';
 import { JobtitleDepartmentService } from '../../services/job-title-department.service';
 import { JobtitleChangeService } from '../../services/job-title-change.service';
 import { DepartmentChangeService } from '../../services/department-change.service';
+import { UserHierarchyService } from '../../services/user-hierarchy.service';
 
 @Component({
   selector: 'app-employee-change-record',
@@ -62,7 +63,8 @@ import { DepartmentChangeService } from '../../services/department-change.servic
     JobtitleDepartmentService,
     ChangeReasonService,
     JobtitleChangeService,
-    DepartmentChangeService
+    DepartmentChangeService,
+    UserHierarchyService
   ],
   styles: [
     `
@@ -77,7 +79,6 @@ import { DepartmentChangeService } from '../../services/department-change.servic
   styleUrls: ['./employee-change-record.component.css'],
 })
 export class EmployeeChangeRecordComponent implements OnInit {
-
   loggedUserId: number | null = null;
   selectedIncidents: any[] = [];
   incidentDialog: boolean = false;
@@ -85,16 +86,18 @@ export class EmployeeChangeRecordComponent implements OnInit {
     UserID: null,
     DepartmentID: null,
     JobPositionID: null,
+    ManagerID: null,
     StartDate: null,
     ChangeReasonID: null,
     Comments: '',
-    CreatedBy: ''
+    CreatedBy: '',
   };
   submitted: boolean = false;
   users: any[] = [];
   departments: any[] = [];
   jobTitles: any[] = [];
-  reasonOptions: any[] = []; // Opciones de razón
+  reasonOptions: any[] = [];
+  managers: any[] = [];
 
   constructor(
     private messageService: MessageService,
@@ -105,20 +108,22 @@ export class EmployeeChangeRecordComponent implements OnInit {
     private jobTitleDepartmentService: JobtitleDepartmentService,
     private changeReasonService: ChangeReasonService,
     private jobTitleChangeService: JobtitleChangeService,
-    private departmentChangeService: DepartmentChangeService
+    private departmentChangeService: DepartmentChangeService,
+    private userHierarchyService: UserHierarchyService
   ) {}
 
   ngOnInit() {
     this.loadUsers();
     this.loadDepartments();
     this.loadReasons();
+    this.loadManagers();
     this.loggedUserId = this.authService.getUserId();
   }
 
   loadUsers(): void {
     this.userService.getUsers().subscribe(
-      (dataUser ) => {
-        this.users = dataUser ;
+      (dataUser) => {
+        this.users = dataUser;
         console.log(dataUser);
       },
       (error) => {
@@ -131,7 +136,7 @@ export class EmployeeChangeRecordComponent implements OnInit {
     this.departmentService.getAllDepartments().subscribe(
       (dataDepto) => {
         this.departments = dataDepto;
-        console.log("Data de Deptos:", dataDepto);
+        console.log('Data de Deptos:', dataDepto);
       },
       (error) => {
         console.error('Error al cargar departamentos:', error);
@@ -159,61 +164,126 @@ export class EmployeeChangeRecordComponent implements OnInit {
   }
 
   loadJobTitlesByDepartment(departmentID: number): void {
-    this.jobTitleDepartmentService.getJobTitlesByDepartmentId(departmentID).subscribe(
-      (dataJobTitles) => {
-        this.jobTitles = Array.isArray(dataJobTitles) ? dataJobTitles : [dataJobTitles];
-        console.log("Puestos:", dataJobTitles);
-      },
-      (error) => {
-        console.error('Error al cargar puestos de trabajo:', error);
-        this.jobTitles = [];
-      }
-    );
-}
+    this.jobTitleDepartmentService
+      .getJobTitlesByDepartmentId(departmentID)
+      .subscribe(
+        (dataJobTitles) => {
+          this.jobTitles = Array.isArray(dataJobTitles)
+            ? dataJobTitles
+            : [dataJobTitles];
+          console.log('Puestos:', dataJobTitles);
+        },
+        (error) => {
+          console.error('Error al cargar puestos de trabajo:', error);
+          this.jobTitles = [];
+        }
+      );
+  }
 
   onUserSelected(event: any) {
     this.information.UserID = event.value;
     console.log('Usuario seleccionado:', this.information.UserID);
   }
 
+  loadManagers(): void {
+    this.userService.getManagerUsers().subscribe(
+      (dataManager) => {
+        this.managers = dataManager;
+        console.log("managers:", this.managers);
+      },
+      (error) => {
+        console.error('Error al cargar managers:', error);
+      }
+    );
+  }
+
   saveInformation() {
     const departmentChange = {
-      UserID: this.information.UserID, 
+      UserID: this.information.UserID,
       DepartmentID: this.information.DepartmentID,
       StartDate: this.information.StartDate,
       ChangeReasonID: this.information.ReasonID,
-      CreatedBy: this.loggedUserId
+      CreatedBy: this.loggedUserId,
     };
-  
+
     const jobTitleChange = {
-      UserID: this.information.UserID, 
+      UserID: this.information.UserID,
       JobTitleID: this.information.JobPositionID,
       StartDate: this.information.StartDate,
       ChangeReasonID: this.information.ReasonID,
-      CreatedBy: this.loggedUserId
+      CreatedBy: this.loggedUserId,
     };
-  
-    console.log("Datos Enviados:", JSON.stringify(departmentChange), JSON.stringify(jobTitleChange));
-  
-    this.departmentChangeService.postDepartmentChange(departmentChange).subscribe(
-      (response) => {
-        console.log('Cambio de departamento guardado:', response);
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Cambio de departamento guardado exitosamente.' });
-      },
-      (error) => {
-        console.error('Error al guardar cambio de departamento:', error);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar el cambio de departamento.' });
-      }
+
+    const userHierarchy = {
+      UserID: this.information.UserID,
+      ManagerID: this.information.ManagerID,
+      StartDate: this.information.StartDate,
+      ChangeReasonID: this.information.ReasonID,
+      CreatedBy: this.loggedUserId,
+    };
+
+    console.log(
+      'Datos Enviados:',
+      JSON.stringify(departmentChange),
+      JSON.stringify(jobTitleChange)
     );
-  
+
+    this.departmentChangeService
+      .postDepartmentChange(departmentChange)
+      .subscribe(
+        (response) => {
+          console.log('Cambio de departamento guardado:', response);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Cambio de departamento guardado exitosamente.',
+          });
+        },
+        (error) => {
+          console.error('Error al guardar cambio de departamento:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo guardar el cambio de departamento.',
+          });
+        }
+      );
+
     this.jobTitleChangeService.postJobTitleChange(jobTitleChange).subscribe(
       (response) => {
         console.log('Cambio de puesto de trabajo guardado:', response);
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Cambio de puesto de trabajo guardado exitosamente.' });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Cambio de puesto de trabajo guardado exitosamente.',
+        });
       },
       (error) => {
         console.error('Error al guardar cambio de puesto de trabajo:', error);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar el cambio de puesto de trabajo.' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo guardar el cambio de puesto de trabajo.',
+        });
+      }
+    );
+
+    this.userHierarchyService.postUserHierarchy(userHierarchy).subscribe(
+      (response) => {
+        console.log('Cambio de jefe directo guardado:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Cambio de jefe directo guardado exitosamente.',
+        });
+      },
+      (error) => {
+        console.error('Error al guardar cambio de jefe directo de trabajo:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo guardar el cambio de jefe directo de trabajo.',
+        });
       }
     );
 
@@ -228,13 +298,14 @@ export class EmployeeChangeRecordComponent implements OnInit {
   clearForm() {
     this.information = {
       UserID: null,
-      DepartmentID: null,
-      JobPositionID: null,
+      DepartmentID: '',
+      JobPositionID: '',
+      ManagerID: '',
       StartDate: null,
       ChangeReasonID: null,
       Comments: '',
     };
-  
+
     this.jobTitles = [];
   }
 }

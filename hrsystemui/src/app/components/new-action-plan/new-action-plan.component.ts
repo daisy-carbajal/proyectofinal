@@ -320,6 +320,4 @@ export class NewActionPlanComponent implements OnInit {
     this.showDetallesParameters = false;
     this.showDetallesTasks = false;
   }
-  
-
 }

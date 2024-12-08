@@ -27,19 +27,13 @@ const getCommentFeedbackByFeedbackID = async (req, res) => {
     const { id } = req.params;
     const RequesterID = req.userId;
 
-    console.log("FeedbackID recibido desde Postman:", id);
-    console.log("RequesterID recibido desde middleware:", RequesterID);
-
     const pool = await poolPromise;
-    console.log("Conexión al pool exitosa");
 
     const result = await pool
       .request()
       .input("FeedbackID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("GetCommentFeedbackByFeedbackID");
-
-    console.log("Resultado del stored procedure:", result.recordset);
 
     if (result.recordset.length === 0) {
       return res

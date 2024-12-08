@@ -63,6 +63,7 @@ export class NewDAComponent implements OnInit {
   };
   userId!: number;
 
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -88,7 +89,6 @@ export class NewDAComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.loadReasons();
-    this.loadWarningLevels();
     this.loadStatusOptions();
   }
 
@@ -111,25 +111,6 @@ export class NewDAComponent implements OnInit {
         console.error('Error al cargar usuarios:', error);
       }
     );
-  }
-
-  onUserSelected(event: any) {
-    this.userSelected = event.value;
-    this.userId = event.value;
-    console.log('ID del Usuario seleccionado:', this.userSelected);
-    this.userService
-      .getUserDetailsById(this.userId)
-      .subscribe((dataUserDetails) => {
-        console.log('Datos del usuario:', dataUserDetails);
-        this.userDetails = dataUserDetails;
-      });
-
-      if(this.userSelected === null){
-        this.userDetails = {
-          jobTile: '',
-          department: '',
-        };
-      }
   }
 
   addTask() {
@@ -162,33 +143,61 @@ export class NewDAComponent implements OnInit {
     );
   }
 
-  onReasonSelected(event: any) {
-    this.reasonSelected = event.value;
-    console.log('ID del tipo seleccionado:', this.reasonSelected);
-  }
-
-  loadWarningLevels(): void {
-    this.daWarningLevelService.getAllWarningLevels().subscribe(
+  loadWarningLevels(userId?: number, reasonId?: number): void {
+    if (!userId || !reasonId) {
+      console.warn('No se pueden cargar niveles de advertencia: UserID o ReasonID no están definidos.');
+      return; // Salir si falta alguno de los parámetros
+    }
+  
+    this.daWarningLevelService.getWarningLevelFiltered(userId, reasonId).subscribe(
       (dataWarning) => {
         console.log('Datos de advertencias:', dataWarning);
         this.warningLevels = dataWarning;
       },
       (error) => {
-        console.error('Error al cargar tipos de advertencias:', error);
+        console.error('Error al cargar niveles de advertencias:', error);
       }
     );
   }
-
-  onWarningLevelSelected(event: any) {
-    this.warningLevelSelected = event.value;
-    console.log(
-      'ID de la advertencia seleccionada:',
-      this.warningLevelSelected
-    );
+  
+  onUserSelected(event: any): void {
+    this.userSelected = event.value || null; // Asegurar que nunca sea undefined
+    console.log('ID del Usuario seleccionado:', this.userSelected);
+  
+    if (this.userSelected) {
+      this.userService.getUserDetailsById(this.userSelected).subscribe(
+        (dataUserDetails) => {
+          console.log('Datos del usuario:', dataUserDetails);
+          this.userDetails = dataUserDetails;
+        },
+        (error) => {
+          console.error('Error al cargar los detalles del usuario:', error);
+        }
+      );
+    } else {
+      this.userDetails = { jobTitle: '', department: '' };
+    }
+  
+    this.onUserOrReasonSelected();
+  }
+  
+  onReasonSelected(event: any): void {
+    this.reasonSelected = event.value || null; // Asegurar que nunca sea undefined
+    console.log('ID del tipo seleccionado:', this.reasonSelected);
+  
+    this.onUserOrReasonSelected();
+  }
+  
+  onUserOrReasonSelected(): void {
+    if (this.userSelected && this.reasonSelected) {
+      console.log('Cargando niveles de advertencia con UserID:', this.userSelected, 'y ReasonID:', this.reasonSelected);
+      this.loadWarningLevels(this.userSelected, this.reasonSelected);
+    } else {
+      console.log('Esperando selección de ambos valores: UserID y ReasonID.');
+    }
   }
 
   saveDisciplinaryAction() {
-    // Validar que todos los campos requeridos estén completos
     if (
       this.da.UserID &&
       this.da.ReportedBy &&
@@ -223,8 +232,8 @@ export class NewDAComponent implements OnInit {
             summary: 'Éxito',
             detail: 'Acción disciplinaria y tareas guardadas correctamente.',
           });
-          this.resetForm(); // Limpiar el formulario después de guardar
-          this.router.navigate(['/disciplinary-actions']); // Redirigir a la lista de acciones disciplinarias
+          this.resetForm(); 
+          this.router.navigate(['home','da']);
         },
         (error) => {
           console.error('Error al guardar la acción disciplinaria:', error);

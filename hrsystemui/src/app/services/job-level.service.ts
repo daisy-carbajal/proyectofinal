@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 })
 export class JobLevelService {
 
-  private apiUrl = 'http://localhost:3000/joblevel'; // URL base del endpoint
+  private apiUrl = 'http://localhost:3000/job-level';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -28,7 +28,7 @@ export class JobLevelService {
   }
 
   // Crear un nuevo nivel de trabajo
-  createJobLevel(jobLevel: any): Observable<any> {
+  postJobLevel(jobLevel: any): Observable<any> {
     return this.http.post(this.apiUrl, jobLevel, this.getHeaders());
   }
 

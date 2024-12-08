@@ -35,6 +35,11 @@ export class DisciplinaryActionService {
     return this.http.get(url, this.getHeaders());
   }
 
+  getDisciplinaryActionWithTasksByID(id: number): Observable<any> {
+    const url = `${this.apiUrl}/details/${id}`;
+    return this.http.get(url, this.getHeaders());
+  }
+
   updateDisciplinaryAction(disciplinaryActionId: number, updatedDisciplinaryAction: any): Observable<any> {
     const url = `${this.apiUrl}/u/${disciplinaryActionId}`;
     return this.http.put(url, updatedDisciplinaryAction, this.getHeaders());
@@ -42,6 +47,11 @@ export class DisciplinaryActionService {
 
   deactivateDisciplinaryAction(disciplinaryActionId: number): Observable<any> {
     const url = `${this.apiUrl}/d/${disciplinaryActionId}`;
+    return this.http.patch(url, {}, this.getHeaders());
+  }
+
+  acknowledgeDisciplinaryAction(disciplinaryActionId: number): Observable<any> {
+    const url = `${this.apiUrl}/a/${disciplinaryActionId}`;
     return this.http.patch(url, {}, this.getHeaders());
   }
 

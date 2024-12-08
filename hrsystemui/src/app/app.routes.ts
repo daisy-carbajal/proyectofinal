@@ -31,11 +31,13 @@ import { NewActionPlanComponent } from './components/new-action-plan/new-action-
 import { DaConfigurationComponent } from './components/da-configuration/da-configuration.component';
 import { DisciplinaryActionViewComponent } from './components/disciplinary-action-view/disciplinary-action-view.component';
 import { FeedbackViewComponent } from './components/feedback-view/feedback-view.component';
-import { FeedbackDetailViewComponent } from './components/feedback-detail-view/feedback-detail-view.component';
 import { ActionPlanViewComponent } from './components/action-plan-view/action-plan-view.component';
 import { OrganizationChartComponent } from './components/organization-chart/organization-chart.component';
 import { JobTitleConfigComponent } from './components/job-title-config/job-title-config.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ReportsComponent } from './components/reports/reports.component';
+import { DaDetailViewComponent } from './components/da-detail-view/da-detail-view.component';
+import { ActionPlanDetailViewComponent } from './components/action-plan-detail-view/action-plan-detail-view.component';
 
 export const routes: Routes = [
   {
@@ -120,7 +122,7 @@ export const routes: Routes = [
           { path: '', component: DisciplinaryActionViewComponent },
           { path: 'new', component: NewDAComponent },
           { path: 'config', component: DaConfigurationComponent },
-          //{ path: 'details/:id', component: DaDetailViewComponent },
+          { path: 'details/:id', component: DaDetailViewComponent },
         ],
       },
       {
@@ -128,19 +130,21 @@ export const routes: Routes = [
         children: [
           { path: '', component: ActionPlanViewComponent },
           { path: 'new', component: NewActionPlanComponent },
-          // { path: 'details/:id', component: ActionPlanDetailViewComponent },
+          { path: 'details/:id', component: ActionPlanDetailViewComponent },
         ],
       },
       {
         path: 'feedback',
         children: [
           { path: '', component: FeedbackViewComponent },
-          { path: ':id', component: FeedbackDetailViewComponent },
         ],
       },
       {
         path: 'settings', component: SettingsComponent
       },
+      {
+        path: 'reports', component: ReportsComponent
+      }
     ],
   },
   {

@@ -21,6 +21,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { DisciplinaryActionService } from '../../services/disciplinary-action.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-disciplinary-action-view',
@@ -70,11 +71,11 @@ export class DisciplinaryActionViewComponent {
   selectedDAs: any[] = [];
   da!: any;
   submitted: boolean = false;
-
   constructor(
     private daService: DisciplinaryActionService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -84,19 +85,24 @@ export class DisciplinaryActionViewComponent {
     });
   }
 
-  editDA(incident: any) {}
+  goToDADetails(DisciplinaryActionID: number): void {
+    console.log('Navigating to DA ID:', DisciplinaryActionID);
+    this.router.navigate(['/home/da/details', DisciplinaryActionID], {
+      replaceUrl: true,
+    });
+  }
 
-  deleteDA(daID: number) {
+  deleteDA(DisciplinaryActionID: number) {
     const confirmed = confirm(
-      '¿Estás seguro de que deseas eliminar este incident?'
+      '¿Estás seguro de que deseas eliminar este acción disciplinaria?'
     );
     if (confirmed) {
-      this.daService.deleteDisciplinaryAction(daID).subscribe(
+      this.daService.deleteDisciplinaryAction(DisciplinaryActionID).subscribe(
         (response) => {
-          console.log('ID de Acción Disciplinaria eliminado:', daID);
+          console.log('ID de Acción Disciplinaria eliminado:', DisciplinaryActionID);
           console.log('Acción Disciplinaria eliminado exitosamente', response);
 
-          this.das = this.das.filter((da) => da.daID !== daID);
+          this.das = this.das.filter((da) => da.DisciplinaryActionID !== DisciplinaryActionID);
 
           this.messageService.add({
             severity: 'success',
@@ -120,14 +126,14 @@ export class DisciplinaryActionViewComponent {
 
   deactivateDA(da: any) {
     this.confirmationService.confirm({
-      message: '¿Está seguro de borrar ' + da.Reason + '?',
+      message: '¿Está seguro de borrar acción disciplinaria de ' + da.EmployeeName + ' por la razón de ' + da.ReasonDescription + ' ?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Acción Disciplinaria a Desactivar:' + da.daID);
+        console.log('Acción Disciplinaria a Desactivar:' + da.DisciplinaryActionID);
 
         this.daService
-          .deactivateDisciplinaryAction(da.daID)
+          .deactivateDisciplinaryAction(da.DisciplinaryActionID)
 
           .subscribe(() => {
             this.messageService.add({
