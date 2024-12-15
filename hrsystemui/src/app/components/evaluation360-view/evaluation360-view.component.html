@@ -1,0 +1,253 @@
+<div class="surface-card p-4 shadow-2 border-round">
+  <p-toast />
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        severity="success"
+        label="Nueva Evaluación 360"
+        icon="pi pi-plus"
+        class="mr-2"
+        (onClick)="openNew()"
+      ></p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="evaluation360"
+    [rows]="10"
+    [paginator]="true"
+    [rowHover]="true"
+    dataKey="evaluationID"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros."
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h2 class="text-700 m-0">Evaluaciones 360</h2>
+        <!--<span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            placeholder=" Search"
+          />
+        </span>-->
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="EvaluateeName">
+          <div class="flex flex-shrink-0">
+            Empleado <p-sortIcon field="EvaluateeName"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="DateCreated">
+          <div class="flex flex-shrink-0">
+            Fecha de Evaluación <p-sortIcon field="DateCreated"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="DateToReview">
+          <div class="flex flex-shrink-0">
+            Fecha de Revisión <p-sortIcon field="DateToReview"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="AveragePonderedScore">
+          <div class="flex flex-shrink-0">
+            Nota Promedio
+            <p-sortIcon field="AveragePonderedScore"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="Status">
+            <div class="flex flex-shrink-0">
+              Estado
+              <p-sortIcon field="Status"></p-sortIcon>
+            </div>
+          </th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-evaluation360>
+      <tr>
+        <td>{{ evaluation360.EvaluateeName }}</td>
+        <td>{{ evaluation360.Evaluation360DateCreated }}</td>
+        <td>{{ evaluation360.Evaluation360DateToReview }}</td>
+        <td>{{ evaluation360.AveragePonderedScore }}</td>
+        <td>
+            <p-tag
+              [rounded]="true"
+              [value]="evaluation360.Status ? 'Revisado' : 'Pendiente'"
+              [severity]="evaluation360.Status ? 'success' : 'warning'"
+            ></p-tag>
+          </td>
+        <td>
+          <div class="flex flex-shrink-0">
+            <p-button
+              icon="pi pi-ellipsis-h"
+              class="mr-2"
+              [rounded]="true"
+              [outlined]="true"
+              severity="info"
+              (onClick)="goToEvaluation360List(evaluation360.Evaluation360ID)"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [outlined]="true"
+            ></p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        Hay un total de {{ evaluation360 ? evaluation360.length : 0 }} registros.
+      </div>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="evaluationDialog"
+    [style]="{ width: '600px' }"
+    header="Detalles de Evaluación"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="name">Empleado</label>
+        <p-dropdown
+          [options]="usersInfo"
+          name="user"
+          optionLabel="FullName"
+          optionValue="UserID"
+          [(ngModel)]="evaluation.EvaluateeUserID"
+          [filter]="true"
+          filterBy="FullName"
+          [showClear]="true"
+          placeholder="Quien es evaluado"
+          styleClass="w-full"
+          appendTo="body"
+        >
+          <ng-template pTemplate="selectedItem" let-selectedOption>
+            <div class="flex align-items-center gap-2">
+              <div>{{ selectedOption?.FullName }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-user pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ user.FullName }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </div>
+      <div class="field">
+        <label for="type">Evaluación A Aplicar</label>
+        <p-dropdown
+            [options]="evaluations"
+            name="evaluationname"
+            optionLabel="EvaluationName"
+            optionValue="EvaluationSavedID"
+            [(ngModel)]="evaluation.EvaluationSavedID"
+            [showClear]="true"
+            placeholder="Selecciona una Evaluación"
+            styleClass="w-full"
+            appendTo="body"
+          >
+          </p-dropdown>
+      </div>
+      <div class="field">
+        <label for="department">Fecha de Evaluación</label>
+        <p-calendar
+        name="date"
+        appendTo="body"
+        [showIcon]="true"
+        [(ngModel)]="evaluation.DateCreated"
+        placeholder="Fecha de Evaluación"
+        styleClass="w-full"
+      ></p-calendar>
+      </div>
+      <div class="field">
+        <label for="department">Fecha de Revisión</label>
+        <p-calendar
+        name="date"
+        appendTo="body"
+        [showIcon]="true"
+        [(ngModel)]="evaluation.DateToReview"
+        placeholder="Fecha de Revisión"
+        styleClass="w-full"
+      ></p-calendar>
+      </div>
+      <h4>Empleados Seleccionados</h4>
+      <div
+        *ngFor="let evaluator of evaluation.Evaluators; let i = index"
+        class="grid mb-3"
+      >
+        <div class="flex align-items-center py-3 px-2 flex-wrap">
+          <div class="w-full w-11 flex-order-0 flex-order-1">
+            <p-dropdown
+          [options]="usersInfo"
+          name="user"
+          optionLabel="FullName"
+          optionValue="UserID"
+          [(ngModel)]="evaluator.EvaluatorUserID"
+          [filter]="true"
+          filterBy="FullName"
+          [showClear]="true"
+          placeholder="Quien es evaluado"
+          styleClass="w-full"
+          appendTo="body"
+        >
+          <ng-template pTemplate="selectedItem" let-selectedOption>
+            <div class="flex align-items-center gap-2">
+              <div>{{ selectedOption?.FullName }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-user pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ user.FullName }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+          </div>
+          <div class="w-full w-1 flex-order-0 flex-order-1">
+            <p-button
+              (onClick)="removeUser(i)"
+              [text]="true"
+              icon="pi pi-times"
+              severity="danger"
+              size="small"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="addUser()"
+        pButton
+        label="Agregar Evaluador"
+      ></button>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="hideDialog()"
+      />
+      <p-button
+        label="Guardar"
+        icon="pi pi-check"
+        [text]="true"
+        (onClick)="saveEvaluation()"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{ width: '450px' }" />
+</div>

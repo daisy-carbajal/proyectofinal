@@ -80,6 +80,11 @@ export class UserService {
     return this.http.put(url, body, this.getHeaders());
   }
 
+  resendToken(id: number, CreatedBy: any): Observable<any> {
+    const url = `${this.apiUrl}/resend-token/${id}`;
+    return this.http.put(url, {CreatedBy}, this.getHeaders());
+  }
+
   deactivateUser(
     userId: number,
     deactivatedUser: { DeletedBy: any }

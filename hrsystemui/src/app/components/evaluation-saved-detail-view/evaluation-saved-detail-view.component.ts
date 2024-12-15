@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-evaluation-saved-detail-view',
@@ -30,6 +31,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     CommonModule,
     FormsModule,
     ConfirmDialogModule,
+    ToastModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './evaluation-saved-detail-view.component.html',
@@ -161,7 +163,6 @@ export class EvaluationSavedDetailViewComponent implements OnInit {
       ParametersToDelete: this.parametersMarkedForDeletion,
     };
 
-    // Log para verificar los datos
     console.log('Datos que se enviarán al backend:', requestBody);
 
     this.evaluationSavedService
@@ -179,11 +180,36 @@ export class EvaluationSavedDetailViewComponent implements OnInit {
           this.goBackToEvaluations();
         },
         (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo actualizar la evaluación. Intenta nuevamente.',
-          });
+          if (
+            error.error?.message?.includes(
+              'La suma total de los pesos debe ser exactamente 100.'
+            )
+          ) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error de Validación',
+              detail:
+                'La suma total de los pesos debe ser exactamente 100. Revisa los pesos de los parámetros.',
+            });
+          } else if (
+            error.error?.message?.includes(
+              'La suma total de los pesos no puede exceder 100.'
+            )
+          ) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error de Validación',
+              detail:
+                'La suma total de los pesos no puede exceder 100. Revisa los pesos de los parámetros.',
+            });
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail:
+                'No se pudo actualizar la evaluación. Intenta nuevamente.',
+            });
+          }
         }
       );
   }

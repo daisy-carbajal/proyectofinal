@@ -1,4 +1,5 @@
 const { poolPromise, sql } = require("../database/db");
+const schedule = require("node-schedule");
 const { sendNotificationEmail } = require("../services/sendNotificationEmail"); // Importa tu archivo de envío de correos
 
 const createEvaluationMaster = async (req, res) => {
@@ -10,30 +11,29 @@ const createEvaluationMaster = async (req, res) => {
       EvaluateeUserID,
       EvaluationSavedID,
       DateCreated,
+      DateToReview,
       Comments,
       Details,
     } = req.body;
 
     const RequesterID = req.userId;
 
-    // Iniciar la transacción
     await transaction.begin();
     console.log("Transacción iniciada");
 
-    // Insertar el registro en EvaluationMaster
     const result = await transaction
       .request()
       .input("EvaluatorUserID", sql.Int, EvaluatorUserID)
       .input("EvaluateeUserID", sql.Int, EvaluateeUserID)
       .input("EvaluationSavedID", sql.Int, EvaluationSavedID)
       .input("DateCreated", sql.DateTime, DateCreated)
+      .input("DateToReview", sql.DateTime, DateToReview)
       .input("Comments", sql.NVarChar, Comments)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddEvaluationMaster");
 
     const EvaluationMasterID = result.recordset[0].EvaluationMasterID;
 
-    // Insertar detalles
     for (const detail of Details) {
       await transaction
         .request()
@@ -44,53 +44,79 @@ const createEvaluationMaster = async (req, res) => {
         .execute("AddEvaluationDetail");
     }
 
-    // Obtener el correo y las preferencias del RequesterID
+    const nameResult = await transaction
+      .request()
+      .input("UserID", sql.Int, EvaluateeUserID)
+      .execute("GetUserName");
+
+    const evaluateeName = nameResult.recordset[0]?.FullName;
+
+    if (!evaluateeName) {
+      throw new Error("No se pudo obtener el nombre del EvaluateeUserID");
+    }
+
     const preferencesResult = await transaction
       .request()
-      .input("UserID", sql.Int, RequesterID)
-      .execute("VerifyUserPreferences"); // Nuevo SP para obtener preferencias
+      .input("UserID", sql.Int, EvaluateeUserID)
+      .execute("VerifyUserPreferences");
 
-    const { Email: requesterEmail, EnableEmailNotifications, EnablePushNotifications } =
-      preferencesResult.recordset[0];
+    const {
+      Email: evaluateeEmail,
+      EnableEmailNotifications,
+      EnablePushNotifications,
+    } = preferencesResult.recordset[0];
 
-    if (!requesterEmail) {
+    if (!evaluateeEmail) {
       throw new Error("No se pudo obtener el correo del RequesterID");
     }
 
-    // Crear mensaje para la notificación
-    const notificationMessage = `Se ha creado una nueva evaluación para el usuario con ID ${EvaluateeUserID}. Puede revisarla en el sistema.`;
+    const subjectMessage = "Nueva Evaluación Creada";
+    const titleMessage = "Nueva Evaluación Creada";
+    const emailNotificationMessage = `
+  ${evaluateeName}, se ha creado una nueva evaluación para usted. Puede revisarla en el sistema.<br>
+  <a href="http://localhost:4200/home/evaluation/details/${EvaluationMasterID}" target="_blank">
+    Revisar evaluación
+  </a>
+`;
+    const pushNotificationMessage = `
+  ${evaluateeName}, se ha creado una nueva evaluación para usted. Puede revisarla en el sistema.`;
 
-    // Crear y guardar notificación
     await transaction
       .request()
       .input("RequesterID", sql.Int, RequesterID)
       .input("UserID", sql.Int, EvaluateeUserID)
-      .input("Title", sql.NVarChar, "Nueva Evaluación")
-      .input("Message", sql.NVarChar, notificationMessage)
+      .input("Title", sql.NVarChar, titleMessage)
+      .input("Message", sql.NVarChar, emailNotificationMessage)
       .execute("AddNotification");
 
-    // Enviar correo solo si EnableEmailNotifications es TRUE
     if (EnableEmailNotifications) {
-      await sendNotificationEmail(requesterEmail, notificationMessage);
+      await sendNotificationEmail(
+        evaluateeEmail,
+        subjectMessage,
+        titleMessage,
+        emailNotificationMessage
+      );
     } else {
-      console.log(`El usuario ${RequesterID} tiene deshabilitadas las notificaciones por correo.`);
+      console.log(
+        `El usuario ${EvaluateeUserID} tiene deshabilitadas las notificaciones por correo.`
+      );
     }
 
-    // Enviar notificación push solo si EnablePushNotifications es TRUE
     const io = req.app.get("socketio");
     if (EnablePushNotifications && io) {
-      io.to(`user_${RequesterID}`).emit("new_notification", {
+      io.to(`user_${EvaluateeUserID}`).emit("new_notification", {
         title: "Nueva Evaluación",
-        message: notificationMessage,
+        message: pushNotificationMessage,
       });
     } else {
-      console.log(`El usuario ${RequesterID} tiene deshabilitadas las notificaciones push o Socket.IO no está configurado.`);
+      console.log(
+        `El usuario ${EvaluateeUserID} tiene deshabilitadas las notificaciones push o Socket.IO no está configurado.`
+      );
     }
 
     await transaction.commit();
     console.log("Transacción confirmada");
 
-    // Responder al cliente
     res.status(201).json({
       message: "Evaluación, detalles y notificación creados exitosamente",
       evaluationMasterID: EvaluationMasterID,
@@ -98,7 +124,6 @@ const createEvaluationMaster = async (req, res) => {
   } catch (error) {
     console.error("Error al crear la evaluación:", error);
 
-    // Revertir la transacción si ocurrió un error
     if (transaction._aborted === false) {
       await transaction.rollback();
       console.log("Transacción revertida");
@@ -261,6 +286,51 @@ const getEvaluationMasterDetailsByID = async (req, res) => {
   }
 };
 
+const getEvaluationMasterDetailsBy360ID = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const RequesterID = req.userId;
+    const pool = await poolPromise;
+
+    const result = await pool
+      .request()
+      .input("Evaluation360ID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetEvaluationMasterDetailsBy360ID");
+
+    if (result.recordset.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron evaluaciones con ese ID." });
+    }
+
+    const processedRecord = result.recordset.map((evaluation) => {
+      if (evaluation.ParametersAndCalifications) {
+        try {
+          if (typeof evaluation.ParametersAndCalifications === "string") {
+            evaluation.ParametersAndCalifications = JSON.parse(
+              evaluation.ParametersAndCalifications
+            );
+          }
+        } catch (parseError) {
+          console.error(
+            "Error al parsear ParametersAndCalifications:",
+            parseError
+          );
+        }
+      }
+      return evaluation;
+    });
+
+    res.status(200).json(processedRecord); // Enviar solo el primer registro
+  } catch (error) {
+    console.error("Error en la consulta:", error);
+    res
+      .status(500)
+      .json({ message: "Error al filtrar las evaluaciones guardadas", error });
+  }
+};
+
 const deactivateEvaluationMaster = async (req, res) => {
   try {
     const { id } = req.params;
@@ -302,25 +372,35 @@ const deleteEvaluationMaster = async (req, res) => {
 };
 
 const updateEvaluationMaster = async (req, res) => {
+  const transaction = new sql.Transaction(await poolPromise);
+
   try {
     const { id } = req.params;
-    const { EvaluatorUserID, DateCreated, Comments, Details } = req.body;
-    const RequesterID = req.userId; // ID del usuario solicitante
-    const pool = await poolPromise;
+    const {
+      EvaluationMasterID,
+      EvaluatorUserID,
+      EvaluateeUserID,
+      DateCreated,
+      DateToReview,
+      Comments,
+      Details,
+    } = req.body;
+    const RequesterID = req.userId;
 
-    // Actualizar EvaluationMaster
-    await pool
+    await transaction.begin();
+
+    await transaction
       .request()
       .input("EvaluationMasterID", sql.Int, id)
       .input("EvaluatorUserID", sql.Int, EvaluatorUserID)
       .input("DateCreated", sql.DateTime, DateCreated)
+      .input("DateToReview", sql.DateTime, DateToReview)
       .input("Comments", sql.Text, Comments)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateEvaluationMaster");
 
-    // Actualizar los detalles de la evaluación
     for (const detail of Details) {
-      await pool
+      await transaction
         .request()
         .input("EvaluationMasterID", sql.Int, id)
         .input("ParameterID", sql.Int, detail.ParameterID)
@@ -329,34 +409,242 @@ const updateEvaluationMaster = async (req, res) => {
         .execute("UpdateEvaluationDetail");
     }
 
+    const evaluationName = await transaction
+      .request()
+      .input("EvaluationMasterID", sql.Int, id)
+      .execute("GetEvaluationNameByMasterID");
+
+    const EvaluationName = evaluationName.recordset[0].EvaluationName;
+
+    const nameResult = await transaction
+      .request()
+      .input("UserID", sql.Int, EvaluateeUserID)
+      .execute("GetUserName");
+
+    const evaluateeName = nameResult.recordset[0]?.FullName;
+
+    if (!evaluateeName) {
+      throw new Error("No se pudo obtener el nombre del EvaluateeUserID");
+    }
+
+    const preferencesResult = await transaction
+      .request()
+      .input("UserID", sql.Int, EvaluateeUserID)
+      .execute("VerifyUserPreferences");
+
+    const {
+      Email: evaluateeEmail,
+      EnableEmailNotifications,
+      EnablePushNotifications,
+    } = preferencesResult.recordset[0];
+
+    if (!evaluateeEmail) {
+      throw new Error("No se pudo obtener el correo del RequesterID");
+    }
+
+    const subjectMessage = "Se actualizada Evaluación";
+    const titleMessage = "Evaluación Actualizada";
+    const emailNotificationMessage = `
+  ${evaluateeName}, se ha actualizada la evaluación de ${EvaluationName}. Puede revisarla en el sistema.<br>
+  <a href="http://localhost:4200/home/evaluation/details/${EvaluationMasterID}" target="_blank">
+    Revisar evaluación
+  </a>
+`;
+    const pushNotificationMessage = `
+  ${evaluateeName}, se ha actualizado la evaluación de ${EvaluationName}.`;
+
+    await transaction
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .input("UserID", sql.Int, EvaluateeUserID)
+      .input("Title", sql.NVarChar, "Nueva Evaluación")
+      .input("Message", sql.NVarChar, emailNotificationMessage)
+      .execute("AddNotification");
+
+    if (EnableEmailNotifications) {
+      await sendNotificationEmail(
+        evaluateeEmail,
+        subjectMessage,
+        titleMessage,
+        emailNotificationMessage
+      );
+    } else {
+      console.log(
+        `El usuario ${EvaluateeUserID} tiene deshabilitadas las notificaciones por correo.`
+      );
+    }
+
+    const io = req.app.get("socketio");
+    if (EnablePushNotifications && io) {
+      io.to(`user_${EvaluateeUserID}`).emit("new_notification", {
+        title: "Evaluación Actualizada",
+        message: pushNotificationMessage,
+      });
+    } else {
+      console.log(
+        `El usuario ${EvaluateeUserID} tiene deshabilitadas las notificaciones push o Socket.IO no está configurado.`
+      );
+    }
+
+    await transaction.commit();
+
     res.status(200).json({ message: "Evaluación actualizada exitosamente" });
   } catch (error) {
     console.error("Error al actualizar evaluación:", error);
+
+    if (transaction._aborted === false) {
+      await transaction.rollback();
+      console.log("Transacción revertida");
+    }
+
     res.status(500).json({ message: "Error al actualizar evaluación", error });
   }
 };
 
 const acknowledgeEvaluationMaster = async (req, res) => {
+  const transaction = new sql.Transaction(await poolPromise);
+
   try {
     const { id } = req.params;
-    const { Comments } = req.body;
-    const RequesterID = req.userId; // ID del usuario solicitante
-    const pool = await poolPromise;
+    const { EvaluatorUserID, Comments } = req.body;
+    const RequesterID = req.userId;
 
-    // Actualizar EvaluationMaster
-    await pool
+    await transaction.begin();
+
+    await transaction
       .request()
       .input("EvaluationMasterID", sql.Int, id)
       .input("Comments", sql.Text, Comments)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AcknowledgeEvaluationMaster");
 
+    const evaluationName = await transaction
+      .request()
+      .input("EvaluationMasterID", sql.Int, id)
+      .execute("GetEvaluationNameByMasterID");
+
+    const EvaluationName = evaluationName.recordset[0].EvaluationName;
+
+    const nameResult = await transaction
+      .request()
+      .input("UserID", sql.Int, EvaluatorUserID)
+      .execute("GetUserName");
+
+    const name = nameResult.recordset[0]?.FullName;
+
+    if (!name) {
+      throw new Error("No se pudo obtener el nombre del Evaluador");
+    }
+
+    const preferencesResult = await transaction
+      .request()
+      .input("UserID", sql.Int, EvaluatorUserID)
+      .execute("VerifyUserPreferences");
+
+    const {
+      Email: evaluateeEmail,
+      EnableEmailNotifications,
+      EnablePushNotifications,
+    } = preferencesResult.recordset[0];
+
+    if (!evaluateeEmail) {
+      throw new Error("No se pudo obtener el correo del RequesterID");
+    }
+
+    const subjectMessage = "Se aceptado el resultado de la Evaluación";
+    const titleMessage = "Evaluación Aceptada";
+    const emailNotificationMessage = `
+  ${name}, se ha aceptado la evaluación de ${EvaluationName}. Puede revisarla en el sistema.<br>
+  <a href="http://localhost:4200/home/evaluation/details/${id}" target="_blank">
+    Revisar evaluación
+  </a>
+`;
+    const pushNotificationMessage = `
+  ${name}, se ha aceptado la evaluación de ${EvaluationName}.`;
+
+    await transaction
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .input("UserID", sql.Int, EvaluatorUserID)
+      .input("Title", sql.NVarChar, "Nueva Evaluación")
+      .input("Message", sql.NVarChar, emailNotificationMessage)
+      .execute("AddNotification");
+
+    if (EnableEmailNotifications) {
+      await sendNotificationEmail(
+        evaluateeEmail,
+        subjectMessage,
+        titleMessage,
+        emailNotificationMessage
+      );
+    } else {
+      console.log(
+        `El usuario ${EvaluatorUserID} tiene deshabilitadas las notificaciones por correo.`
+      );
+    }
+
+    const io = req.app.get("socketio");
+    if (EnablePushNotifications && io) {
+      io.to(`user_${EvaluatorUserID}`).emit("new_notification", {
+        title: "Evaluación Aceptada",
+        message: pushNotificationMessage,
+      });
+    } else {
+      console.log(
+        `El usuario ${EvaluateeUserID} tiene deshabilitadas las notificaciones push o Socket.IO no está configurado.`
+      );
+    }
+
+    await transaction.commit();
+
     res.status(200).json({ message: "Evaluación aceptada exitosamente" });
   } catch (error) {
     console.error("Error al aceptar evaluación:", error);
+
+    if (transaction._aborted === false) {
+      await transaction.rollback();
+      console.log("Transacción revertida");
+    }
+
     res.status(500).json({ message: "Error al aceptar evaluación", error });
   }
 };
+
+const updateExpiredEvaluations = async (req, res) => {
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool.request().execute("UpdateExpiredEvaluations");
+
+    res.status(200).json({
+      message: "Actualización completada exitosamente.",
+      rowsAffected: result.rowsAffected,
+    });
+  } catch (error) {
+    console.error("Error al ejecutar la actualización de evaluaciones:", error);
+    res.status(500).json({
+      message: "Error al actualizar las evaluaciones.",
+      error: error.message || error,
+    });
+  }
+};
+
+schedule.scheduleJob("0 0 * * *", async () => {
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool.request().execute("UpdateExpiredEvaluations");
+
+    console.log(
+      `Actualización automática completada: ${result.rowsAffected} registros afectados.`
+    );
+  } catch (error) {
+    console.error(
+      "Error durante la actualización automática de evaluaciones:",
+      error
+    );
+  }
+});
 
 module.exports = {
   createEvaluationMaster,
@@ -364,9 +652,11 @@ module.exports = {
   getAllEvaluationMasterDetails,
   getEvaluationMasterByEvaluationID,
   getEvaluationMasterDetailsByID,
+  getEvaluationMasterDetailsBy360ID,
   getEvaluationMasterByUserID,
   deactivateEvaluationMaster,
   deleteEvaluationMaster,
   updateEvaluationMaster,
   acknowledgeEvaluationMaster,
+  updateExpiredEvaluations
 };

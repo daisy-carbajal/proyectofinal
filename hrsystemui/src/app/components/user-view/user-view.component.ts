@@ -22,6 +22,8 @@ import { Router } from '@angular/router';
 import { DepartmentService } from '../../services/department.service';
 import { JobtitleDepartmentService } from '../../services/job-title-department.service';
 import { AuthService } from '../../services/auth.service';
+import { CalendarModule } from 'primeng/calendar'; 
+
 
 @Component({
   selector: 'app-user-view',
@@ -45,7 +47,8 @@ import { AuthService } from '../../services/auth.service';
     InputTextModule,
     FormsModule,
     InputNumberModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    CalendarModule,
   ],
   providers: [MessageService, ConfirmationService, UserService],
   styles: [
@@ -61,7 +64,6 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './user-view.component.css',
 })
 export class UserViewComponent implements OnInit {
-
   @ViewChild('dt') dt: any;
 
   users: any[] = [];
@@ -88,7 +90,7 @@ export class UserViewComponent implements OnInit {
 
   ngOnInit() {
     this.userService.getUsersFiltered().subscribe((data: any[]) => {
-      console.log("Usuarios:", data);
+      console.log('Usuarios:', data);
       this.users = data;
     });
 
@@ -109,7 +111,7 @@ export class UserViewComponent implements OnInit {
     this.userService.getManagerUsers().subscribe(
       (dataUser) => {
         this.managers = dataUser;
-        console.log("managers:", this.managers);
+        console.log('managers:', this.managers);
       },
       (error) => {
         console.error('Error al cargar managers:', error);

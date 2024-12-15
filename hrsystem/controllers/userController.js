@@ -34,7 +34,7 @@ const createUser = async (req, res) => {
       JobTitleID,
       DepartmentID,
       CreatedBy,
-      ManagerID
+      ManagerID,
     } = req.body;
     const RequesterID = req.userId;
 
@@ -101,9 +101,14 @@ const createUser = async (req, res) => {
     await pool
       .request()
       .input("UserID", sql.Int, userId)
-      .input("ManagerID", sql.Int,ManagerID )
+      .input("ManagerID", sql.Int, ManagerID)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddNewUserHierarchy");
+
+    await pool
+    .request()
+    .input("UserID", sql.Int, userId)
+    .execute("AddUserPreferences");
 
     await pool
       .request()
@@ -139,6 +144,55 @@ const createUser = async (req, res) => {
   }
 };
 
+const resendToken = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { CreatedBy } = req.body;
+    const tempPassword = generateRandomPassword();
+    const hashedTempPassword = await bcrypt.hash(tempPassword, 10);
+    const token = crypto.randomBytes(32).toString("hex");
+
+    await pool
+      .request()
+      .input("UserID", sql.Int, id)
+      .input("Password", sql.NVarChar, hashedTempPassword)
+      .input("UpdatedBy", sql.Int, CreatedBy)
+      .execute("UpdateTempPassword");
+
+    const emailResult = await pool
+      .request()
+      .input("UserID", sql.Int, id)
+      .execute("GetUserEmail");
+
+    const personalEmail = emailResult.recordset[0].PersonalEmail;
+
+    await pool
+      .request()
+      .input("UserID", sql.Int, id)
+      .input("Token", sql.NVarChar, token)
+      .input(
+        "TokenExpiration",
+        sql.DateTime,
+        new Date(Date.now() + 24 * 60 * 60 * 1000)
+      )
+      .input("CreatedBy", sql.Int, CreatedBy)
+      .execute("AddUserInvitationToken");
+
+    sendInvitationEmail(personalEmail, token, tempPassword);
+
+    res
+      .status(201)
+      .json({ message: "Correo de invitación enviado nuevamente." });
+  } catch (err) {
+    {
+      return res.status(400).json({
+        message: "Error el re-enviar correo de invitación.",
+        error: err,
+      });
+    }
+  }
+};
+
 const completeRegistration = async (req, res) => {
   try {
     const { token, tempPassword, newPassword, confirmPassword } = req.body;
@@ -156,13 +210,20 @@ const completeRegistration = async (req, res) => {
     const userId = result.recordset[0].UserID;
     const storedTempPassword = result.recordset[0].TempPassword; // Asumimos que la columna existe
 
-    const isTempPasswordValid = await bcrypt.compare(tempPassword, storedTempPassword);
+    const isTempPasswordValid = await bcrypt.compare(
+      tempPassword,
+      storedTempPassword
+    );
     if (!isTempPasswordValid) {
-      return res.status(400).json({ message: "Contraseña temporal incorrecta" });
+      return res
+        .status(400)
+        .json({ message: "Contraseña temporal incorrecta" });
     }
 
     if (newPassword !== confirmPassword) {
-      return res.status(400).json({ message: "Las nuevas contraseñas no coinciden" });
+      return res
+        .status(400)
+        .json({ message: "Las nuevas contraseñas no coinciden" });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -181,14 +242,14 @@ const completeRegistration = async (req, res) => {
   }
 };
 
-
 const getAllUsers = async (req, res) => {
   try {
     const RequesterID = req.userId;
 
-    const result = await pool.request()
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("GetAllUsers");
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetAllUsers");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron usuarios" });
@@ -205,9 +266,10 @@ const getAllUsersWithoutLoggedUser = async (req, res) => {
   try {
     const RequesterID = req.userId;
 
-    const result = await pool.request()
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("GetAllUsersWithoutLoggedUser");
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetAllUsersWithoutLoggedUser");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron usuarios" });
@@ -224,9 +286,10 @@ const getAllUserDetails = async (req, res) => {
   try {
     const RequesterID = req.userId;
 
-    const result = await pool.request()
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("GetUserDetails");
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetUserDetails");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "No se encontraron usuarios" });
@@ -278,9 +341,11 @@ const deleteUser = async (req, res) => {
     const { id } = req.params;
     const RequesterID = req.userId;
 
-    await pool.request().input("UserID", sql.Int, id)
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("DeleteUser");
+    await pool
+      .request()
+      .input("UserID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("DeleteUser");
 
     res.json({ message: "Usuario eliminado exitosamente" });
   } catch (err) {
@@ -554,6 +619,7 @@ module.exports = {
   getAllUsers,
   getAllUserDetails,
   getUserDetailsById,
+  resendToken,
   completeRegistration,
   updateUser,
   updateUserField,
@@ -561,5 +627,5 @@ module.exports = {
   deleteUser,
   importUsersFromCSV,
   getAllUsersWithoutLoggedUser,
-  getManagerUsers
+  getManagerUsers,
 };

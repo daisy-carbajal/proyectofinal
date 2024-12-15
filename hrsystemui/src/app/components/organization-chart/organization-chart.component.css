@@ -4,3 +4,43 @@
     justify-content: center; /* Centrar horizontalmente el contenido */
     align-items: center; /* Centrar verticalmente el contenido */
   }
+
+  .resizable-container {
+    resize: both; /* Permite redimensionar en ambas direcciones */
+    overflow: auto; /* Asegura que el contenido sea desplazable si es más grande que el contenedor */
+    padding: 10px;
+    max-width: 100%; /* Limita el ancho máximo */
+    max-height: 100%; /* Limita la altura máxima */
+  }
+  
+  .resizable-container:hover {
+    cursor: nwse-resize; /* Cambia el cursor para indicar que es redimensionable */
+    transition: transform 0.2s ease-in-out;
+  transform-origin: center;
+  }
+  
+  /* Contenedor de controles de zoom */
+.zoom-controls {
+  display: flex;
+  justify-content: right;
+  margin-bottom: 10px;
+  gap: 5px;
+  z-index: 10; /* Asegura que los botones estén por encima */
+}
+
+/* Contenedor que permite el scroll */
+.scroll-container {
+  width: 100%;
+  height: 100%; /* Ajusta según el espacio necesario */
+  overflow: auto; /* Permite el scroll */
+  position: relative;
+}
+
+/* Contenedor para aplicar zoom */
+.zoom-container {
+  display: inline-block; /* Asegura que el zoom no se desborde */
+  transform-origin: top left; /* Fija el punto de origen del zoom */
+  transition: transform 0.2s ease-in-out; /* Efecto suave en el zoom */
+}
+
+

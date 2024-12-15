@@ -22,8 +22,9 @@ const sendInvitationEmail = async (email, token, tempPassword) => {
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <title>Complete su registro</title>
+          <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
           <style>
-            table, td, div, h1, p { font-family: Arial, sans-serif; }
+            table, td, div, h1, p { font-family: 'Lexend', sans-serif; }
             @media screen and (max-width: 530px) {
               .col-lge { max-width: 100% !important; }
             }
@@ -40,12 +41,8 @@ const sendInvitationEmail = async (email, token, tempPassword) => {
                 <td align="center" style="padding:0;">
                   <table role="presentation" style="width:94%;max-width:600px;border:none;border-spacing:0;text-align:left;">
                     <tr>
-                      <td style="padding:40px 30px 30px 30px;text-align:center;">
-                      </td>
-                    </tr>
-                    <tr>
                       <td style="padding:30px;background-color:#ffffff;">
-                        <h1 style="margin-top:0;margin-bottom:16px;font-size:26px;">¡Bienvenido!</h1>
+                        <h1 style="margin-top:0;margin-bottom:16px;font-size:26px;color:#e50d70;">¡Bienvenido!</h1>
                         <p style="margin:0;">Por favor, haga clic en el enlace a continuación para completar su registro:</p>
                         <p style="margin:0;">
                           <a href="http://localhost:4200/complete-registration?token=${token}" style="color:#e50d70;text-decoration:underline;">
@@ -68,8 +65,7 @@ const sendInvitationEmail = async (email, token, tempPassword) => {
                     </tr>
                     <tr>
                       <td style="padding:30px;text-align:center;font-size:12px;background-color:#404040;color:#cccccc;">
-                        <p style="margin:0 0 8px 0;">
-                        </p>
+                        <p style="margin:0;">El Equipo de SGHR🩷</p>
                       </td>
                     </tr>
                   </table>

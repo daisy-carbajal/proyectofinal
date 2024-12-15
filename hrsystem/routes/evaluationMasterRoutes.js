@@ -31,6 +31,12 @@ router.get(
 );
 
 router.get(
+  "/360details/:id",
+  checkPermission("VIEW_EVALUATION"),
+  evaluationMasterController.getEvaluationMasterDetailsBy360ID
+);
+
+router.get(
   "/eval/:id",
   checkPermission("VIEW_EVALUATION"),
   evaluationMasterController.getEvaluationMasterByEvaluationID
@@ -65,5 +71,7 @@ router.delete(
   checkPermission("DELETE_EVALUATION"),
   evaluationMasterController.deleteEvaluationMaster
 );
+
+router.post("/update-evaluations", evaluationMasterController.updateExpiredEvaluations);
 
 module.exports = router;

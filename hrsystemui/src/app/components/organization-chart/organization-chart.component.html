@@ -1,23 +1,29 @@
-<div class="surface-card p-4 shadow-2 border-round">
-    <p-toolbar styleClass="mb-4 gap-2">
-      <ng-template pTemplate="left">
-        <h2 class="text-700 m-0">Organigrama</h2>
-      </ng-template>
-    </p-toolbar>
-    <div class="card flex justify-content-center overflow-x-auto">
-    <p-organizationChart [value]="data" [collapsible]="true">
-      <ng-template let-node pTemplate="person">
-        <div class="p-2 text-center node-container">
-          <div class="font-bold">
-            {{ node.data.name }}
-          </div>
-          <div class="font-italic">
-            {{ node.data.title }}
-          </div>
-          <div *ngIf="node.data.manager">
-          </div>
-        </div>
-      </ng-template>
-    </p-organizationChart>
+<div class="surface-card p-4 shadow-2 border-round min-h-screen">
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <h2 class="text-700 m-0">Organigrama</h2>
+    </ng-template>
+  </p-toolbar>
+  <div class="card flex justify-content-center overflow-hidden">
+    <div class="scroll-container">
+      <div
+        class="zoom-container"
+        [style.transform]="'scale(' + zoomLevel + ')'"
+        [style.transform-origin]="'top left'"
+      >
+        <p-organizationChart [value]="data" [collapsible]="true">
+          <ng-template let-node pTemplate="person">
+            <div class="p-2 text-center node-container">
+              <div class="font-bold">{{ node.data.name }}</div>
+              <div class="font-italic">{{ node.data.title }}</div>
+            </div>
+          </ng-template>
+        </p-organizationChart>
+      </div>
     </div>
-  </div>  
+  </div>
+  <div class="zoom-controls">
+    <p-button icon="pi pi-plus" round="true" text="true" (click)="zoomIn()"></p-button>
+    <p-button icon="pi pi-minus" round="true" text="true" (click)="zoomOut()"></p-button>
+  </div>
+</div>

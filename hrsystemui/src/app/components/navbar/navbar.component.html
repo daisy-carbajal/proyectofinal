@@ -10,15 +10,19 @@
         class="p-mb-3"
         rounded="true"
         text="true"
-        label="Inicio"
         [routerLink]="['/home']"
+      ></p-button>
+      <p-button
+        icon="pi pi-bell"
+        class="p-mb-3"
+        rounded="true"
+        text="true"
       ></p-button>
       <p-button
         icon="pi pi-cog"
         class="p-mb-3"
         rounded="true"
         text="true"
-        label="Configuración"
         [routerLink]="['/home','settings']"
       ></p-button>
       <p-button
@@ -26,7 +30,6 @@
         class="p-mb-3"
         rounded="true"
         text="true"
-        label="Atajos"
         (onClick)="menu.toggle($event)"
       ></p-button>
     </ng-template>

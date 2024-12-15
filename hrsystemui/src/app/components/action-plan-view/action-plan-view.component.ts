@@ -132,6 +132,7 @@ export class ActionPlanViewComponent {
               summary: 'Successful',
               detail: 'Acción Disciplinaria Borrada.',
               life: 3000,
+              sticky: true
             });
           });
       },

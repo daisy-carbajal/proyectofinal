@@ -19,6 +19,7 @@ import { MessageService } from 'primeng/api';
 import { EvaluationParameterService } from '../../services/evaluation-parameter.service';
 import { EvaluationCalificationService } from '../../services/evaluation-calification.service';
 import { EvaluationMasterService } from '../../services/evaluation-master.service';
+import { ToastModule } from 'primeng/toast';
 
 interface Evaluation {
   EvaluationID?: number;
@@ -47,6 +48,7 @@ interface Parameter {
     EditorModule,
     CalendarModule,
     DropdownModule,
+    ToastModule
   ],
   providers: [UserService, MessageService],
   templateUrl: './new-evaluation.component.html',
@@ -64,7 +66,8 @@ export class NewEvaluationComponent implements OnInit {
   dropdownClass: string = '';
   selectedEvaluateeUserID: number | null = null; 
   selectedEvaluationSavedID: number | null = null; 
-  selectedDate: Date | null = null; 
+  dateCreated: Date | null = null; 
+  dateToReview: Date | null = null;
   editorContent: string = ''; 
   showAreasAEvaluar: boolean = false;
   evaluatorUserID: number | null = null;
@@ -175,7 +178,7 @@ export class NewEvaluationComponent implements OnInit {
 
   saveEvaluation(): void {
     // Verifica que los campos requeridos estén completos
-    if (!this.evaluatorUserID || !this.evaluateeUserID || !this.selectedEvaluationSavedID || !this.selectedDate) {
+    if (!this.evaluatorUserID || !this.evaluateeUserID || !this.selectedEvaluationSavedID || !this.dateCreated || !this.dateToReview) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa todos los campos requeridos.' });
       return;
     }
@@ -186,21 +189,23 @@ export class NewEvaluationComponent implements OnInit {
       CalificationID: parameter.CalificationID // Asegúrate de que esta propiedad esté correctamente definida
     })) || [];
 
-    const formattedDate = this.selectedDate?.toISOString();
+    const formattedDateCreated = this.dateCreated?.toISOString();
+
+    const formattedDateToReview = this.dateToReview?.toISOString();
   
     // Estructura los datos correctamente para enviarlos al backend
     const evaluationMaster = {
       EvaluatorUserID: this.evaluatorUserID,
       EvaluateeUserID: this.evaluateeUserID,
       EvaluationSavedID: this.selectedEvaluationSavedID,
-      DateCreated: formattedDate,
+      DateCreated: formattedDateCreated,
+      DateToReview: formattedDateToReview,
       Comments: this.editorContent,
       Details: details
     };
 
     console.log("Datos Enviados:", evaluationMaster);
   
-    // Enviar la evaluación al backend
     this.evaluationService.postEvaluationMaster(evaluationMaster)
       .subscribe(
         (response) => {
@@ -217,7 +222,8 @@ export class NewEvaluationComponent implements OnInit {
     this.evaluatorUserID = null;
     this.evaluateeUserID = null;
     this.selectedEvaluationSavedID = null;
-    this.selectedDate = null;
+    this.dateCreated = null;
+    this.dateToReview = null;
     this.editorContent = ''; 
     this.evaluationDetails = [];
     this.evaluation = null;

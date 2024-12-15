@@ -48,13 +48,13 @@ router.get(
   userController.getUserDetailsById
 );
 
-router.put("/u/:id", checkPermission("EDIT_USER"), userController.updateUser);
-
-router.patch(
+router.put(
   "/user-detail/:id",
   checkPermission("EDIT_USER"),
   userController.updateUserField
 );
+
+router.put("/resend-token/:id", userController.resendToken);
 
 router.patch(
   "/d/:id",

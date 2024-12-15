@@ -47,9 +47,14 @@
             Fecha <p-sortIcon field="DateCreated"></p-sortIcon>
           </div>
         </th>
-        <th pSortableColumn="DateReviewed">
+        <th pSortableColumn="DateToReview">
           <div class="flex flex-shrink-0">
             Revisión <p-sortIcon field="DateReviewed"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="Status">
+          <div class="flex flex-shrink-0">
+            Estado <p-sortIcon field="Status"></p-sortIcon>
           </div>
         </th>
         <th pSortableColumn="TotalPonderedScore">
@@ -72,13 +77,20 @@
         <td>{{ evaluation.EvaluateeName }}</td>
         <td>{{ evaluation.EvaluatorName }}</td>
         <td>{{ evaluation.DateCreated | date : "yyyy-MM-dd" }}</td>
-        <td>{{ evaluation.DateReviewed | date : "yyyy-MM-dd" }}</td>
+        <td>{{ evaluation.DateToReview | date : "yyyy-MM-dd" }}</td>
         <td>{{ evaluation.TotalPonderedScore }} / 5</td>
         <td>
           <p-tag
             [rounded]="true"
             [value]="evaluation.Acknowledged ? 'Revisado' : 'Pendiente'"
             [severity]="evaluation.Acknowledged ? 'success' : 'warning'"
+          ></p-tag>
+        </td>
+        <td>
+          <p-tag
+            [rounded]="true"
+            [value]="evaluation.Status ? 'En Curso' : 'Atrasada'"
+            [severity]="evaluation.Status ? 'info' : 'danger'"
           ></p-tag>
         </td>
         <td>

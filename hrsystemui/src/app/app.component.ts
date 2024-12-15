@@ -7,7 +7,8 @@ import { RouterOutlet } from '@angular/router';
 import { RippleModule } from 'primeng/ripple';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd, Event  } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -16,8 +17,13 @@ import { Router } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-
 export class AppComponent implements OnInit {
+  private excludedRoutes = [
+    '/reset-password',
+    '/confirm-email',
+    '/complete-registration',
+  ]; // Lista de rutas excluidas
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private primengConfig: PrimeNGConfig,
@@ -29,26 +35,50 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.primengConfig.ripple = true;
     this.themeService.initializeTheme();
-  
+
     if (isPlatformBrowser(this.platformId)) {
-      this.authService.validateSession().subscribe({
-        next: (response) => {
-          if (response.valid) {
-            console.log('Usuario sigue logueado:', response.user);
-            this.router.navigate(['/home']);
-          } else {
-            console.log('Sesión no válida. Redirigiendo al login...');
-            this.router.navigate(['/login']);
+      this.router.events
+        .pipe(
+          filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd)
+        )
+        .subscribe((event: NavigationEnd) => {
+          const currentRoute = event.urlAfterRedirects;
+
+          if (this.isExcludedRoute(currentRoute)) {
+            console.log(`Ruta excluida: ${currentRoute}. No se valida la sesión.`);
+            return;
           }
-        },
-        error: () => {
-          console.log('Error al validar la sesión. Redirigiendo al login...');
-          this.router.navigate(['/login']);
-        },
-      });
+
+          this.validateSession(currentRoute);
+        });
     } else {
       console.log('Renderización del servidor, saltando validación de sesión.');
     }
   }
-  
+
+  private isExcludedRoute(route: string): boolean {
+    return this.excludedRoutes.some((excludedRoute) => route.startsWith(excludedRoute));
+  }
+
+  private validateSession(currentRoute: string) {
+    this.authService.validateSession().subscribe({
+      next: (response) => {
+        if (response.valid) {
+          console.log('Usuario sigue logueado:', response.user);
+
+          // Solo redirige al home si el usuario está en el login
+          if (currentRoute === '/login') {
+            this.router.navigate(['/home']);
+          }
+        } else {
+          console.log('Sesión no válida. Redirigiendo al login...');
+          this.router.navigate(['/login']);
+        }
+      },
+      error: () => {
+        console.log('Error al validar la sesión. Redirigiendo al login...');
+        this.router.navigate(['/login']);
+      },
+    });
+  }
 }

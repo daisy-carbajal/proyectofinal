@@ -41,6 +41,8 @@ export class NotificationComponent implements OnInit, OnDestroy {
         severity: 'info',
         summary: data.title,
         detail: data.message,
+        life: 5000,
+        sticky: true
       });
     });
   }

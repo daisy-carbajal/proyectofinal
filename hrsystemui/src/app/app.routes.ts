@@ -38,6 +38,9 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { DaDetailViewComponent } from './components/da-detail-view/da-detail-view.component';
 import { ActionPlanDetailViewComponent } from './components/action-plan-detail-view/action-plan-detail-view.component';
+import { Evaluation360ViewComponent } from './components/evaluation360-view/evaluation360-view.component';
+import { Evaluation360RecordViewComponent } from './components/evaluation360-record-view/evaluation360-record-view.component';
+import { Evaluation360DetailViewComponent } from './components/evaluation360-detail-view/evaluation360-detail-view.component';
 
 export const routes: Routes = [
   {
@@ -109,6 +112,14 @@ export const routes: Routes = [
           { path: 'config', component: EvaluationConfigurationComponent },
           { path: 'records', component: EvaluationViewComponent },
           { path: 'new', component: NewEvaluationComponent },
+          {
+            path: 'eval360',
+            children: [
+              { path: '', component: Evaluation360ViewComponent },
+              { path: 'list/:id', component: EvaluationViewComponent },
+              { path: 'records/:id', component: EvaluationRecordDetailEditComponent },
+            ],
+          },
           { path: 'saved/:id', component: EvaluationSavedDetailViewComponent },
           {
             path: 'details/:id',
@@ -135,16 +146,16 @@ export const routes: Routes = [
       },
       {
         path: 'feedback',
-        children: [
-          { path: '', component: FeedbackViewComponent },
-        ],
+        children: [{ path: '', component: FeedbackViewComponent }],
       },
       {
-        path: 'settings', component: SettingsComponent
+        path: 'settings',
+        component: SettingsComponent,
       },
       {
-        path: 'reports', component: ReportsComponent
-      }
+        path: 'reports',
+        component: ReportsComponent,
+      },
     ],
   },
   {

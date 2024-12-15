@@ -132,4 +132,8 @@ export class SettingsComponent implements OnInit {
     this.logout();
     this.router.navigate(['/confirm-email'], { replaceUrl: true });
   }
+
+  goBackToHome(): void {
+    this.router.navigate(['/home'], { replaceUrl: true });
+  }
 }

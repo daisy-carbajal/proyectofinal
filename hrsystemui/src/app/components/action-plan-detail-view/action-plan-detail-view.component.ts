@@ -311,6 +311,7 @@ export class ActionPlanDetailViewComponent implements OnInit {
             summary: 'Éxito',
             detail: 'Plan de Acción actualizado correctamente.',
             life: 3000,
+            sticky: true
           });
           this.router.navigate(['/home/action-plan'], { replaceUrl: true });
         },
@@ -322,6 +323,7 @@ export class ActionPlanDetailViewComponent implements OnInit {
             detail:
               'No se pudo actualizar el plan de mejora. Intenta nuevamente.',
             life: 3000,
+            sticky: true
           });
         }
       );
@@ -348,6 +350,7 @@ export class ActionPlanDetailViewComponent implements OnInit {
               summary: 'Éxito',
               detail: 'Plan de Mejora aceptado correctamente.',
               life: 3000,
+              sticky: true
             });
           },
           (error) => {
@@ -357,6 +360,7 @@ export class ActionPlanDetailViewComponent implements OnInit {
               summary: 'Error',
               detail: 'No se pudo aceptar plan de mejora.',
               life: 3000,
+              sticky: true
             });
           }
         );

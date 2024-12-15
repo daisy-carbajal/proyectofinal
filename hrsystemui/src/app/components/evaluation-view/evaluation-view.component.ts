@@ -24,12 +24,13 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { RouterModule } from '@angular/router';
 import { EvaluationMasterService } from '../../services/evaluation-master.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-evaluation-view',
   standalone: true,
-  imports: [TableModule,
+  imports: [
+    TableModule,
     DialogModule,
     RippleModule,
     ButtonModule,
@@ -50,7 +51,7 @@ import { Router } from '@angular/router';
     CalendarModule,
     InputGroupModule,
     InputGroupAddonModule,
-    RouterModule
+    RouterModule,
   ],
   providers: [
     MessageService,
@@ -68,7 +69,7 @@ import { Router } from '@angular/router';
     `,
   ],
   templateUrl: './evaluation-view.component.html',
-  styleUrl: './evaluation-view.component.css'
+  styleUrl: './evaluation-view.component.css',
 })
 export class EvaluationViewComponent {
   filterGlobal(arg0: EventTarget | null) {
@@ -76,11 +77,13 @@ export class EvaluationViewComponent {
   }
 
   evaluations: any[] = [];
+  evaluations360: any[] = [];
   selectedEvaluations: any[] = [];
   loggedUserId: number | null = null;
   users: any[] = [];
   userSelected: number | null = null;
   evaluation: any = {};
+  evaluationMasterID: any;
 
   constructor(
     private messageService: MessageService,
@@ -88,13 +91,27 @@ export class EvaluationViewComponent {
     private authService: AuthService,
     private userService: UserService,
     private evaluationService: EvaluationMasterService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.loggedUserId = this.authService.getUserId();
+
+    // Verificar si hay un ID en la URL
+    this.route.paramMap.subscribe((params) => {
+      const evaluation360ID = params.get('id'); // Extrae el ID desde la URL
+      if (evaluation360ID) {
+        // Si hay un ID, carga las evaluaciones 360 específicas
+        this.loadEvaluation360(+evaluation360ID); // Convierte el ID a número
+      } else {
+        // Si no hay un ID, carga todas las evaluaciones
+        this.loadEvaluations();
+      }
+    });
+
+    // Cargar usuarios
     this.loadUsers();
-    this.loadEvaluations();
   }
 
   goToEvaluationDetails(EvaluationMasterID: number): void {
@@ -117,10 +134,21 @@ export class EvaluationViewComponent {
   }
 
   loadEvaluations(): void {
-    this.evaluationService.getAllEvaluationMasterDetails().subscribe((data: any[]) => {
-      console.log('Datos de evaluaciones:', data);
-      this.evaluations = data;
-    });
+    this.evaluationService
+      .getAllEvaluationMasterDetails()
+      .subscribe((data: any[]) => {
+        console.log('Datos de evaluaciones:', data);
+        this.evaluations = data;
+      });
+  }
+
+  loadEvaluation360(Evaluation360ID: number) {
+    this.evaluationService
+      .getEvaluationMasterDetailsBy360ID(Evaluation360ID)
+      .subscribe((dataEval360: any[]) => {
+        console.log('Datos de evaluaciones 360:', dataEval360);
+        this.evaluations = dataEval360;
+      });
   }
 
   onUserSelected(event: any) {
@@ -133,24 +161,26 @@ export class EvaluationViewComponent {
       '¿Estás seguro de que deseas eliminar esta evaluación?'
     );
     if (confirmed) {
-      this.evaluationService.deleteEvaluationMaster(EvaluationMasterID).subscribe(
-        (response) => {
-          console.log('ID de evaluación eliminada:', EvaluationMasterID);
-          console.log('Evaluación Eliminada exitosamente', response);
+      this.evaluationService
+        .deleteEvaluationMaster(EvaluationMasterID)
+        .subscribe(
+          (response) => {
+            console.log('ID de evaluación eliminada:', EvaluationMasterID);
+            console.log('Evaluación Eliminada exitosamente', response);
 
-          this.loadEvaluations();
+            this.loadEvaluations();
 
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Evaluación correctamente.',
-            life: 3000,
-          });
-        },
-        (error) => {
-          console.error('Error al eliminar evaluación', error);
-        }
-      );
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Evaluación correctamente.',
+              life: 3000,
+            });
+          },
+          (error) => {
+            console.error('Error al eliminar evaluación', error);
+          }
+        );
     }
   }
 }

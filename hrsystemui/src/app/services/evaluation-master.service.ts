@@ -45,6 +45,11 @@ export class EvaluationMasterService {
     return this.http.get(url, this.getHeaders());
   }
 
+  getEvaluationMasterDetailsBy360ID(evaluation360ID: number): Observable<any> {
+    const url = `${this.apiUrl}/360details/${evaluation360ID}`;
+    return this.http.get(url, this.getHeaders());
+  }
+
   getEvaluationMasterByUserID(userID: number): Observable<any> {
     const url = `${this.apiUrl}/user/${userID}`;
     return this.http.get(url, this.getHeaders());
@@ -53,6 +58,11 @@ export class EvaluationMasterService {
   updateEvaluationMaster(id: number, updatedEvaluation: any): Observable<any> {
     const url = `${this.apiUrl}/u/${id}`;
     return this.http.put(url, updatedEvaluation, this.getHeaders());
+  }
+
+  updateExpiredEvaluations(): Observable<any> {
+    const url = `${this.apiUrl}/update-expired`;
+    return this.http.post(url, {}, this.getHeaders());
   }
 
   acknowledgeEvaluationMaster(id: number, updatedEvaluation: any): Observable<any> {

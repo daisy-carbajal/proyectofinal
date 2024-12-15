@@ -3,12 +3,21 @@ const http = require('http');
 const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
+const cors = require("cors");
+
 require('dotenv').config();
+
+const corsOptions = {
+  origin: "http://localhost:4200",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 const io = new Server(server, {
   cors: {
-      origin: '*', // Cambia esto según tu configuración
-      methods: ['GET', 'POST'],
+    origin: corsOptions.origin,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   },
 });
 
@@ -25,22 +34,13 @@ io.on('connection', (socket) => {
 
   socket.on('register_user', (userId) => {
     console.log(`Usuario registrado para notificaciones: ${userId}`);
-    socket.join(`user_${userId}`); // Une al usuario a una sala específica
+    socket.join(`user_${userId}`);
   });
 
   socket.on('disconnect', () => {
     console.log('Usuario desconectado:', socket.id);
   });
 });
-
-const cors = require("cors");
-
-app.use(
-  cors({
-    origin: "http://localhost:4200",
-    credentials: true,
-  })
-);
 
 const routes = require("./routes");
 

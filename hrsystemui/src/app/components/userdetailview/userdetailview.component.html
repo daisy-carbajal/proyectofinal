@@ -1,10 +1,12 @@
 <div class="surface-card p-4 shadow-2 border-round mt-3">
+  <p-toast positon="top-right"/>
   <div class="card flex content-left gap-3 mb-3">
     <p-button label="Regresar" icon="pi pi-arrow-circle-left" (onClick)="goBackToUsers()" />
   </div>
   <div class="card flex content-left gap-3 mb-2">
   <div class="font-medium text-3xl text-700 mb-3">{{ employeeName }}</div>
   <p-button label="Actualizar Rol" icon="pi pi-pencil" [text]="true" severity="info" (onClick)="editUserRole({ RoleID: roleID })" />
+  <p-button *ngIf="!isPasswordSet" label="Reenviar Token" icon="pi pi-replay" [text]="true" severity="help" (onClick)="resendToken(userId)"/>
 </div>
   <div class="text-500 mb-5">
     {{ workEmail }} | {{ jobTitle }} | {{ department }} | {{ role }}

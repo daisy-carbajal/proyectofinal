@@ -1,4 +1,5 @@
 <div class="surface-card p-4 shadow-2 border-round">
+  <p-toast/>
   <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
       <p-button
@@ -133,8 +134,8 @@
         *ngFor="let parameter of evaluation.Parameters; let i = index"
         class="grid mb-3"
       >
-        <div class="flex align-items-center flex-wrap">
-          <div class="col-8">
+        <div class="flex align-items-center py-3 px-2 flex-wrap">
+          <div class="w-full md:w-8 md:flex-order-0 flex-order-1">
             <p-dropdown
               [options]="getFilteredParameters(i)"
               optionLabel="Name"
@@ -145,7 +146,7 @@
               appendTo="body"
             ></p-dropdown>
           </div>
-          <div class="col-3">
+          <div class="w-full md:w-3 md:flex-order-0 flex-order-1">
             <input
               type="number"
               pInputText
@@ -154,7 +155,7 @@
               placeholder="Peso"
             />
           </div>
-          <div class="col-1">
+          <div class="w-full md:w-1 md:flex-order-0 flex-order-1">
             <p-button
               (onClick)="removeParameter(i)"
               [text]="true"

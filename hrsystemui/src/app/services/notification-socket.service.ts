@@ -8,7 +8,13 @@ export class NotificationSocketService {
   private socket: Socket;
 
   constructor() {
-    this.socket = io('http://localhost:3000'); // Cambia esto si usas un dominio o puerto diferente
+    this.socket = io('http://localhost:3000', {
+      transports: ['websocket'],
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 2000,
+    });
   }
 
   registerUser(userId: number) {
@@ -20,6 +26,9 @@ export class NotificationSocketService {
   }
 
   disconnect() {
-    this.socket.disconnect();
+    if (this.socket) {
+      this.socket.off('new_notification'); // Remueve el listener
+      this.socket.disconnect();
+    }
   }
 }

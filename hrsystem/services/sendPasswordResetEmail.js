@@ -22,8 +22,9 @@ const sendPasswordResetEmail = async (email, resetLink, tempPassword) => {
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <title>Restablecimiento de Contraseña</title>
+          <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
           <style>
-            table, td, div, h1, p { font-family: Arial, sans-serif; }
+            table, td, div, h1, p { font-family: 'Lexend', sans-serif; }
             @media screen and (max-width: 530px) {
               .col-lge { max-width: 100% !important; }
             }
@@ -45,12 +46,12 @@ const sendPasswordResetEmail = async (email, resetLink, tempPassword) => {
                     </tr>
                     <tr>
                       <td style="padding:30px;background-color:#ffffff;">
-                        <h1 style="margin-top:0;margin-bottom:16px;font-size:26px;color:#06ccb5;">Restablecimiento de Contraseña</h1>
+                        <h1 style="margin-top:0;margin-bottom:16px;font-size:26px;color:#3eb01d;">Restablecimiento de Contraseña</h1>
                         <p style="margin:0;">Hemos recibido una solicitud para restablecer su contraseña. Use la siguiente contraseña temporal para iniciar sesión y restablecer su contraseña:</p>
-                        <p style="font-size:18px; font-weight:bold; color:#06ccb5;">${tempPassword}</p>
+                        <p style="font-size:18px; font-weight:bold; color:#3eb01d;">${tempPassword}</p>
                         <p>Si no hizo esta solicitud, ignore este mensaje. De lo contrario, haga clic en el enlace a continuación para establecer una nueva contraseña:</p>
                         <p style="margin:0;">
-                          <a href="${resetLink}" style="color:#06ccb5;text-decoration:underline;font-weight:bold;">
+                          <a href="${resetLink}" style="color:#3eb01d;text-decoration:underline;font-weight:bold;">
                             Restablecer Contraseña
                           </a>
                         </p>
@@ -68,7 +69,7 @@ const sendPasswordResetEmail = async (email, resetLink, tempPassword) => {
                     </tr>
                     <tr>
                       <td style="padding:30px;text-align:center;font-size:12px;background-color:#404040;color:#cccccc;">
-                        <p style="margin:0 0 8px 0;">
+                        <p style="margin:0;">El Equipo de SGHR💚</p>
                         </p>
                       </td>
                     </tr>

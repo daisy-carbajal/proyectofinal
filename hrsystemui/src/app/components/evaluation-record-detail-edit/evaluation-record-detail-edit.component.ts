@@ -64,7 +64,8 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
   dropdownClass: string = '';
   selectedEvaluateeUserID: number | null = null;
   selectedEvaluationSavedID: number | null = null;
-  selectedDate: Date | null = null;
+  dateCreated: Date | null = null;
+  dateToReview: Date | null = null;
   editorContent: string = '';
   showAreasAEvaluar: boolean = false;
   evaluatorUserID: number | null = null;
@@ -135,19 +136,19 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
       .subscribe(
         (dataEval) => {
           console.log('Evaluación con Detalle:', dataEval);
-          this.evaluationInfo = { ...dataEval }; // Copiamos los datos de la evaluación
-          this.evaluationDetails = dataEval.ParametersAndCalifications || []; // Asignamos los parámetros y calificaciones
+          this.evaluationInfo = { ...dataEval };
+          this.evaluationDetails = dataEval.ParametersAndCalifications || [];
           if (this.evaluationInfo.DateCreated) {
             this.evaluationInfo.DateCreated = new Date(
               this.evaluationInfo.DateCreated
             );
           }
-          if (this.evaluationInfo.DateReviewed) {
-            this.evaluationInfo.DateReviewed = new Date(
-              this.evaluationInfo.DateReviewed
+          if (this.evaluationInfo.DateToReview) {
+            this.evaluationInfo.DateToReview = new Date(
+              this.evaluationInfo.DateToReview
             );
           }
-          // Activa la vista de parámetros si existen
+
           if (this.evaluationDetails.length > 0) {
             this.showAreasAEvaluar = this.evaluationDetails.length > 0;
             this.cdr.detectChanges();
@@ -264,7 +265,6 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
   updateEvaluationMaster() {
     console.log('Se llamó a la función updateEvaluationMaster');
   
-    // Verifica que evaluationInfo tenga datos válidos antes de continuar
     if (!this.evaluationInfo) {
       console.error('No hay información de evaluación para actualizar.');
       this.messageService.add({
@@ -275,7 +275,6 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
       return;
     }
   
-    // Construir los detalles de la evaluación
     const details = Array.isArray(this.evaluationInfo.ParametersAndCalifications)
       ? this.evaluationInfo.ParametersAndCalifications.map((parameter: any) => ({
           EvaluationDetailID: parameter.EvaluationDetailID || null,
@@ -284,7 +283,6 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
         }))
       : [];
   
-    // Validar detalles
     if (details.length === 0) {
       console.error('No se encontraron detalles para enviar.');
       this.messageService.add({
@@ -295,14 +293,14 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
       return;
     }
   
-    // Formatear fecha
     const formattedDate = this.evaluationInfo.DateCreated
       ? new Date(this.evaluationInfo.DateCreated).toISOString()
       : null;
   
-    // Construir el cuerpo de la solicitud
     const requestBody = {
+      EvaluationMasterID: this.evaluationInfo.EvaluationMasterID,
       EvaluatorUserID: this.evaluationInfo.EvaluatorUserID,
+      EvaluateeUserID: this.evaluationInfo.EvaluateeUserID,
       DateCreated: formattedDate,
       Comments: this.evaluationInfo.Comments || '',
       Details: details,
@@ -335,6 +333,7 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
 
   acknowledgeEvaluationMaster() {
     const requestBody = {
+      EvaluatorUserID: this.evaluationInfo.EvaluatorUserID,
       Comments: this.evaluationInfo.Comments || ''
     };
 

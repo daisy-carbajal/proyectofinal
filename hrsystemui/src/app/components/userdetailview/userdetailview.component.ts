@@ -14,8 +14,10 @@ import { DialogModule } from 'primeng/dialog';
 import { RoleService } from '../../services/role.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserRoleService } from '../../services/user-role.service';
+import { AuthService } from '../../services/auth.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-userdetailview',
@@ -32,9 +34,10 @@ import { UserRoleService } from '../../services/user-role.service';
     InputIconModule,
     DialogModule,
     DropdownModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    ToastModule
   ],
-  providers: [ConfirmationService, UserService],
+  providers: [ConfirmationService, UserService, AuthService, MessageService],
   templateUrl: './userdetailview.component.html',
   styleUrls: ['./userdetailview.component.css'],
 })
@@ -52,6 +55,9 @@ export class UserDetailViewComponent implements OnInit {
   userRole!: any;
   roles: any[] = [];
   selectedRole: number | null = null;
+
+  loggedUserID: number | null = null;
+  isPasswordSet: boolean = false;
 
   userFields = [
     { label: 'Nombre', value: '', fieldName: 'FirstName', isEditing: false },
@@ -97,7 +103,9 @@ export class UserDetailViewComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private roleService: RoleService,
-    private userRoleService: UserRoleService
+    private userRoleService: UserRoleService,
+    private authService: AuthService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -109,6 +117,7 @@ export class UserDetailViewComponent implements OnInit {
         this.loadRoles();
       }
     });
+    this.loggedUserID = this.authService.getUserId();
   }
 
   goBackToUsers(): void {
@@ -124,6 +133,7 @@ export class UserDetailViewComponent implements OnInit {
       this.department = data.Department || 'Sin departamento asignado';
       this.role = data.Role || 'Sin rol asignado';
       this.roleID = data.RoleID;
+      this.isPasswordSet = data.isPasswordSet;
       
       this.userFields.forEach((field) => {
         field.value = this.getFieldOriginalValue(data, field.label);
@@ -229,6 +239,14 @@ export class UserDetailViewComponent implements OnInit {
   onRoleSelect(event: any) {
     this.selectedRole = event.value;
     console.log('ID del Role seleccionado:', this.selectedRole);
+  }
+
+  resendToken(userId: number): void {
+    this.userService.resendToken(userId, this.loggedUserID).subscribe(() => {
+      this.messageService.add({ severity: 'success', summary:'Confirmación', detail:'Token de verificación enviado con éxito'});
+      }, () => {
+        this.messageService.add({ severity: 'danger', summary:'Error', detail:'Error al enviar token de verificación'});
+        });
   }
 
   saveUserRole() {
