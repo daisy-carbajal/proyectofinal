@@ -3,7 +3,6 @@ const schedule = require("node-schedule");
 const { sendNotificationEmail } = require("../services/sendNotificationEmail");
 
 const createEvaluation360 = async (req, res) => {
-
   const transaction = new sql.Transaction(await poolPromise);
 
   try {
@@ -38,7 +37,6 @@ const createEvaluation360 = async (req, res) => {
 
     console.log(`Evaluation360 creada con ID: ${Evaluation360ID}`);
 
-    // 2. Iterar sobre los evaluadores
     for (const evaluator of Evaluators) {
       // 2.1 Insertar en EvaluationMaster
       const evaluationMasterResult = await transaction
@@ -52,11 +50,37 @@ const createEvaluation360 = async (req, res) => {
         .input("Comments", sql.Text, Comments || "")
         .input("RequesterID", sql.Int, RequesterID)
         .execute("AddEvaluationMaster");
-
-      const EvaluationMasterID = evaluationMasterResult.recordset[0].EvaluationMasterID;
-
+    
+      const EvaluationMasterID =
+        evaluationMasterResult.recordset[0].EvaluationMasterID;
+    
       console.log(
         `EvaluationMaster creada con ID: ${EvaluationMasterID} para evaluador ${evaluator.EvaluatorUserID}`
+      );
+    
+      // 2.2 Obtener los parámetros asociados desde EvaluationParameterWeight
+      const parameterWeightsResult = await transaction
+        .request()
+        .input("EvaluationSavedID", sql.Int, EvaluationSavedID)
+        .execute("GetParametersByEvaluationSavedID");
+    
+      const parameters = parameterWeightsResult.recordset;
+    
+      console.log(`Parámetros encontrados para EvaluationSavedID ${EvaluationSavedID}:`, parameters);
+    
+      // 2.3 Insertar los parámetros en EvaluationDetail
+      for (const parameter of parameters) {
+        await transaction
+          .request()
+          .input("EvaluationMasterID", sql.Int, EvaluationMasterID)
+          .input("ParameterID", sql.Int, parameter.ParameterID)
+          .input("CalificationID", sql.Int, null) // Calificación aún no asignada
+          .input("RequesterID", sql.Int, RequesterID)
+          .execute("AddEvaluationDetail");
+      }
+    
+      console.log(
+        `Parámetros asociados a EvaluationSavedID ${EvaluationSavedID} agregados a EvaluationDetail para EvaluationMasterID ${EvaluationMasterID}`
       );
 
       const nameResult = await transaction
@@ -67,7 +91,9 @@ const createEvaluation360 = async (req, res) => {
       const evaluatorName = nameResult.recordset[0]?.FullName;
 
       if (!evaluatorName) {
-        throw new Error(`No se pudo obtener el nombre del evaluador ${evaluator.EvaluatorUserID}`);
+        throw new Error(
+          `No se pudo obtener el nombre del evaluador ${evaluator.EvaluatorUserID}`
+        );
       }
 
       const preferencesResult = await transaction
