@@ -61,7 +61,7 @@ export class EvaluationMasterService {
   }
 
   updateExpiredEvaluations(): Observable<any> {
-    const url = `${this.apiUrl}/update-expired`;
+    const url = `${this.apiUrl}//update-evaluations`;
     return this.http.post(url, {}, this.getHeaders());
   }
 

@@ -37,21 +37,25 @@
             "production": {
               "budgets": [
                 {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "3mb",
+                  "maximumError": "5mb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "outputPath": "dist/hrsystemui",
+              "sourceMap": {
+                "scripts": true,
+                "styles": true,
+                "hidden": false,
+                "vendor": true
+              },
+              "optimization": true,
+              "extractLicenses": true
             },
             "development": {
-              "optimization": false,
-              "extractLicenses": false,
+              "optimization": true,
+              "extractLicenses": true,
               "sourceMap": true
             }
           },
@@ -87,5 +91,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

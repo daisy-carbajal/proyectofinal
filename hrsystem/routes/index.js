@@ -50,4 +50,6 @@ module.exports = [
   { path: "/user-preference", route: require("./userPreferencesRoutes") },
   { path: "/summary", route: require("./summaryRoutes") },
   { path: "/eval360", route: require("./evaluation360Routes") },
+  { path: "/files", route: require("./fileUploadRoutes") },
+  { path: "/logs", route: require("./logRoutes") },
 ];

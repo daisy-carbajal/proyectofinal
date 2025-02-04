@@ -15,6 +15,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { Router, NavigationEnd } from '@angular/router';
+import * as Sentry from "@sentry/angular";
 
 @Component({
   selector: 'app-navbar',
@@ -92,4 +93,14 @@ export class NavbarComponent implements OnInit {
       }
     });
   }
+
+  throwError() {
+    try {
+      throw new Error("Test error from HeaderComponent");
+    } catch (error) {
+      Sentry.captureException(error);
+      console.error("Error enviado a Sentry:", error);
+    }
+  }
+
 }

@@ -7,8 +7,9 @@ import { RouterOutlet } from '@angular/router';
 import { RippleModule } from 'primeng/ripple';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
-import { Router, NavigationEnd, Event  } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { LoggerService } from './services/logger.service';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +30,8 @@ export class AppComponent implements OnInit {
     private primengConfig: PrimeNGConfig,
     private authService: AuthService,
     private themeService: ThemeService,
-    private router: Router
+    private router: Router,
+    private logger: LoggerService
   ) {}
 
   ngOnInit() {
@@ -39,13 +41,18 @@ export class AppComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.router.events
         .pipe(
-          filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd)
+          filter(
+            (event: Event): event is NavigationEnd =>
+              event instanceof NavigationEnd
+          )
         )
         .subscribe((event: NavigationEnd) => {
           const currentRoute = event.urlAfterRedirects;
 
           if (this.isExcludedRoute(currentRoute)) {
-            console.log(`Ruta excluida: ${currentRoute}. No se valida la sesión.`);
+            console.log(
+              `Ruta excluida: ${currentRoute}. No se valida la sesión.`
+            );
             return;
           }
 
@@ -57,7 +64,9 @@ export class AppComponent implements OnInit {
   }
 
   private isExcludedRoute(route: string): boolean {
-    return this.excludedRoutes.some((excludedRoute) => route.startsWith(excludedRoute));
+    return this.excludedRoutes.some((excludedRoute) =>
+      route.startsWith(excludedRoute)
+    );
   }
 
   private validateSession(currentRoute: string) {
@@ -80,5 +89,17 @@ export class AppComponent implements OnInit {
         this.router.navigate(['/login']);
       },
     });
+  }
+
+  logInfo() {
+    this.logger.log('📢 Esto es un mensaje de información', 'info');
+  }
+
+  logWarning() {
+    this.logger.log('⚠️ Esto es una advertencia', 'warn');
+  }
+
+  logError() {
+    this.logger.log('❌ Esto es un error', 'error');
   }
 }

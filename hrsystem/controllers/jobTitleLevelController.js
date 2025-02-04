@@ -14,7 +14,9 @@ const createJobTitleLevel = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleLevel");
 
-    res.status(201).json({ message: "Nivel de título de trabajo creado exitosamente" });
+    res
+      .status(201)
+      .json({ message: "Nivel de título de trabajo creado exitosamente" });
   } catch (err) {
     console.error("Error al crear JobTitleLevel:", err);
     res.status(500).json({ message: "Error al crear JobTitleLevel" });
@@ -32,7 +34,9 @@ const getAllJobTitleLevels = async (req, res) => {
       .execute("GetAllJobTitleLevels");
 
     if (result.recordset.length === 0) {
-      return res.status(404).json({ message: "No se encontraron niveles de título de trabajo" });
+      return res
+        .status(404)
+        .json({ message: "No se encontraron niveles de título de trabajo" });
     }
 
     res.status(200).json(result.recordset);
@@ -57,7 +61,9 @@ const updateJobTitleLevel = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateJobTitleLevel");
 
-    res.status(200).json({ message: "Nivel de título de trabajo actualizado exitosamente" });
+    res
+      .status(200)
+      .json({ message: "Nivel de título de trabajo actualizado exitosamente" });
   } catch (err) {
     console.error("Error al actualizar JobTitleLevel:", err);
     res.status(500).json({ message: "Error al actualizar JobTitleLevel" });
@@ -76,7 +82,9 @@ const deactivateJobTitleLevel = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateJobTitleLevel");
 
-    res.status(200).json({ message: "Nivel de título de trabajo desactivado exitosamente" });
+    res
+      .status(200)
+      .json({ message: "Nivel de título de trabajo desactivado exitosamente" });
   } catch (err) {
     console.error("Error al desactivar JobTitleLevel:", err);
     res.status(500).json({ message: "Error al desactivar JobTitleLevel" });
@@ -95,7 +103,9 @@ const deleteJobTitleLevel = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteJobTitleLevel");
 
-    res.status(200).json({ message: "Nivel de título de trabajo eliminado exitosamente" });
+    res
+      .status(200)
+      .json({ message: "Nivel de título de trabajo eliminado exitosamente" });
   } catch (err) {
     console.error("Error al eliminar JobTitleLevel:", err);
     res.status(500).json({ message: "Error al eliminar JobTitleLevel" });

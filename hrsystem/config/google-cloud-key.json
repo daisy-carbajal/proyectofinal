@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "predictive-tree-448704-a6",
+  "private_key_id": "bd5cdb8899cd6e3f6c8d742f2b8c06d2ae4f8c01",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4G7O1VGkf2Yw8\nS0Tss2c/MW34SElKeeGHlfTWQPoiI0+ZzazSUvDilbFT1TsDMIJPz9h2Gc30CyFF\nWLFwXiNgH0eIStayFSpqAxMGisvzLnTgatwLNuSKBX3KgFiC13WbyHRHthMKdfIz\n+ZCL+DCDudr/BWvW0DkLgaTP/tJFJIR/6ILfeDfqIL3KzUTjeUVpgr7sMzL5A8sl\nxdy943QgrUv+sZNmz6YaTX4CkwJ4ot72vydV9DNR9jn8sYX6QsFxp629Q+VBll59\nn2Av2JMeh99gqbA4R+2rHIVfXY9hdPxpEri3oLt4sSJsh7ONJD/5PaYI8t9WBpWv\nrrTt2pzFAgMBAAECggEAAKWquZIxvy3w4tVCHrxRsznqALyNa9e8HANekE7JqWfH\niSedK+1PbfMhB1r90z/n7cycpZZK6SxGSWoH+r9+2dZIiCsVLNU9KEnZMz5v0ZZQ\nMFukPmuDnTEjzhSqWvso9IfrmO+1pyWCmSFWhftti4+npxpT29mikweyRL+sabRM\ni99XjhxCGAqPa8RnJ4I7ptXItGn7QpL5SZsZiB3vKWsmzEfJn0FqHepF4a47KIhB\n+b88vR2IZIbPpxNneWSK2ITwwY1blnN+i5tiLQ1DDzpRUjObzrJWRIkyYPAnFV1k\nOSr7pK6mtdw1mMK6mFhyqSedKtsL9JT7vZXxXvRLyQKBgQDa7A5RPN3Zbi3cFMji\nasouyS7uRtQkk7DzWd2GwCGKjPs0iO6ZsKO0bJ96ErGWKWv1BGFVmefD9gO1oEnH\nnLg9jfn0u5YO8jDfKNHEzKmHKKxEfHPgI+3tD/fgAyA/ES3QgZZxj3gefGLcOXiH\n5UsEECksqhR73+N0Efa15Q3euQKBgQDXSjLO0DgpnJd1JlyC67R/WivDlZNHcUHV\nVMDi4qk/J/vQaZi7H02URY5iU1cPaJcAahamdw/53a5X6ULMkyx4B1qvyOg9sCSF\nbGeb1GuFCqVf+KGZSWEMocnkZmwmR+jMY9ha6jdNi8Chqv7YuDFEQS9H+4JUcH6U\nGH+lYWUIbQKBgQCIQMUEcMKO8hEe2dzRdq+RgOtxp6mffkBypSrIFEqL5gTvBI6k\nHxk0USrMmlfm4q7rVyeRVHG4OCTE5RcmYncU8IlydVIGyVv7eHdeahbVJU5aba7d\nAN+zXO3kgW2Pcwy1qgHNegLDzpzk/evzgJU42SoXP1/yXT0+X3PSb9Y7GQKBgDtC\nIiAI8hyKDKpjR72FkWYodLleF27nvr4wmPMafolywP5Jwo9m+1yflKR92g3UtROZ\nH+jsBsq4+P8bppZWwDu9knmmLD6mmDbdcttSqdGx73kuH5TovLzUX5TtmEElM+/m\nX6wOofBHUlttjL4sXOszogcHNIV3fW/YGnJ0D3I1AoGAPxwf/uhXyjWcTjJ+BNsC\nBDXiVVaDKktotIjU7qdmeBQ5DpXSp7mx3FH3gFJdtWBdwNtf8hGqBdyoC3FYk8aK\nMVu64DVO0ZTJc5eU/I8CDJVVvqdcmJxq6aqWLw+QKvSKLg+xYzzd0e1rNu4qAzjk\nmeznsZ+Btv1rfnLEf3XODaM=\n-----END PRIVATE KEY-----\n",
+  "client_email": "hrsystem-admin@predictive-tree-448704-a6.iam.gserviceaccount.com",
+  "client_id": "102021502546703963270",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/hrsystem-admin%40predictive-tree-448704-a6.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

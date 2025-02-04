@@ -41,6 +41,7 @@ import { ActionPlanDetailViewComponent } from './components/action-plan-detail-v
 import { Evaluation360ViewComponent } from './components/evaluation360-view/evaluation360-view.component';
 import { Evaluation360RecordViewComponent } from './components/evaluation360-record-view/evaluation360-record-view.component';
 import { Evaluation360DetailViewComponent } from './components/evaluation360-detail-view/evaluation360-detail-view.component';
+import { UserDocumentsViewComponent } from './components/user-documents-view/user-documents-view.component';
 
 export const routes: Routes = [
   {
@@ -74,10 +75,16 @@ export const routes: Routes = [
             path: 'change',
             children: [
               { path: '', component: EmployeeChangeManagementComponent },
-              { path: ':id', component: EmployeeChangeDetailViewComponent },
+              { path: ':id', component: EmployeeChangeDetailViewComponent }
             ],
           },
           { path: 'org-chart', component: OrganizationChartComponent },
+          { path: 'docs', 
+            children: [
+              {path: '', component: JobTitleConfigComponent },
+              {path: ':id', component: UserDocumentsViewComponent}
+            ]
+          },
           { path: ':id', component: UserDetailViewComponent },
         ],
       },

@@ -1,6 +1,6 @@
 const { poolPromise, sql } = require("../database/db");
 const schedule = require("node-schedule");
-const { sendNotificationEmail } = require("../services/sendNotificationEmail"); // Importa tu archivo de envío de correos
+const { sendNotificationEmail } = require("../services/sendNotificationEmail");
 
 const createEvaluationMaster = async (req, res) => {
   const transaction = new sql.Transaction(await poolPromise);

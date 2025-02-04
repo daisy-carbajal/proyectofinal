@@ -123,6 +123,15 @@
           >
           </p-button>
           <p-button
+            icon="pi pi-folder-open"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            severity="info"
+            (onClick)="goToUserDocs(user.UserID)"
+          >
+          </p-button>
+          <p-button
             icon="pi pi-trash"
             severity="danger"
             [rounded]="true"

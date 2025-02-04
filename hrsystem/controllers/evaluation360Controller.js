@@ -108,7 +108,7 @@ const createEvaluation360 = async (req, res) => {
       } = preferencesResult.recordset[0];
 
       const subjectMessage = "Nueva Evaluación 360 Asignada";
-      const titleMessage = "Nueva Evaluación 360 Creada"; // <- Reincorporado
+      const titleMessage = "Nueva Evaluación 360 Creada";
       const emailNotificationMessage = `
         ${evaluatorName}, se le ha asignado una nueva evaluación 360 para que complete.<br>
         <a href="http://localhost:4200/home/evaluation360/details/${EvaluationMasterID}" target="_blank">
@@ -119,16 +119,14 @@ const createEvaluation360 = async (req, res) => {
         ${evaluatorName}, se ha creado una nueva evaluación para usted. Puede revisarla en el sistema.
       `;
 
-      // Guardar notificación en la BD
       await transaction
         .request()
         .input("RequesterID", sql.Int, RequesterID)
         .input("UserID", sql.Int, evaluator.EvaluatorUserID)
-        .input("Title", sql.NVarChar, titleMessage) // <- Usando titleMessage
+        .input("Title", sql.NVarChar, titleMessage)
         .input("Message", sql.NVarChar, emailNotificationMessage)
         .execute("AddNotification");
 
-      // Enviar notificación por correo
       if (EnableEmailNotifications) {
         await sendNotificationEmail(
           evaluatorEmail,
@@ -142,11 +140,10 @@ const createEvaluation360 = async (req, res) => {
         );
       }
 
-      // Enviar notificación push
       const io = req.app.get("socketio");
       if (EnablePushNotifications && io) {
         io.to(`user_${evaluator.EvaluatorUserID}`).emit("new_notification", {
-          title: titleMessage, // <- Usando titleMessage
+          title: titleMessage,
           message: pushNotificationMessage,
         });
       } else {
@@ -156,7 +153,6 @@ const createEvaluation360 = async (req, res) => {
       }
     }
 
-    // 3. Confirmar la transacción
     await transaction.commit();
     console.log("Transacción confirmada");
 
@@ -258,7 +254,6 @@ const updateEvaluation360 = async (req, res) => {
   }
 };
 
-// Desactivar evaluación 360 (soft delete)
 const deactivateEvaluation360 = async (req, res) => {
   try {
     const { id } = req.params;
@@ -283,7 +278,6 @@ const deactivateEvaluation360 = async (req, res) => {
   }
 };
 
-// Eliminar evaluación 360 (hard delete)
 const deleteEvaluation360 = async (req, res) => {
   try {
     const { id } = req.params;
@@ -308,7 +302,6 @@ const deleteEvaluation360 = async (req, res) => {
   }
 };
 
-// Actualizar evaluaciones expiradas
 const updateExpiredEvaluations360 = async (req, res) => {
   try {
     const pool = await poolPromise;
@@ -328,7 +321,6 @@ const updateExpiredEvaluations360 = async (req, res) => {
   }
 };
 
-// Programar la ejecución automática de evaluaciones expiradas a medianoche
 schedule.scheduleJob("0 0 * * *", async () => {
   try {
     const pool = await poolPromise;

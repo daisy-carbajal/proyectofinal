@@ -53,7 +53,6 @@ const updateJobLevel = async (req, res) => {
       .input("JobLevelID", sql.Int, id)
       .input("Name", sql.NVarChar, Name)
       .input("Description", sql.NVarChar, Description)
-      .input("Status", sql.Bit, Status)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("UpdateJobLevel");
 

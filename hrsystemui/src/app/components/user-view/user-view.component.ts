@@ -160,6 +160,11 @@ export class UserViewComponent implements OnInit {
     this.router.navigate(['/home/user', userId], { replaceUrl: true });
   }
 
+  goToUserDocs(userId: number): void {
+    console.log('Navigating to user ID:', userId);
+    this.router.navigate(['/home/user/docs', userId], { replaceUrl: true });
+  }
+
   openNew() {
     this.user = {
       FirstName: '',

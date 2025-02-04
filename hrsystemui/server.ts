@@ -1,11 +1,20 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
 
-// The Express app is exported so that it can be used by serverless Functions.
+// Importar Sentry
+import * as Sentry from '@sentry/node';
+
+// Inicializar Sentry
+Sentry.init({
+  dsn: 'https://52951e4f991008d9a8589a5ec6750bf7@o4508469580988416.ingest.us.sentry.io/4508473266339840',
+  tracesSampleRate: 1.0,
+  environment: 'production',
+});
+
 export function app(): express.Express {
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
@@ -17,14 +26,20 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
-  // Serve static files from /browser
-  server.get('*.*', express.static(browserDistFolder, {
-    maxAge: '1y'
-  }));
+  // Middleware para capturar solicitudes y errores
+  server.use((req: Request, res: Response, next: NextFunction) => {
+    try {
+      next();
+    } catch (err) {
+      Sentry.captureException(err);
+      next(err);
+    }
+  });
 
-  // All regular routes use the Angular engine
+  // Servir archivos estáticos
+  server.get('*.*', express.static(browserDistFolder, { maxAge: '1y' }));
+
+  // Todas las rutas normales
   server.get('*', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
@@ -37,7 +52,17 @@ export function app(): express.Express {
         providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
       })
       .then((html) => res.send(html))
-      .catch((err) => next(err));
+      .catch((err) => {
+        Sentry.captureException(err); // Capturar el error con Sentry
+        next(err); // Pasar el error al siguiente middleware
+      });
+  });
+
+  // Middleware para manejar errores
+  server.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error('Error:', err);
+    Sentry.captureException(err);
+    res.status(500).send('An unexpected error occurred.');
   });
 
   return server;
@@ -46,11 +71,13 @@ export function app(): express.Express {
 function run(): void {
   const port = process.env['PORT'] || 4000;
 
-  // Start up the Node server
   const server = app();
   server.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
+
+// Simular un error de prueba
+throw new Error('Test error for Sentry SSR!');
 
 run();
