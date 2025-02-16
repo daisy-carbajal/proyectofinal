@@ -11,5 +11,11 @@ logs/
 *.log
 *.csv
 
-# Google Cloud Key
-config/google-cloud-key.json
+```markdown
+# Google Cloud Key File
+### Location
+The Google Cloud key file is located at:
+`config/google-cloud-key.json`
+
+### Important
+DO NOT COMMIT THIS FILE TO THE REPOSITORY. Add it to your `.gitignore` file to prevent accidental uploads.
