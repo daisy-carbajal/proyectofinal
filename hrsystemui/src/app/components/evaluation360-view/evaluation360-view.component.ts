@@ -168,37 +168,33 @@ export class Evaluation360ViewComponent implements OnInit {
   }
 
   deleteEvaluation(evaluation: any) {
-    const confirmed = confirm(
-      '¿Estás seguro de que deseas eliminar esta evaluación?'
-    );
-    if (confirmed) {
-      this.evaluationSavedService
-        .deleteEvaluationSaved(evaluation.EvaluationSavedID)
-        .subscribe(
-          (response) => {
-            console.log(
-              'ID de evaluación eliminada:',
-              evaluation.EvaluationSavedID
-            );
-            console.log('Evaluación eliminada exitosamente', response);
-
-            this.loadEvaluations();
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Evaluación eliminada correctamente.',
-            });
-          },
-          (error) => {
-            console.error('Error al eliminar evaluación', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Ocurrió un error al eliminar la evaluación.',
-            });
-          }
-        );
-    }
-  }
+    this.confirmationService.confirm({
+      message: '¿Estás seguro de que deseas eliminar esta evaluación?',
+      header: 'Confirmación de eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        // Lógica para eliminar la evaluación
+        this.evaluationSavedService.deleteEvaluationSaved(evaluation.EvaluationSavedID)
+          .subscribe(
+            (response) => {
+              console.log('Evaluación eliminada exitosamente', response);
+              this.loadEvaluations();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Éxito',
+                detail: 'Evaluación eliminada correctamente.',
+              });
+            },
+            (error) => {
+              console.error('Error al eliminar evaluación', error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Ocurrió un error al eliminar la evaluación.',
+              });
+            }
+          );
+      }
+    });
+  }  
 }

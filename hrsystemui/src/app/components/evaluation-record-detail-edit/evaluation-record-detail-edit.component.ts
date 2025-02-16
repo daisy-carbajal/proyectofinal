@@ -253,7 +253,14 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
   }
 
   goBackToEvaluations(): void {
-    this.router.navigate(['/home/evaluation/records'], { replaceUrl: true });
+    if (this.evaluationInfo && this.evaluationInfo.Evaluation360) {
+      this.router.navigate(
+        ['/home/evaluation/eval360/list', this.evaluationInfo.Evaluation360ID],
+        { replaceUrl: true }
+      );
+    } else {
+      this.router.navigate(['/home/evaluation/records'], { replaceUrl: true });
+    }
   }
 
   get totalPonderedScoreWithPercentage(): string {

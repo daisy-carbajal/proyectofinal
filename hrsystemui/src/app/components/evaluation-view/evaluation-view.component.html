@@ -11,6 +11,14 @@
     [showCurrentPageReport]="true"
   >
     <ng-template pTemplate="caption">
+      <div *ngIf="evaluation360ActiveID" class="mb-3">
+        <p-button
+          label="Regresar a Evaluaciones360"
+          icon="pi pi-arrow-left"
+          (click)="goBack()"
+          class="p-button-outlined"
+        ></p-button>
+      </div>
       <div class="flex align-items-center justify-content-between">
         <h2 class="text-700 m-0">Evaluaciones</h2>
         <!--<span class="p-input-icon-left">

@@ -10,6 +10,7 @@ const createEvaluationMaster = async (req, res) => {
       EvaluatorUserID,
       EvaluateeUserID,
       EvaluationSavedID,
+      Evaluation360ID,
       DateCreated,
       DateToReview,
       Comments,
@@ -26,6 +27,7 @@ const createEvaluationMaster = async (req, res) => {
       .input("EvaluatorUserID", sql.Int, EvaluatorUserID)
       .input("EvaluateeUserID", sql.Int, EvaluateeUserID)
       .input("EvaluationSavedID", sql.Int, EvaluationSavedID)
+      .input("Evaluation360ID", sql.Int, Evaluation360ID || null)
       .input("DateCreated", sql.DateTime, DateCreated)
       .input("DateToReview", sql.DateTime, DateToReview)
       .input("Comments", sql.NVarChar, Comments)
@@ -591,7 +593,7 @@ const acknowledgeEvaluationMaster = async (req, res) => {
       });
     } else {
       console.log(
-        `El usuario ${EvaluateeUserID} tiene deshabilitadas las notificaciones push o Socket.IO no está configurado.`
+        `El usuario ${EvaluatorUserID} tiene deshabilitadas las notificaciones push o Socket.IO no está configurado.`
       );
     }
 

@@ -84,6 +84,7 @@ export class EvaluationViewComponent {
   userSelected: number | null = null;
   evaluation: any = {};
   evaluationMasterID: any;
+  evaluation360ActiveID: any;
 
   constructor(
     private messageService: MessageService,
@@ -97,15 +98,12 @@ export class EvaluationViewComponent {
 
   ngOnInit() {
     this.loggedUserId = this.authService.getUserId();
-
-    // Verificar si hay un ID en la URL
     this.route.paramMap.subscribe((params) => {
       const evaluation360ID = params.get('id'); // Extrae el ID desde la URL
       if (evaluation360ID) {
-        // Si hay un ID, carga las evaluaciones 360 específicas
+        this.evaluation360ActiveID = +evaluation360ID;
         this.loadEvaluation360(+evaluation360ID); // Convierte el ID a número
       } else {
-        // Si no hay un ID, carga todas las evaluaciones
         this.loadEvaluations();
       }
     });
@@ -119,6 +117,10 @@ export class EvaluationViewComponent {
     this.router.navigate(['/home/evaluation/details', EvaluationMasterID], {
       replaceUrl: true,
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/home/evaluation/eval360']); 
   }
 
   loadUsers(): void {
