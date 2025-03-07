@@ -73,14 +73,14 @@
     <ng-template pTemplate="body" let-evaluation360>
       <tr>
         <td>{{ evaluation360.EvaluateeName }}</td>
-        <td>{{ evaluation360.Evaluation360DateCreated }}</td>
-        <td>{{ evaluation360.Evaluation360DateToReview }}</td>
-        <td>{{ evaluation360.AveragePonderedScore }}</td>
+        <td>{{ evaluation360.Evaluation360DateCreated | date : "yyyy-MM-dd" }}</td>
+        <td>{{ evaluation360.Evaluation360DateToReview | date : "yyyy-MM-dd" }}</td>
+        <td>{{ evaluation360.AveragePonderedScore }} / 5</td>
         <td>
             <p-tag
               [rounded]="true"
-              [value]="evaluation360.Status ? 'Revisado' : 'Pendiente'"
-              [severity]="evaluation360.Status ? 'success' : 'warning'"
+              [value]="evaluation360.Evaluation360Status ? 'Revisado' : 'Pendiente'"
+              [severity]="evaluation360.Evaluation360Status ? 'success' : 'warning'"
             ></p-tag>
           </td>
         <td>
@@ -98,7 +98,7 @@
               severity="danger"
               [rounded]="true"
               [outlined]="true"
-              (onClick)="deleteEvaluation(evaluation360.Evaluation360ID)"
+              (onClick)="deleteEvaluation(evaluation360)"
             ></p-button>
           </div>
         </td>

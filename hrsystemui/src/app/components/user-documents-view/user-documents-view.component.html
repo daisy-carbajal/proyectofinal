@@ -2,43 +2,88 @@
   <p-toast position="top-right"></p-toast>
 
   <div class="card flex content-left gap-3 mb-3">
-      <p-button label="Regresar" icon="pi pi-arrow-circle-left" (onClick)="goBackToUsers()" />
+    <p-button
+      label="Regresar"
+      icon="pi pi-arrow-circle-left"
+      (onClick)="goBackToUsers()"
+    />
   </div>
 
   <div class="card flex content-left gap-3 mb-2">
-      <div class="font-medium text-3xl text-700 mb-3">{{ employeeName }}</div>
-      <p-button label="Agregar Nuevo Documento" icon="pi pi-file-plus" [text]="true" severity="info" (onClick)="openFileUploadDialog()" />
+    <div class="font-medium text-3xl text-700 mb-3">{{ employeeName }}</div>
+    <p-button
+      label="Agregar Nuevo Documento"
+      icon="pi pi-file-plus"
+      [text]="true"
+      severity="info"
+      (onClick)="openFileUploadDialog()"
+    />
   </div>
 
   <div class="text-500 mb-5">
-      {{ workEmail }} | {{ jobTitle }} | {{ department }} | {{ role }}
+    {{ workEmail }} | {{ jobTitle }} | {{ department }} | {{ role }}
   </div>
 
-  <!-- LISTA DE ARCHIVOS SUBIDOS -->
   <div class="card">
-      <h4>Documentos del Usuario</h4>
-      <ul class="list-none p-0 m-0">
-        <li *ngFor="let file of uploadedFiles" class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-            <div class="text-900 w-full md:w-8">{{ file.name }}</div>
-            <div class="w-full md:w-4 flex justify-content-end">
-                <p-button label="Ver" icon="pi pi-eye" class="p-button-text p-button-sm" (click)="viewFile(file.name)" />
-                <p-button label="Eliminar" icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="deleteFile(file.name)" />
-            </div>
-        </li>
+    <h4>Documentos del Usuario</h4>
+    <ul class="list-none p-0 m-0">
+      <li
+        *ngFor="let file of uploadedFiles"
+        class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap"
+      >
+        <div class="text-900 w-full md:w-8">{{ file.name }}</div>
+        <div class="w-full md:w-4 flex justify-content-end">
+          <p-button
+            label="Ver"
+            icon="pi pi-eye"
+            class="p-button-text p-button-sm mr-2"
+            (click)="viewFile(file.name)"
+            severity="info"
+          />
+          <p-button
+            label="Eliminar"
+            icon="pi pi-trash"
+            class="p-button-text p-button-danger p-button-sm"
+            (click)="deleteFile(file.name)"
+            severity="danger"
+          />
+        </div>
+      </li>
     </ul>
   </div>
-
-  <!-- DIALOGO PARA SUBIR ARCHIVOS -->
-  <p-dialog [(visible)]="fileUploadDialog" [style]="{ width: '450px' }" header="Subir Archivo" [modal]="true" styleClass="p-fluid">
-      <ng-template pTemplate="content">
-          <div class="field">
-              <label for="file">Selecciona un archivo</label>
-              <input type="file" id="file" (change)="onFileSelected($event)" class="p-inputtext w-full" />
-          </div>
-      </ng-template>
-      <ng-template pTemplate="footer">
-          <p-button label="Cancelar" icon="pi pi-times" [text]="true" (onClick)="fileUploadDialog = false" />
-          <p-button label="Subir" icon="pi pi-upload" [text]="true" (onClick)="uploadFile()" />
-      </ng-template>
+  <p-dialog
+    [(visible)]="fileUploadDialog"
+    [style]="{ width: '450px' }"
+    header="Subir Archivo"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <p-toast />
+        <p-fileUpload
+          mode="basic"
+          chooseLabel="Seleccionar Archivo"
+          chooseIcon="pi pi-upload"
+          maxFileSize="1000000"
+          (onSelect)="onFileSelected($event)"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="fileUploadDialog = false"
+        severity="danger"
+      />
+      <p-button
+        label="Subir"
+        icon="pi pi-upload"
+        [text]="true"
+        (onClick)="uploadFile()"
+      />
+    </ng-template>
   </p-dialog>
 </div>

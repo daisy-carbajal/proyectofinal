@@ -174,7 +174,7 @@ export class Evaluation360ViewComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         // Lógica para eliminar la evaluación
-        this.evaluationSavedService.deleteEvaluationSaved(evaluation.EvaluationSavedID)
+        this.evaluation360Service.deleteEvaluation360(evaluation.Evaluation360ID)
           .subscribe(
             (response) => {
               console.log('Evaluación eliminada exitosamente', response);

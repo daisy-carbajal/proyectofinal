@@ -315,17 +315,22 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
   
     console.log('Datos que se enviarán al backend:', requestBody);
   
-    // Enviar la solicitud al servicio
+    // Enviar la solicitud de actualización al servicio
     this.evaluationService.updateEvaluationMaster(this.evaluationMasterID, requestBody)
       .subscribe(
         (response) => {
           console.log('Respuesta del backend:', response);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Evaluación actualizada correctamente.',
-          });
-          this.router.navigate(['/home/evaluation/records'], { replaceUrl: true });
+          // Si la evaluación es 360, llamar adicionalmente a acknowledgeEvaluationMaster
+          if (this.evaluationInfo.Evaluation360) {
+            this.acknowledgeEvaluationMaster();
+          } else {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Evaluación actualizada correctamente.',
+            });
+            this.goBackToEvaluations();
+          }
         },
         (error) => {
           console.error('Error al actualizar la evaluación:', error);
@@ -336,7 +341,7 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
           });
         }
       );
-  }
+  }  
 
   acknowledgeEvaluationMaster() {
     const requestBody = {
@@ -353,7 +358,7 @@ export class EvaluationRecordDetailEditComponent implements OnInit {
             summary: 'Éxito',
             detail: 'Evaluación aceptada correctamente.',
           });
-          this.router.navigate(['/home/evaluation/records'], { replaceUrl: true });
+          this.goBackToEvaluations();
         },
         (error) => {
           console.error('Error al aceptar la evaluación:', error);

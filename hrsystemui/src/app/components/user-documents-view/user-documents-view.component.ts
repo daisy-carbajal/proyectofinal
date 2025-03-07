@@ -17,6 +17,12 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '../../services/user.service';
+import { FileUploadModule } from 'primeng/fileupload';
+
+interface UploadEvent {
+  originalEvent: Event;
+  files: File[];
+}
 
 @Component({
   selector: 'app-userdetailview',
@@ -35,8 +41,15 @@ import { UserService } from '../../services/user.service';
     DropdownModule,
     ConfirmDialogModule,
     ToastModule,
+    FileUploadModule,
   ],
-  providers: [ConfirmationService, FileUploadService, AuthService, UserService, MessageService],
+  providers: [
+    ConfirmationService,
+    FileUploadService,
+    AuthService,
+    UserService,
+    MessageService,
+  ],
   templateUrl: './user-documents-view.component.html',
   styleUrls: ['./user-documents-view.component.css'],
 })
@@ -71,6 +84,21 @@ export class UserDocumentsViewComponent implements OnInit {
     });
   }
 
+  onUpload(event: any) {
+    console.log('Evento de subida:', event);
+    if (event.files && event.files.length > 0) {
+      this.selectedFile = event.files[0]; // Guarda el primer archivo subido
+    }
+  }
+
+  onFileSelected(event: any) {
+    if (event.files && event.files.length > 0) {
+      this.selectedFile = event.files[0]; // Guarda el archivo seleccionado
+      console.log('Archivo seleccionado:', this.selectedFile);
+    }
+  }
+  
+
   goBackToUsers(): void {
     this.router.navigate(['/home/user'], { replaceUrl: true });
   }
@@ -89,10 +117,6 @@ export class UserDocumentsViewComponent implements OnInit {
     this.fileUploadDialog = true;
   }
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
-  }
-
   uploadFile() {
     if (!this.selectedFile) {
       this.messageService.add({
@@ -102,7 +126,9 @@ export class UserDocumentsViewComponent implements OnInit {
       });
       return;
     }
-
+  
+    console.log('Subiendo archivo:', this.selectedFile);
+  
     this.fileUploadService.uploadUserFile(this.userId, this.selectedFile).subscribe(
       (response) => {
         this.messageService.add({
@@ -121,7 +147,7 @@ export class UserDocumentsViewComponent implements OnInit {
         });
       }
     );
-  }
+  }  
 
   loadUserFiles() {
     this.fileUploadService.getUserFiles(this.userId).subscribe(
@@ -136,15 +162,15 @@ export class UserDocumentsViewComponent implements OnInit {
 
   viewFile(fileName: string) {
     this.fileUploadService.getSignedFileUrl(this.userId, fileName).subscribe(
-      response => {
-        window.open(response.url, "_blank");
+      (response) => {
+        window.open(response.url, '_blank');
       },
-      error => {
-        console.error("Error al obtener la URL firmada:", error);
+      (error) => {
+        console.error('Error al obtener la URL firmada:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo obtener el archivo.'
+          detail: 'No se pudo obtener el archivo.',
         });
       }
     );

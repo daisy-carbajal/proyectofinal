@@ -225,6 +225,7 @@
         icon="pi pi-check-circle"
         class="p-button-success mr-2"
         (click)="acknowledgeEvaluationMaster()"
+        *ngIf="!evaluationInfo?.Evaluation360"
       ></button>
       <button
         type="button"

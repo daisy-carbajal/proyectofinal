@@ -14,9 +14,9 @@ const createFeedback = async (req, res) => {
       .input("Comment", sql.Text, Comment)
       .input("Acknowledged", sql.Bit, Acknowledged)
       .input("RequesterID", sql.Int, RequesterID)
-      .execute("AddFeedback"); 
+      .execute("AddFeedback");
 
-      const nameResult = await transaction
+    const nameResult = await transaction
       .request()
       .input("UserID", sql.Int, UserID)
       .execute("GetUserName");
@@ -47,8 +47,8 @@ const createFeedback = async (req, res) => {
   ${evaluateeName}, se ha creado una nueva evaluación para usted. Puede revisarla en el sistema.<br>
   <a href="http://localhost:4200/home/evaluation/details/${EvaluationMasterID}" target="_blank">
     Revisar evaluación
-  </a>
-`;
+  </a>`;
+  
     const pushNotificationMessage = `
   ${evaluateeName}, se ha creado una nueva evaluación para usted. Puede revisarla en el sistema.`;
 
@@ -98,9 +98,10 @@ const getAllFeedbacks = async (req, res) => {
   try {
     const pool = await poolPromise;
     const RequesterID = req.userId;
-    const result = await pool.request()
-    .input("RequesterID", sql.Int, RequesterID)
-    .execute("GetAllFeedbacks");
+    const result = await pool
+      .request()
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("GetAllFeedbacks");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -114,7 +115,8 @@ const getFeedbackById = async (req, res) => {
     const { id } = req.params;
     const pool = await poolPromise;
     const RequesterID = req.userId;
-    const result = await pool.request()
+    const result = await pool
+      .request()
       .input("FeedbackID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("GetFeedbackById");
@@ -138,7 +140,8 @@ const updateFeedback = async (req, res) => {
 
     const pool = await poolPromise;
 
-    await pool.request()
+    await pool
+      .request()
       .input("FeedbackID", sql.Int, id)
       .input("Comment", sql.Text, Comment)
       .input("RequesterID", sql.Int, RequesterID)
@@ -157,7 +160,8 @@ const deleteFeedback = async (req, res) => {
     const RequesterID = req.userId;
     const pool = await poolPromise;
 
-    await pool.request()
+    await pool
+      .request()
       .input("FeedbackID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DeleteFeedback");
@@ -175,7 +179,8 @@ const deactivateFeedback = async (req, res) => {
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
-    await pool.request()
+    await pool
+      .request()
       .input("FeedbackID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DeactivateFeedback");
@@ -192,8 +197,9 @@ const acknowledgeFeedback = async (req, res) => {
     const { id } = req.params;
     const RequesterID = req.userId;
     const pool = await poolPromise;
-    
-    await pool.request()
+
+    await pool
+      .request()
       .input("FeedbackID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AcknowledgeFeedback");
@@ -212,5 +218,5 @@ module.exports = {
   updateFeedback,
   deleteFeedback,
   deactivateFeedback,
-  acknowledgeFeedback
+  acknowledgeFeedback,
 };
