@@ -1,2 +1,9 @@
 hrsystem/config/google-cloud-key.json
 /hrsystem/config
+*.pack
+*.pack
+/hrsystemui/.angular/cache/17.3.11/angular-webpack/1656b0ce96fb8debb47c1e8408f2e348c76afe3c
+/hrsystemui/.angular/cache/17.3.11/angular-webpack
+/hrsystemui/.angular/cache/17.3.11
+/hrsystemui/.angular/cache
+/hrsystemui/.angular
