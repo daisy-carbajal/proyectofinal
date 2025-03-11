@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PermissionCategoryComponent } from './permission-category.component';
 
 describe('PermissionCategoryComponent', () => {
@@ -8,7 +9,11 @@ describe('PermissionCategoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PermissionCategoryComponent]
+      imports: [PermissionCategoryComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     

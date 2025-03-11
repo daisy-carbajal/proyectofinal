@@ -7,3 +7,4 @@ hrsystem/config/google-cloud-key.json
 /hrsystemui/.angular/cache/17.3.11
 /hrsystemui/.angular/cache
 /hrsystemui/.angular
+*spec.ts

@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RolesViewComponent } from './roles-view.component';
 
 describe('RolesViewComponent', () => {
@@ -8,7 +10,11 @@ describe('RolesViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RolesViewComponent]
+      imports: [RolesViewComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     

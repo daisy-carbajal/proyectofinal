@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ActionPlanService } from '../../services/action-plan.service';
+import { ActivatedRoute } from '@angular/router';
 import { ActionPlanViewComponent } from './action-plan-view.component';
+import { of } from 'rxjs';
 
 describe('ActionPlanViewComponent', () => {
   let component: ActionPlanViewComponent;
@@ -8,7 +12,13 @@ describe('ActionPlanViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ActionPlanViewComponent]
+      imports: [
+        RouterTestingModule,
+        HttpClientTestingModule, ActionPlanViewComponent], // Se declara el componente
+      providers: [
+        ActionPlanService, // Se provee el servicio normalmente
+        { provide: ActivatedRoute, useValue: { queryParams: of({}) } } // Se asegura que ActivatedRoute tenga queryParams
+      ]
     })
     .compileComponents();
     
@@ -17,7 +27,7 @@ describe('ActionPlanViewComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create and interact with ActionPlanService', () => {
     expect(component).toBeTruthy();
   });
 });

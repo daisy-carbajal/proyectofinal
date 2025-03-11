@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { IncidentViewComponent } from './incident-view.component';
 
 describe('IncidentViewComponent', () => {
@@ -8,7 +9,11 @@ describe('IncidentViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IncidentViewComponent]
+      imports: [IncidentViewComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { DepartmentViewComponent } from './department-view.component';
 
 describe('DepartmentViewComponent', () => {
@@ -8,7 +9,11 @@ describe('DepartmentViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DepartmentViewComponent]
+      imports: [DepartmentViewComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     
@@ -21,3 +26,4 @@ describe('DepartmentViewComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

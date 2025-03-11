@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { OrganizationChartComponent } from './organization-chart.component';
 
 describe('OrganizationChartComponent', () => {
@@ -8,7 +10,11 @@ describe('OrganizationChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OrganizationChartComponent]
+      imports: [OrganizationChartComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     

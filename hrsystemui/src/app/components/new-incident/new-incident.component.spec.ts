@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NewIncidentComponent } from './new-incident.component';
 
 describe('NewIncidentComponent', () => {
@@ -8,7 +9,11 @@ describe('NewIncidentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NewIncidentComponent]
+      imports: [NewIncidentComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     
@@ -21,3 +26,4 @@ describe('NewIncidentComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+                                                                        

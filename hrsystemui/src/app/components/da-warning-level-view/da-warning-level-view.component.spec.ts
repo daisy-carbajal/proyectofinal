@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { DaWarningLevelViewComponent } from './da-warning-level-view.component';
 
 describe('DaWarningLevelViewComponent', () => {
@@ -8,7 +9,11 @@ describe('DaWarningLevelViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DaWarningLevelViewComponent]
+      imports: [DaWarningLevelViewComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     

@@ -1,6 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { LoginComponent } from './login.component';
+import { AuthService } from '../../services/auth.service';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+
+// Mock de AuthService
+class MockAuthService {
+  login() {
+    return of({ token: 'fake-token' }); // Simula respuesta exitosa de login
+  }
+}
+
+// Mock de ActivatedRoute con queryParams definido correctamente
+const mockActivatedRoute = {
+  snapshot: { queryParams: { returnUrl: '/dashboard' } }, // Agrega snapshot por si el código lo usa directamente
+  queryParams: of({ returnUrl: '/dashboard' }) // Simula parámetros en la URL
+};
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -8,7 +25,15 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginComponent]
+      imports: [
+        RouterTestingModule,
+        HttpClientTestingModule,
+        LoginComponent
+      ],
+      providers: [
+        { provide: AuthService, useClass: MockAuthService },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute } // Mockeamos ActivatedRoute
+      ],
     })
     .compileComponents();
     
@@ -17,7 +42,7 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create and interact with AuthService', () => {
     expect(component).toBeTruthy();
   });
 });

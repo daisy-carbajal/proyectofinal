@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { EmployeeChangeViewComponent } from './employee-change-view.component';
 
 describe('EmployeeChangeViewComponent', () => {
@@ -8,7 +9,11 @@ describe('EmployeeChangeViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmployeeChangeViewComponent]
+      imports: [EmployeeChangeViewComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient en producción
+        provideHttpClientTesting() // Proporciona HttpClient en pruebas
+      ],
     })
     .compileComponents();
     

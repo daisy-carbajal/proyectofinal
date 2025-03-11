@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { FeedbackViewComponent } from './feedback-view.component';
 
 describe('FeedbackViewComponent', () => {
@@ -8,7 +10,11 @@ describe('FeedbackViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FeedbackViewComponent]
+      imports: [FeedbackViewComponent],
+      providers: [
+        provideHttpClient(),       // Proporciona HttpClient para producción
+        provideHttpClientTesting() // Proporciona HttpClient para pruebas
+      ],
     })
     .compileComponents();
     

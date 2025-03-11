@@ -1,23 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { HttpClientModule } from '@angular/common/http'; // <-- Asegúrate de importar esto
 import { EmployeeChangeManagementComponent } from './employee-change-management.component';
+import { AuthService } from '../../services/auth.service'; // Ajusta la ruta según corresponda
 
 describe('EmployeeChangeManagementComponent', () => {
-  let component: EmployeeChangeManagementComponent;
-  let fixture: ComponentFixture<EmployeeChangeManagementComponent>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmployeeChangeManagementComponent]
-    })
-    .compileComponents();
-    
-    fixture = TestBed.createComponent(EmployeeChangeManagementComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      imports: [HttpClientModule, EmployeeChangeManagementComponent], // <-- Agregar HttpClientModule aquí
+      providers: [AuthService], // <-- Asegurar que AuthService está proporcionado
+    }).compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(EmployeeChangeManagementComponent);
+    const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
 });
