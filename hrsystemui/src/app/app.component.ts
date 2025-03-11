@@ -19,7 +19,8 @@ import { LoggerService } from './services/logger.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
-  private excludedRoutes = [
+  title = 'hrsystemui'; // Adding title property
+  private excludedRoutes = [ 
     '/reset-password',
     '/confirm-email',
     '/complete-registration',
