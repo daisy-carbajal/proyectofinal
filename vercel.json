@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "hrsystem/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "hrsystemui/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/hrsystemui",
+        "buildCommand": "cd hrsystemui && npm install && npm run build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/hrsystem/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/hrsystemui/dist/hrsystemui/$1"
+    }
+  ]
+}

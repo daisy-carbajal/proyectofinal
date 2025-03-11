@@ -8,3 +8,5 @@ hrsystem/config/google-cloud-key.json
 /hrsystemui/.angular/cache
 /hrsystemui/.angular
 *spec.ts
+
+.vercel
