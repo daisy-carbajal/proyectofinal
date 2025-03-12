@@ -51,7 +51,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// 🔹 Importar rutas (asegúrate de que `routes` está bien definido)
 const routes = require("./routes");
 
 routes.forEach((route) => {
@@ -60,14 +59,12 @@ routes.forEach((route) => {
 
 Sentry.setupExpressErrorHandler(app);
 
-// 🔹 Middleware de errores personalizados
 app.use((err, req, res, next) => {
   logger.error(`Error en la API: ${err.message}`);
   Sentry.captureException(err);
   res.status(500).json({ error: "Algo salió mal." });
 });
 
-// 🔹 Manejo de errores 404
 app.use((req, res, next) => {
   logger.warn(`Ruta no encontrada: ${req.method} ${req.url}`);
   res.status(404).send("Página no encontrada");

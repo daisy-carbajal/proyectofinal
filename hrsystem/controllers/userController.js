@@ -435,6 +435,7 @@ const importUsersFromCSV = async (req, res) => {
             JobTitleID: row.JobTitleID,
             DepartmentID: row.DepartmentID,
             CreatedBy: createdBy,
+            Password:123
           });
         })
         .on("end", resolve)
@@ -465,6 +466,7 @@ const importUsersFromCSV = async (req, res) => {
           .input("Country", sql.NVarChar, user.Country)
           .input("CreatedBy", sql.Int, user.CreatedBy)
           .input("RequesterID", sql.Int, RequesterID)
+          .input("Password", sql.Int, Passwor)
           .execute("AddUser");
 
         const userId = result.recordset[0].UserID;
