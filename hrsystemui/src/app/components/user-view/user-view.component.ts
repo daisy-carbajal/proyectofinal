@@ -11,7 +11,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CommonModule } from '@angular/common';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { DropdownModule } from 'primeng/dropdown';
 import { TagModule } from 'primeng/tag';
 import { RadioButtonModule } from 'primeng/radiobutton';
@@ -22,8 +22,7 @@ import { Router } from '@angular/router';
 import { DepartmentService } from '../../services/department.service';
 import { JobtitleDepartmentService } from '../../services/job-title-department.service';
 import { AuthService } from '../../services/auth.service';
-import { CalendarModule } from 'primeng/calendar'; 
-
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-user-view',
@@ -65,6 +64,7 @@ import { CalendarModule } from 'primeng/calendar';
 })
 export class UserViewComponent implements OnInit {
   @ViewChild('dt') dt: any;
+  @ViewChild('fileUploader') fileUploader!: FileUpload;
 
   users: any[] = [];
   selectedUsers: any[] = [];
@@ -190,6 +190,13 @@ export class UserViewComponent implements OnInit {
 
   onFileSelected(event: any): void {
     this.selectedFile = event.files[0];
+  }
+
+  clearFileUpload(): void {
+    if (this.fileUploader) {
+      this.fileUploader.clear();
+      this.selectedFile = null; // Opcional: Resetear la variable también
+    }
   }
 
   onUpload(event: any): void {

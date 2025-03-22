@@ -2,11 +2,13 @@ const { poolPromise, sql } = require("../database/db");
 
 const checkPermission = (permissionName) => {
   return async (req, res, next) => {
-    const userId = req.headers['x-user-id'];
-    const roleId = req.headers['x-role-id'];
+    const userId = req.headers["x-user-id"];
+    const roleId = req.headers["x-role-id"];
 
     if (!userId || !roleId) {
-      return res.status(400).json({ message: "Faltan encabezados de userId o roleId" });
+      return res
+        .status(400)
+        .json({ message: "Faltan encabezados de userId o roleId" });
     }
 
     try {
@@ -31,7 +33,8 @@ const checkPermission = (permissionName) => {
 
       if (rolePermissionResult.recordset.length === 0) {
         return res.status(403).json({
-          message: "Acceso denegado: No tienes permiso para realizar esta acción.",
+          message:
+            "Acceso denegado: No tienes permiso para realizar esta acción.",
         });
       }
 
@@ -40,7 +43,9 @@ const checkPermission = (permissionName) => {
       next();
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "An error occurred during permission verification" });
+      res
+        .status(500)
+        .json({ message: "An error occurred during permission verification" });
     }
   };
 };

@@ -52,4 +52,5 @@ module.exports = [
   { path: "/eval360", route: require("./evaluation360Routes") },
   { path: "/files", route: require("./fileUploadRoutes") },
   { path: "/logs", route: require("./logRoutes") },
+  { path: "/notifications", route: require("./notificationRoutes") },
 ];

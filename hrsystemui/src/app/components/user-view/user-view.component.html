@@ -11,7 +11,15 @@
     </ng-template>
 
     <ng-template pTemplate="right">
+      <p-button
+        icon="pi pi-times"
+        severity="danger"
+        class="mr-2"
+        [text]="true"
+        (click)="clearFileUpload()"
+      ></p-button>
       <p-fileUpload
+      #fileUploader
         mode="basic"
         [customUpload]="true"
         accept=".csv"
@@ -59,23 +67,23 @@
           </div>
         </th>
         <th pSortableColumn="WorkEmail">
-          <div class="flex flex-shrink-0"> 
-          Correo Laboral <p-sortIcon field="WorkEmail"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Correo Laboral <p-sortIcon field="WorkEmail"></p-sortIcon>
           </div>
         </th>
         <th pSortableColumn="PhoneNumber">
-          <div class="flex flex-shrink-0"> 
-          Télefono <p-sortIcon field="PhoneNumber"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Télefono <p-sortIcon field="PhoneNumber"></p-sortIcon>
           </div>
         </th>
         <th pSortableColumn="Status">
-          <div class="flex flex-shrink-0"> 
-          Estado <p-sortIcon field="Status"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Estado <p-sortIcon field="Status"></p-sortIcon>
           </div>
         </th>
         <th pSortableColumn="IsPasswordSet">
-          <div class="flex flex-shrink-0"> 
-          Registro <p-sortIcon field="IsPasswordSet"></p-sortIcon>
+          <div class="flex flex-shrink-0">
+            Registro <p-sortIcon field="IsPasswordSet"></p-sortIcon>
           </div>
         </th>
         <th></th>

@@ -17,13 +17,17 @@
         class="p-mb-3"
         rounded="true"
         text="true"
+        (onClick)="notificationPanel.toggle($event)"
+        pBadge
+        [badge]="unreadCount > 0 ? unreadCount.toString() : undefined"
+        badgeSeverity="danger"
       ></p-button>
       <p-button
         icon="pi pi-cog"
         class="p-mb-3"
         rounded="true"
         text="true"
-        [routerLink]="['/home','settings']"
+        [routerLink]="['/home', 'settings']"
       ></p-button>
       <p-button
         icon="pi pi-bolt"
@@ -33,7 +37,7 @@
         (onClick)="menu.toggle($event)"
       ></p-button>
     </ng-template>
-    <p-menu #menu [model]="items" [popup]="true" [style]="{ width: '300px'}"/>
+    <p-menu #menu [model]="items" [popup]="true" [style]="{ width: '300px' }" />
     <div class="ml-auto mr-3">
       <ng-container *ngTemplateOutlet="myTemplate"> </ng-container>
     </div>
@@ -41,9 +45,39 @@
 </div>
 
 <p-button
-*ngIf="currentUrl === '/home'"
+  *ngIf="currentUrl === '/home'"
   icon="pi pi-plus"
   class="floating-button"
   (onClick)="menu.toggle($event)"
   rounded="true"
 ></p-button>
+
+<p-overlayPanel #notificationPanel>
+  <div class="w-20rem max-h-20rem overflow-auto">
+    <div class="text-lg font-semibold mb-3">Notificaciones</div>
+
+    <div *ngIf="notifications.length === 0" class="text-color-secondary">
+      No tienes notificaciones.
+    </div>
+
+    <ul class="list-none p-0 m-0">
+      <li
+        *ngFor="let notification of notifications"
+        class="border-round bg-gray-100 p-3 mb-2"
+      >
+        <div class="font-bold text-sm">{{ notification.Title }}</div>
+        <div class="text-sm text-color-secondary mb-2">
+          {{ notification.Message }}
+        </div>
+        <div class="text-xs text-right">
+          <p-button
+            icon="pi pi-check"
+            label="Marcar como leída"
+            class="p-button-text p-button-sm"
+            (onClick)="markAsRead(notification.NotificationID)"
+          />
+        </div>
+      </li>
+    </ul>
+  </div>
+</p-overlayPanel>
