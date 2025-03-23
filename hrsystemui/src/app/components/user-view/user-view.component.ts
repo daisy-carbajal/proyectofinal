@@ -209,6 +209,7 @@ export class UserViewComponent implements OnInit {
         (response) => {
           console.log('Archivo CSV importado correctamente:', response);
           alert('Archivo CSV importado correctamente');
+          this.clearFileUpload();
         },
         (error) => {
           console.error('Error al importar el archivo CSV:', error);

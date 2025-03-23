@@ -106,9 +106,9 @@ const createUser = async (req, res) => {
       .execute("AddNewUserHierarchy");
 
     await pool
-    .request()
-    .input("UserID", sql.Int, userId)
-    .execute("AddUserPreferences");
+      .request()
+      .input("UserID", sql.Int, userId)
+      .execute("AddUserPreferences");
 
     await pool
       .request()
@@ -396,8 +396,8 @@ const importUsersFromCSV = async (req, res) => {
     return res.status(400).json({ message: "Por favor, sube un archivo CSV" });
   }
 
-  const createdBy = req.body.createdBy;
   const RequesterID = req.userId;
+  const token = crypto.randomBytes(32).toString("hex");
 
   try {
     const users = [];
@@ -432,10 +432,10 @@ const importUsersFromCSV = async (req, res) => {
             State: row.State,
             PostalCode: row.PostalCode,
             Country: row.Country,
-            JobTitleID: row.JobTitleID,
             DepartmentID: row.DepartmentID,
-            CreatedBy: createdBy,
-            Password:123
+            JobTitleID: row.JobTitleID,
+            CreatedBy: RequesterID,
+            Password: "12345678",
           });
         })
         .on("end", resolve)
@@ -455,6 +455,7 @@ const importUsersFromCSV = async (req, res) => {
           .input("FirstName", sql.NVarChar, user.FirstName)
           .input("LastName", sql.NVarChar, user.LastName)
           .input("PersonalEmail", sql.NVarChar, user.PersonalEmail)
+          .input("Password", sql.NVarChar, user.Password)
           .input("BirthDate", sql.Date, user.BirthDate)
           .input("Gender", sql.NVarChar, user.Gender)
           .input("PhoneNumber", sql.NVarChar, user.PhoneNumber)
@@ -464,9 +465,8 @@ const importUsersFromCSV = async (req, res) => {
           .input("State", sql.NVarChar, user.State)
           .input("PostalCode", sql.NVarChar, user.PostalCode)
           .input("Country", sql.NVarChar, user.Country)
-          .input("CreatedBy", sql.Int, user.CreatedBy)
+          .input("CreatedBy", sql.Int, RequesterID)
           .input("RequesterID", sql.Int, RequesterID)
-          .input("Password", sql.Int, Passwor)
           .execute("AddUser");
 
         const userId = result.recordset[0].UserID;
@@ -476,39 +476,48 @@ const importUsersFromCSV = async (req, res) => {
           .input("UserID", sql.Int, userId)
           .input("JobTitleID", sql.Int, user.JobTitleID)
           .input("StartDate", sql.Date, new Date())
-          .input("EndDate", sql.Date, null)
-          .input("CreatedBy", sql.Int, user.CreatedBy)
+          .input("ChangeReasonID", sql.Int, 4)
+          .input("CreatedBy", sql.Int, RequesterID)
           .input("RequesterID", sql.Int, RequesterID)
-          .execute("AddJobTitleChange");
+          .execute("AddNewJobTitleChange");
 
         await transaction
           .request()
           .input("UserID", sql.Int, userId)
           .input("DepartmentID", sql.Int, user.DepartmentID)
           .input("StartDate", sql.Date, new Date())
-          .input("EndDate", sql.Date, null)
-          .input("CreatedBy", sql.Int, user.CreatedBy)
+          .input("ChangeReasonID", sql.Int, 4)
+          .input("CreatedBy", sql.Int, RequesterID)
           .input("RequesterID", sql.Int, RequesterID)
-          .execute("AddDepartmentChange");
+          .execute("AddNewDepartmentChange");
 
         const roleResult = await transaction
           .request()
           .input("JobTitleID", sql.Int, user.JobTitleID)
-          .input("RequesterID", sql.Int, RequesterID)
           .execute("GetRoleByJobTitle");
 
         const roleId = roleResult.recordset[0]?.RoleID;
 
-        if (roleId) {
-          await transaction
-            .request()
-            .input("UserID", sql.Int, userId)
-            .input("RoleID", sql.Int, roleId)
-            .input("RequesterID", sql.Int, RequesterID)
-            .execute("AddUserRole");
-        }
+        await transaction
+          .request()
+          .input("UserID", sql.Int, userId)
+          .input("RoleID", sql.Int, roleId)
+          .input("CreatedBy", sql.Int, RequesterID)
+          .input("RequesterID", sql.Int, RequesterID)
+          .execute("AddUserRole");
 
-        const token = crypto.randomBytes(32).toString("hex");
+        await transaction
+          .request()
+          .input("UserID", sql.Int, userId)
+          .input("ManagerID", sql.Int, 81)
+          .input("RequesterID", sql.Int, RequesterID)
+          .execute("AddNewUserHierarchy");
+
+        await transaction
+          .request()
+          .input("UserID", sql.Int, userId)
+          .execute("AddUserPreferences");
+
         await transaction
           .request()
           .input("UserID", sql.Int, userId)
@@ -518,10 +527,10 @@ const importUsersFromCSV = async (req, res) => {
             sql.DateTime,
             new Date(Date.now() + 24 * 60 * 60 * 1000)
           )
-          .input("IsUsed", sql.Bit, 0)
+          .input("CreatedBy", sql.Int, RequesterID)
           .execute("AddUserInvitationToken");
 
-        sendInvitationEmail(user.PersonalEmail, token);
+        sendInvitationEmail(user.PersonalEmail, token, user.Password);
       }
 
       await transaction.commit();
