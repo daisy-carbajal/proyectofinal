@@ -11,3 +11,4 @@ hrsystem/config/google-cloud-key.json
 
 .vercel
 hrsystemui/.angular/cache/17.3.11/hrsystemui/.tsbuildinfo
+hrsystem/.env
