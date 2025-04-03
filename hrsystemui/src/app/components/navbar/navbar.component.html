@@ -63,7 +63,7 @@
     <ul class="list-none p-0 m-0">
       <li
         *ngFor="let notification of notifications"
-        class="border-round bg-gray-100 p-3 mb-2"
+        class="border-round p-3 mb-2"
       >
         <div class="font-bold text-sm">{{ notification.Title }}</div>
         <div class="text-sm text-color-secondary mb-2">
@@ -77,6 +77,7 @@
             (onClick)="markAsRead(notification.NotificationID)"
           />
         </div>
+        <p-divider />
       </li>
     </ul>
   </div>

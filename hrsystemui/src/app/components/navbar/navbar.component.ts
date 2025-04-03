@@ -18,6 +18,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { OverlayPanelModule  } from 'primeng/overlaypanel';
 import { NotificationService } from '../../services/notification-service.service';
 import { AuthService } from '../../services/auth.service';
+import { DividerModule } from 'primeng/divider';
 import * as Sentry from '@sentry/angular';
 
 @Component({
@@ -38,7 +39,8 @@ import * as Sentry from '@sentry/angular';
     CardModule,
     ButtonModule,
     MenuModule,
-    OverlayPanelModule ,
+    OverlayPanelModule,
+    DividerModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
