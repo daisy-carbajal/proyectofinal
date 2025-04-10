@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { poolPromise, sql } = require("../database/db");
+
 const {
   sendPasswordResetEmail,
 } = require("../services/sendPasswordResetEmail");
@@ -35,7 +36,6 @@ const login = async (req, res) => {
         .json({ message: "Usuario o contraseña incorrectos" });
     }
 
-    // Ajustar la duración del token basado en rememberMe
     const tokenExpiration = rememberMe ? "30d" : "1h";
 
     const token = jwt.sign(
@@ -57,7 +57,6 @@ const login = async (req, res) => {
       sameSite: "None",
     });
 
-    // Cambiar maxAge del token según rememberMe
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production" ? true : false,
@@ -65,10 +64,8 @@ const login = async (req, res) => {
       sameSite: "None",
     });
 
-    // Llama a createSessionToken pero no intentes enviar otra respuesta después
     await createSessionToken(result.output.UserID, token);
 
-    // Solo envía una respuesta aquí
     res.json({
       message: "Login exitoso",
       token,
@@ -81,7 +78,6 @@ const login = async (req, res) => {
     res.status(500).json({ message: "Error en el servidor" });
   }
 };
-
 
 const getUserFirstandLastName = async (req, res) => {
   try {
@@ -244,14 +240,18 @@ const validateToken = (req, res) => {
 
   if (!token) {
     console.log("Token no encontrado en cookies ni en headers");
-    return res.status(401).json({ valid: false, message: "Token no encontrado" });
+    return res
+      .status(401)
+      .json({ valid: false, message: "Token no encontrado" });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       console.log("Error al verificar el token:", err.message);
       if (err.name === "jwt expired") {
-        return res.status(401).json({ valid: false, message: "Token expirado" });
+        return res
+          .status(401)
+          .json({ valid: false, message: "Token expirado" });
       }
       return res.status(403).json({ valid: false, message: "Token inválido" });
     }
@@ -261,6 +261,34 @@ const validateToken = (req, res) => {
   });
 };
 
+const getUserPermissions = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const pool = await poolPromise;
+
+      const result = await pool
+        .request()
+        .input("UserID", sql.Int, id)
+        .execute("GetUserPermissionsJson");
+
+      if (result.recordset.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Usuario o permisos no encontrados" });
+      }
+
+      const userPermissions = result.recordset[0];
+
+      if (typeof userPermissions.Permissions === "string") {
+        userPermissions.Permissions = JSON.parse(userPermissions.Permissions);
+      }
+
+      res.json(userPermissions);
+    } catch (err) {
+      console.error("Error obteniendo permisos del usuario:", err);
+      res.status(500).json({ message: "Error en el servidor" });
+    }
+  };
 
 module.exports = {
   login,
@@ -270,4 +298,5 @@ module.exports = {
   resetPassword,
   logoutUser,
   validateToken,
+  getUserPermissions,
 };

@@ -6,7 +6,6 @@ const createJobTitle = async (req, res) => {
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
-    // Crear el JobTitle
     const result = await pool
       .request()
       .input("Title", sql.NVarChar, Title)
@@ -17,7 +16,6 @@ const createJobTitle = async (req, res) => {
 
     const jobTitleId = result.output.JobTitleID;
 
-    // Asociar el JobTitle con un Departamento
     await pool
       .request()
       .input("JobTitleID", sql.Int, jobTitleId)
@@ -25,7 +23,6 @@ const createJobTitle = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleDepartment");
 
-    // Asociar el JobTitle con un Rol
     await pool
       .request()
       .input("JobTitleID", sql.Int, jobTitleId)
@@ -33,7 +30,6 @@ const createJobTitle = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddJobTitleRole");
 
-    // Crear un JobLevel
     await pool
       .request()
       .input("RequesterID", sql.Int, RequesterID)

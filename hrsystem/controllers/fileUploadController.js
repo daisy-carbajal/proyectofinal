@@ -14,7 +14,6 @@ const uploadFile = async (req, res) => {
             return res.status(400).json({ message: "No file uploaded." });
         }
 
-        // Nombre del archivo con prefijo del usuario
         const fileName = `users/${req.params.userId}/${Date.now()}_${req.file.originalname}`;
         const blob = bucket.file(fileName);
         const blobStream = blob.createWriteStream({
@@ -38,13 +37,12 @@ const uploadFile = async (req, res) => {
     }
 };
 
-// 📌 LISTAR ARCHIVOS DEL USUARIO
 const listFiles = async (req, res) => {
     try {
         const [files] = await bucket.getFiles({ prefix: `users/${req.params.userId}/` });
 
         const fileList = files.map(file => ({
-            name: file.name.replace(`users/${req.params.userId}/`, ""), // Mostrar solo el nombre del archivo
+            name: file.name.replace(`users/${req.params.userId}/`, ""),
             url: `https://storage.googleapis.com/${bucket.name}/${file.name}`
         }));
 
@@ -55,7 +53,6 @@ const listFiles = async (req, res) => {
     }
 };
 
-// 📌 ELIMINAR ARCHIVO
 const deleteFile = async (req, res) => {
     try {
         const fileName = `users/${req.params.userId}/${req.params.fileName}`;
@@ -69,7 +66,6 @@ const deleteFile = async (req, res) => {
     }
 };
 
-// Middleware de subida de archivos con Multer
 const uploadMiddleware = upload.single("file");
 
 const generateSignedUrl = async (req, res) => {
@@ -79,7 +75,7 @@ const generateSignedUrl = async (req, res) => {
 
         const [url] = await file.getSignedUrl({
             action: 'read',
-            expires: Date.now() + 15 * 60 * 1000 // Expira en 15 minutos
+            expires: Date.now() + 15 * 60 * 1000
         });
 
         res.status(200).json({ url });

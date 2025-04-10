@@ -44,11 +44,10 @@ const getWarningLevelFiltered = async (req, res) => {
   try {
     const pool = await poolPromise;
 
-    const RequesterID = req.userId; // ID del solicitante
-    const NewUserID = req.query.NewUserID; // Parámetro desde query string
-    const NewReasonID = req.query.NewReasonID; // Parámetro desde query string
+    const RequesterID = req.userId; 
+    const NewUserID = req.query.NewUserID; 
+    const NewReasonID = req.query.NewReasonID; 
 
-    // Validación de parámetros
     if (!NewUserID || !NewReasonID) {
       return res
         .status(400)

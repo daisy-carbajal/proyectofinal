@@ -2,7 +2,7 @@ const { poolPromise, sql } = require("../database/db");
 
 const createDisciplinaryActionReason = async (req, res) => {
   try {
-    const { Description, Status } = req.body;
+    const { Description } = req.body;
     const pool = await poolPromise;
     const RequesterID = req.userId;
 

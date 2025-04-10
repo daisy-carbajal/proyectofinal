@@ -128,7 +128,7 @@ const deactivateDepartmentChange = async (req, res) => {
 const approveDepartmentChange = async (req, res) => {
   try {
     const { departmentChangeId, userId } = req.body;
-    const requesterId = req.userId; // Extraído del token o sesión
+    const requesterId = req.userId;
 
     const pool = await poolPromise;
 
@@ -148,7 +148,7 @@ const approveDepartmentChange = async (req, res) => {
 const denyDepartmentChange = async (req, res) => {
   try {
     const { departmentChangeId, userId } = req.body;
-    const requesterId = req.userId; // Extraído del token o sesión
+    const requesterId = req.userId;
 
     const pool = await poolPromise;
 

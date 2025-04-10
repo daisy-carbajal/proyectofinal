@@ -135,7 +135,7 @@ const getFeedbackById = async (req, res) => {
 const updateFeedback = async (req, res) => {
   try {
     const { id } = req.params;
-    const { TypeID, Subject, Comment, UpdatedBy } = req.body;
+    const { Comment } = req.body;
     const RequesterID = req.userId;
 
     const pool = await poolPromise;

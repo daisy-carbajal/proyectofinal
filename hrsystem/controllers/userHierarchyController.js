@@ -28,7 +28,6 @@ const getAllUserHierarchies = async (req, res) => {
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
-    // Llamada al procedimiento almacenado
     const result = await pool
       .request()
       .input("RequesterID", sql.Int, RequesterID)
@@ -40,17 +39,13 @@ const getAllUserHierarchies = async (req, res) => {
         .json({ message: "No se encontraron jerarquías de usuario" });
     }
 
-    // Estructurar los datos en un árbol jerárquico
     const buildHierarchy = (data) => {
-      const map = new Map(); // Usar Map para garantizar unicidad y mejor manejo de relaciones
-      const tree = [];
+      const map = new Map(); 
 
-      // Crear nodos iniciales para todos los usuarios
       data.forEach((item) => {
         map.set(item.UserID, { ...item, children: [] });
       });
 
-      // Construir la jerarquía
       data.forEach((item) => {
         const currentNode = map.get(item.UserID);
 
@@ -59,16 +54,13 @@ const getAllUserHierarchies = async (req, res) => {
           if (managerNode) {
             managerNode.children.push(currentNode); // Agregar al manager como hijo
           } else {
-            // Si el manager no está en el mapa, manejar como nodo raíz
             tree.push(currentNode);
           }
         } else {
-          // Si no tiene manager, es un nodo raíz
           tree.push(currentNode);
         }
       });
 
-      // Eliminar duplicados en niveles inferiores
       const removeDuplicates = (node) => {
         const uniqueChildren = new Map();
         node.children.forEach((child) => {
@@ -78,7 +70,7 @@ const getAllUserHierarchies = async (req, res) => {
         });
 
         node.children = Array.from(uniqueChildren.values());
-        node.children.forEach(removeDuplicates); // Aplicar recursivamente
+        node.children.forEach(removeDuplicates);
       };
 
       tree.forEach(removeDuplicates);

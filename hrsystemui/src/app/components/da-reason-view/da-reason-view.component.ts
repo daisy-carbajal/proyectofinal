@@ -173,7 +173,6 @@ export class DaReasonViewComponent implements OnInit {
             (error) => {
               console.error('Error al desactivar razón:', error);
 
-              // Manejar error
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',

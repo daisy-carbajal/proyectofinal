@@ -89,10 +89,7 @@ export class UserViewComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.userService.getUsersFiltered().subscribe((data: any[]) => {
-      console.log('Usuarios:', data);
-      this.users = data;
-    });
+    this.refreshUsers();
 
     this.loadDepartments();
     this.loadManagers();
@@ -100,6 +97,13 @@ export class UserViewComponent implements OnInit {
     this.loggedUserId = this.authService.getUserId();
     console.log('Logged User ID - :', this.loggedUserId);
     console.log('Rol de usuario logueado:', this.authService.getRoleId());
+  }
+
+  refreshUsers() {
+    this.userService.getUsersFiltered().subscribe((data: any[]) => {
+      console.log('Usuarios:', data);
+      this.users = data;
+    });
   }
 
   onFilterGlobal(event: Event) {
@@ -244,10 +248,48 @@ export class UserViewComponent implements OnInit {
               this.users[index].status = false;
             }
 
+            this.refreshUsers();
+
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
               detail: 'Usuario desactivado.',
+              life: 3000,
+            });
+          });
+      },
+    });
+  }
+
+  enableUser(userID: number) {
+    const user = this.users.find((u) => u.UserID === userID);
+
+    if (!user) {
+      console.error('Usuario no encontrado');
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: '¿Está seguro de reactivar a ' + user.FirstName + '?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const deletedBy = this.loggedUserId;
+
+        this.userService
+          .enableUser(userID)
+          .subscribe(() => {
+            const index = this.findIndexById(userID);
+            if (index !== -1) {
+              this.users[index].status = false;
+            }
+
+            this.refreshUsers
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Usuario Reactivado.',
               life: 3000,
             });
           });

@@ -72,7 +72,7 @@ const getAllPermissionsByCategory = async (req, res) => {
 
 const getPermissionsByCategory = async (req, res) => {
   try {
-    const { id } = req.params; // ID de la categoría
+    const { id } = req.params;
     const RequesterID = req.userId;
     const pool = await poolPromise;
 

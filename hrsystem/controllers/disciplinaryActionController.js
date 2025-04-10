@@ -193,8 +193,8 @@ const deleteDisciplinaryAction = async (req, res) => {
 
 const getDisciplinaryActionWithTasksByID = async (req, res) => {
   try {
-    const { id } = req.params; // ID de la acción disciplinaria
-    const RequesterID = req.userId; // ID del usuario solicitante
+    const { id } = req.params; 
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     const result = await pool
@@ -209,11 +209,10 @@ const getDisciplinaryActionWithTasksByID = async (req, res) => {
       });
     }
 
-    // Procesar el registro devuelto (si Tasks está en formato JSON, asegúrate de parsearlo)
     const processedRecord = result.recordset.map((disciplinaryAction) => {
       if (disciplinaryAction.Tasks) {
         try {
-          // Verificar si Tasks es una cadena JSON y parsearla
+
           if (typeof disciplinaryAction.Tasks === "string") {
             disciplinaryAction.Tasks = JSON.parse(disciplinaryAction.Tasks);
           }
@@ -224,7 +223,7 @@ const getDisciplinaryActionWithTasksByID = async (req, res) => {
       return disciplinaryAction;
     });
 
-    res.status(200).json(processedRecord[0]); // Enviar solo el primer registro
+    res.status(200).json(processedRecord[0]);
   } catch (error) {
     console.error("Error en la consulta:", error);
     res

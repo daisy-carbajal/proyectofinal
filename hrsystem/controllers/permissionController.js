@@ -77,8 +77,8 @@ const deletePermission = async (req, res) => {
 const updatePermission = async (req, res) => {
   try {
     const { PermissionName, Description, CategoryID } = req.body;
-    const PermissionID = req.params.id; // Obtener el ID del permiso de los parámetros de la URL
-    const RequesterID = req.userId; // Obtener el ID del usuario logueado desde el middleware de autenticación
+    const PermissionID = req.params.id; 
+    const RequesterID = req.userId;
     const pool = await poolPromise;
 
     await pool

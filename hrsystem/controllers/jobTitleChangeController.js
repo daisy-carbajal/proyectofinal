@@ -163,9 +163,9 @@ const approveChanges = async (req, res) => {
 
     await pool
       .request()
-      .input("DepartmentChangeID", sql.Int, DepartmentChangeID || null) // Puede ser null
-      .input("JobTitleChangeID", sql.Int, JobTitleChangeID || null) // Puede ser null
-      .input("HierarchyID", sql.Int, HierarchyID || null) // Puede ser null
+      .input("DepartmentChangeID", sql.Int, DepartmentChangeID || null)
+      .input("JobTitleChangeID", sql.Int, JobTitleChangeID || null)
+      .input("HierarchyID", sql.Int, HierarchyID || null)
       .input("UserID", sql.Int, UserID)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("ApproveChanges");
@@ -186,9 +186,9 @@ const denyChanges = async (req, res) => {
 
     await pool
       .request()
-      .input("DepartmentChangeID", sql.Int, DepartmentChangeID || null) // Puede ser null
-      .input("JobTitleChangeID", sql.Int, JobTitleChangeID || null) // Puede ser null
-      .input("HierarchyID", sql.Int, HierarchyID || null) // Puede ser null
+      .input("DepartmentChangeID", sql.Int, DepartmentChangeID || null)
+      .input("JobTitleChangeID", sql.Int, JobTitleChangeID || null)
+      .input("HierarchyID", sql.Int, HierarchyID || null)
       .input("UserID", sql.Int, UserID)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("DenyChanges");
@@ -261,7 +261,7 @@ const getCurrentDetailsByID = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterId)
       .execute("GetCurrentDetailsByID");
 
-    res.status(200).json(result.recordset); // Devolver los resultados al cliente
+    res.status(200).json(result.recordset);
   } catch (err) {
     console.error("Error al obtener los detalles actuales:", err);
     if (err.message.includes("Access denied")) {

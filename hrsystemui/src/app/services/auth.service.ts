@@ -154,6 +154,23 @@ export class AuthService {
     return this.http.get<UserNameResponse>(url, this.getHeaders());
   }
 
+  getUserPermissions(): Observable<any> {
+    const userId = this.getUserId();
+    if (!userId) {
+      throw new Error('User ID is not available');
+    }
+    const url = `${this.apiUrl}/get-permissions/${userId}`;
+    return this.http.get<any>(url, this.getHeaders()).pipe(
+      tap((response) => {
+        console.log("Permisos del usuario:", response);
+      }),
+      catchError((error) => {
+        console.error("Error al obtener permisos:", error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   isLoggedIn(): boolean {
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('token');

@@ -87,11 +87,18 @@ export class UserService {
 
   deactivateUser(
     userId: number,
-    deactivatedUser: { DeletedBy: any }
+    deletedBy: { DeletedBy: any }
   ): Observable<any> {
     const url = `${this.apiUrl}/d/${userId}`;
-    return this.http.patch(url, deactivatedUser, this.getHeaders());
+    return this.http.patch(url, deletedBy, this.getHeaders());
   }
+
+  enableUser(
+    userId: number,
+  ): Observable<any> {
+    const url = `${this.apiUrl}/e/${userId}`;
+    return this.http.patch(url, {}, this.getHeaders());
+  }  
 
   deleteUser(userId: number): Observable<any> {
     const url = `${this.apiUrl}/${userId}`;

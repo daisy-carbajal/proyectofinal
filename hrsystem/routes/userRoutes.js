@@ -62,6 +62,12 @@ router.patch(
   userController.deactivateUser
 );
 
+router.patch(
+  "/e/:id",
+  checkPermission("EDIT_USER"),
+  userController.enableUser
+);
+
 router.post(
   "/import-csv",
   upload.single("file"),

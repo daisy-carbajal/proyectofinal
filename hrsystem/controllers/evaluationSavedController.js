@@ -6,7 +6,6 @@ const createEvaluationSaved = async (req, res) => {
     const { Name, TypeID, DepartmentID, ParameterWeights } = req.body;
     const RequesterID = req.userId;
 
-    // Validar que la suma de los pesos sea igual a 100
     const totalWeight = ParameterWeights.reduce(
       (sum, weight) => sum + weight.Weight,
       0
@@ -19,7 +18,6 @@ const createEvaluationSaved = async (req, res) => {
 
     await transaction.begin();
 
-    // Crear la evaluación
     const result = await transaction
       .request()
       .input("Name", sql.VarChar(255), Name)
@@ -30,7 +28,6 @@ const createEvaluationSaved = async (req, res) => {
 
     const EvaluationSavedID = result.recordset[0].EvaluationSavedID;
 
-    // Agregar los pesos de los parámetros
     for (const weight of ParameterWeights) {
       await transaction
         .request()
@@ -41,7 +38,6 @@ const createEvaluationSaved = async (req, res) => {
         .execute("AddEvaluationParameterWeight");
     }
 
-    // Confirmar la transacción
     await transaction.commit();
 
     res.status(201).json({
@@ -50,7 +46,6 @@ const createEvaluationSaved = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
 
-    // Verificar si es un error de validación del procedimiento almacenado
     if (
       error.message.includes("La suma total de los pesos no puede exceder 100.")
     ) {
@@ -84,11 +79,9 @@ const getAllEvaluationSaved = async (req, res) => {
         .json({ message: "No se encontraron evaluaciones guardadas" });
     }
 
-    // Procesar los campos que contienen cadenas JSON
     const processedRecordset = result.recordset.map((evaluation) => {
       if (evaluation.Parameters) {
         try {
-          // Parsear el campo "Parameters" si es una cadena JSON
           evaluation.Parameters = JSON.parse(evaluation.Parameters);
         } catch (parseError) {
           console.error("Error al parsear el campo Parameters:", parseError);
@@ -150,11 +143,9 @@ const getEvaluationSavedByID = async (req, res) => {
         .json({ message: "No se encontraron evaluaciones con ese ID." });
     }
 
-    // Procesar y formatear campos JSON
     const processedRecord = result.recordset.map((evaluation) => {
       if (evaluation.Parameters) {
         try {
-          // Intentar parsear el campo Parameters si es una cadena JSON
           evaluation.Parameters = JSON.parse(evaluation.Parameters);
         } catch (parseError) {
           console.error("Error al parsear el campo Parameters:", parseError);
@@ -163,7 +154,7 @@ const getEvaluationSavedByID = async (req, res) => {
       return evaluation;
     });
 
-    res.status(200).json(processedRecord[0]); // Enviar solo el primer registro
+    res.status(200).json(processedRecord[0]);
   } catch (error) {
     res
       .status(500)

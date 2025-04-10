@@ -17,7 +17,6 @@ const authenticateToken = (req, res, next) => {
             return res.status(403).json({ message: "Token de actualización inválido" });
           }
   
-          // Genera un nuevo token
           const newToken = jwt.sign({ id: decoded.id, roleId: decoded.roleId }, process.env.JWT_SECRET, { expiresIn: "1h" });
   
           res.cookie("token", newToken, {

@@ -5,14 +5,13 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class LoggerService {
-  private apiUrl ='http://localhost:3000/logs' // Ruta del backend con Winston
+  private apiUrl ='http://localhost:3000/logs'
 
   constructor(private http: HttpClient) {}
 
   log(message: string, level: 'info' | 'warn' | 'error' = 'info') {
     const logData = { message, level, timestamp: new Date().toISOString() };
     
-    // Muestra los logs en la consola (para desarrollo)
     switch (level) {
       case 'info':
         console.info(`[INFO] ${message}`);

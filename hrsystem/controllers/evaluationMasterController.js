@@ -258,12 +258,9 @@ const getEvaluationMasterDetailsByID = async (req, res) => {
         .json({ message: "No se encontraron evaluaciones con ese ID." });
     }
 
-    // Los parámetros y calificaciones ya están en formato JSON, no se necesita hacer el parseo manual
     const processedRecord = result.recordset.map((evaluation) => {
-      // Enviar directamente los parámetros y calificaciones en JSON
       if (evaluation.ParametersAndCalifications) {
         try {
-          // Verificar si ParametersAndCalifications es una cadena JSON (en caso de no serlo)
           if (typeof evaluation.ParametersAndCalifications === "string") {
             evaluation.ParametersAndCalifications = JSON.parse(
               evaluation.ParametersAndCalifications
@@ -279,7 +276,7 @@ const getEvaluationMasterDetailsByID = async (req, res) => {
       return evaluation;
     });
 
-    res.status(200).json(processedRecord[0]); // Enviar solo el primer registro
+    res.status(200).json(processedRecord[0]);
   } catch (error) {
     console.error("Error en la consulta:", error);
     res
@@ -324,7 +321,7 @@ const getEvaluationMasterDetailsBy360ID = async (req, res) => {
       return evaluation;
     });
 
-    res.status(200).json(processedRecord); // Enviar solo el primer registro
+    res.status(200).json(processedRecord);
   } catch (error) {
     console.error("Error en la consulta:", error);
     res

@@ -223,10 +223,9 @@
             <div class="text-500 w-6 font-medium mb-2">Descripción</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-editor
-                name="comments"
+                name="summary"
                 [style]="{ height: '150px' }"
                 [(ngModel)]="actionPlanInfo.Summary"
-                [readonly]="true"
               />
             </div>
           </div>
@@ -238,10 +237,9 @@
             <div class="text-500 w-6 font-medium mb-2">Objetivos</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-editor
-                name="comments"
+                name="objectives"
                 [style]="{ height: '150px' }"
                 [(ngModel)]="actionPlanInfo.Goal"
-                [readonly]="true"
               />
             </div>
           </div>
@@ -253,10 +251,9 @@
             <div class="text-500 w-6 font-medium mb-2">Areas de Exito</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-editor
-                name="comments"
+                name="successarea"
                 [style]="{ height: '150px' }"
                 [(ngModel)]="actionPlanInfo.SuccessArea"
-                [readonly]="true"
               />
             </div>
           </div>
@@ -264,10 +261,9 @@
             <div class="text-500 w-6 font-medium mb-2">Areas de Oportunidad</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-editor
-                name="comments"
+                name="opportunityarea"
                 [style]="{ height: '150px' }"
                 [(ngModel)]="actionPlanInfo.OpportunityArea"
-                [readonly]="true"
               />
             </div>
           </div>
@@ -279,10 +275,9 @@
             <div class="text-500 w-6 font-medium mb-2">Impacto</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-editor
-                name="comments"
+                name="impact"
                 [style]="{ height: '150px' }"
                 [(ngModel)]="actionPlanInfo.Impact"
-                [readonly]="true"
               />
             </div>
           </div>
@@ -290,10 +285,9 @@
             <div class="text-500 w-6 font-medium mb-2">Análisis del Problema</div>
             <div class="text-900 w-full md:flex-order-0 flex-order-1">
               <p-editor
-                name="comments"
+                name="rootcauseanalysis"
                 [style]="{ height: '150px' }"
                 [(ngModel)]="actionPlanInfo.RootCauseAnalysis"
-                [readonly]="true"
               />
             </div>
           </div>
@@ -305,7 +299,7 @@
             <div class="text-500 w-6 font-medium mb-2">Estrategias</div>
             <div class="w-full md:flex-order-0 flex-order-1">
               <p-editor
-                name="comments"
+                name="strategies"
                 [style]="{ height: '150px' }"
                 [(ngModel)]="actionPlanInfo.Strategies"
               />

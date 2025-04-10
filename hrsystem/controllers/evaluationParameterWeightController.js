@@ -21,7 +21,6 @@ const createEvaluationParameterWeight = async (req, res) => {
         message: "Peso del parámetro de evaluación agregado exitosamente",
       });
   } catch (error) {
-    // Manejar el error de validación del procedimiento almacenado
     if (
       error.message.includes("The total weight for this evaluation exceeds 100")
     ) {

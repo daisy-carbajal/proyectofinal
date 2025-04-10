@@ -171,7 +171,6 @@ export class DaWarningLevelViewComponent implements OnInit {
           (error) => {
             console.error('Error al desactivar advertencia:', error);
   
-            // Manejar error
             this.messageService.add({
               severity: 'error',
               summary: 'Error',

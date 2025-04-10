@@ -18,15 +18,13 @@ const createActionPlan = async (req, res) => {
       RootCauseAnalysis,
       Strategies,
       Comments,
-      Parameters, // Lista de parámetros para ActionPlanParameter
-      Tasks, // Lista de tareas para ActionPlanTask
+      Parameters, 
+      Tasks, 
     } = req.body;
     const RequesterID = req.userId;
 
-    // Iniciar una transacción
     await transaction.begin();
 
-    // Insertar el registro en ActionPlan
     const result = await transaction
       .request()
       .input("AppliedByUserID", sql.Int, AppliedByUserID)
@@ -46,10 +44,8 @@ const createActionPlan = async (req, res) => {
       .input("RequesterID", sql.Int, RequesterID)
       .execute("AddActionPlan");
 
-    // Obtener el ID del plan de acción recién creado
     const ActionPlanID = result.recordset[0].ActionPlanID;
 
-    // Insertar múltiples registros en ActionPlanParameter
     for (const parameter of Parameters) {
       await transaction
         .request()
@@ -66,7 +62,6 @@ const createActionPlan = async (req, res) => {
         .execute("AddActionPlanParameter");
     }
 
-    // Insertar múltiples registros en ActionPlanTask
     for (const task of Tasks) {
       await transaction
         .request()
@@ -78,14 +73,13 @@ const createActionPlan = async (req, res) => {
         .execute("AddActionPlanTask");
     }
 
-    // Confirmar la transacción
     await transaction.commit();
 
     res
       .status(201)
       .json({ message: "Plan de acción y detalles agregados exitosamente" });
   } catch (error) {
-    // Revertir la transacción en caso de error
+
     await transaction.rollback();
     console.error("Error al crear el plan de acción y sus detalles:", error);
     res
@@ -149,6 +143,12 @@ const updateActionPlan = async (req, res) => {
   try {
     const { id } = req.params;
     const {
+      Summary,
+      Goal,
+      SuccessArea,
+      OpportunityArea,
+      Impact,
+      RootCauseAnalysis,
       EndDate,
       ActionPlanStatus,
       Strategies,
@@ -162,6 +162,12 @@ const updateActionPlan = async (req, res) => {
     await pool
       .request()
       .input("ActionPlanID", sql.Int, id)
+      .input("Summary", sql.Text, Summary)
+      .input("Goal", sql.Text, Goal)
+      .input("SuccessArea", sql.Text, SuccessArea)
+      .input("OpportunityArea", sql.Text, OpportunityArea)
+      .input("Impact", sql.Text, Impact)
+      .input("RootCauseAnalysis", sql.Text, RootCauseAnalysis)
       .input("EndDate", sql.Date, EndDate)
       .input("ActionPlanStatus", sql.NVarChar, ActionPlanStatus)
       .input("Strategies", sql.Text, Strategies)
@@ -184,6 +190,7 @@ const updateActionPlan = async (req, res) => {
       await pool
         .request()
         .input("ActionPlanID", sql.Int, id)
+        .input("ActionPlanTaskID", sql.Int, task.TaskID)
         .input("Task", sql.NVarChar, task.Task)
         .input("FollowUpDate", sql.Date, task.FollowUpDate)
         .input("TaskStatus", sql.NVarChar, task.TaskStatus)
@@ -245,25 +252,22 @@ const deleteActionPlan = async (req, res) => {
 
 const getActionPlanWithDetailsByID = async (req, res) => {
   try {
-    const { id } = req.params; // ID del Action Plan
-    const RequesterID = req.userId; // ID del usuario solicitante (obtenido del token o sesión)
-    const pool = await poolPromise; // Conexión al pool de la base de datos
+    const { id } = req.params; 
+    const RequesterID = req.userId; 
+    const pool = await poolPromise;
 
-    // Llamar al stored procedure con los parámetros necesarios
     const result = await pool
       .request()
       .input("ActionPlanID", sql.Int, id)
       .input("RequesterID", sql.Int, RequesterID)
       .execute("GetActionPlanInformationByID");
 
-    // Validar si se obtuvieron registros
     if (result.recordset.length === 0) {
       return res
         .status(404)
         .json({ message: "No se encontró ningún plan de acción con ese ID." });
     }
 
-    // Procesar el registro devuelto (si Parameters o Tasks están en formato JSON, parsearlos)
     const processedRecord = result.recordset.map((actionPlan) => {
       if (actionPlan.Parameters) {
         try {
@@ -288,7 +292,7 @@ const getActionPlanWithDetailsByID = async (req, res) => {
       return actionPlan;
     });
 
-    res.status(200).json(processedRecord[0]); // Enviar solo el primer registro procesado
+    res.status(200).json(processedRecord[0]);
   } catch (error) {
     console.error("Error en la consulta:", error);
     res

@@ -1,13 +1,11 @@
 const winston = require("winston");
 require("winston-daily-rotate-file");
 
-// Formato del log
 const logFormat = winston.format.combine(
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   winston.format.printf(({ level, message, timestamp }) => `${timestamp} [${level.toUpperCase()}]: ${message}`)
 );
 
-// Configuración de Winston con dos archivos (backend y frontend)
 const transports = [
   new winston.transports.Console({
     format: winston.format.combine(winston.format.colorize(), logFormat),

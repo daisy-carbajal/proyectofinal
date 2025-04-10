@@ -1,14 +1,14 @@
-const db = require("./database/db"); // Adjusted the path to the correct location
+const db = require("./database/db"); 
 
 describe("Database Connection Tests", () => {
   it("should connect to the database successfully", async () => {
-    const pool = await db.poolPromise; // Updated to use poolPromise
+    const pool = await db.poolPromise;
     expect(pool).toBeDefined();
-    expect(pool).toHaveProperty("query"); // Assuming the connection object has a query method
+    expect(pool).toHaveProperty("query");
   });
 
   it("should return an error for invalid queries", async () => {
-    const pool = await db.poolPromise; // Updated to use poolPromise
-    await expect(pool.query("INVALID SQL QUERY")).rejects.toThrow(); // Updated to use pool.query
+    const pool = await db.poolPromise;
+    await expect(pool.query("INVALID SQL QUERY")).rejects.toThrow();
   });
 });

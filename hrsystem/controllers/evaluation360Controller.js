@@ -23,7 +23,6 @@ const createEvaluation360 = async (req, res) => {
     await transaction.begin();
     console.log("Transacción iniciada");
 
-    // 1. Insertar en Evaluation360
     const evaluation360Result = await transaction
       .request()
       .input("EvaluateeUserID", sql.Int, EvaluateeUserID)
@@ -38,7 +37,6 @@ const createEvaluation360 = async (req, res) => {
     console.log(`Evaluation360 creada con ID: ${Evaluation360ID}`);
 
     for (const evaluator of Evaluators) {
-      // 2.1 Insertar en EvaluationMaster
       const evaluationMasterResult = await transaction
         .request()
         .input("EvaluatorUserID", sql.Int, evaluator.EvaluatorUserID)
@@ -58,7 +56,6 @@ const createEvaluation360 = async (req, res) => {
         `EvaluationMaster creada con ID: ${EvaluationMasterID} para evaluador ${evaluator.EvaluatorUserID}`
       );
 
-      // 2.2 Obtener los parámetros asociados desde EvaluationParameterWeight
       const parameterWeightsResult = await transaction
         .request()
         .input("EvaluationSavedID", sql.Int, EvaluationSavedID)
@@ -71,13 +68,12 @@ const createEvaluation360 = async (req, res) => {
         parameters
       );
 
-      // 2.3 Insertar los parámetros en EvaluationDetail
       for (const parameter of parameters) {
         await transaction
           .request()
           .input("EvaluationMasterID", sql.Int, EvaluationMasterID)
           .input("ParameterID", sql.Int, parameter.ParameterID)
-          .input("CalificationID", sql.Int, null) // Calificación aún no asignada
+          .input("CalificationID", sql.Int, null)
           .input("RequesterID", sql.Int, RequesterID)
           .execute("AddEvaluationDetail");
       }

@@ -11,6 +11,8 @@ router.post("/logout", authController.logoutUser);
 
 router.get('/get-name/:id', verifyToken, checkPermission("VIEW_USER"), authController.getUserFirstandLastName);
 
+router.get('/get-permissions/:id', verifyToken, authController.getUserPermissions);
+
 router.post("/create-session", authController.createSessionToken);
 
 router.post("/complete-registration", userController.completeRegistration);

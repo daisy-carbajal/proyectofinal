@@ -184,7 +184,7 @@ export class ActionPlanDetailViewComponent implements OnInit {
         this.duration = 0;
       }
     } else {
-      this.duration = 0; // Si falta una fecha, la duración es 0
+      this.duration = 0;
     }
   }
 
@@ -231,7 +231,7 @@ export class ActionPlanDetailViewComponent implements OnInit {
   }
 
   trackByTask(index: number, task: any): number {
-    return task.id || index; // Usa una propiedad única como ID
+    return task.id || index;
   }
 
   goBackToActionPlans(): void {
@@ -253,13 +253,13 @@ export class ActionPlanDetailViewComponent implements OnInit {
 
     const taskDetails = Array.isArray(this.actionPlanInfo.Tasks)
       ? this.actionPlanInfo.Tasks.map((task: any) => ({
+          TaskID: task.ActionPlanTaskID || null,
           Task: task.Task || null,
           FollowUpDate: task.FollowUpDate || null,
           TaskStatus: task.TaskStatus || null,
         }))
       : [];
 
-    // Validar detalles
     if (taskDetails.length === 0) {
       console.error('No se encontraron detalles de tareas para enviar.');
       this.messageService.add({
@@ -278,7 +278,6 @@ export class ActionPlanDetailViewComponent implements OnInit {
         }))
       : [];
 
-    // Validar detalles
     if (parameterDetails.length === 0) {
       console.error('No se encontraron detalles deparametros para enviar.');
       this.messageService.add({
@@ -291,6 +290,12 @@ export class ActionPlanDetailViewComponent implements OnInit {
 
     const requestBody = {
       ActionPlanID: this.actionPlanInfo.ActionPlanID,
+      Summary: this.actionPlanInfo.Summary,
+      Goal: this.actionPlanInfo.Goal,
+      SuccessArea: this.actionPlanInfo.SuccessArea,
+      OpportunityArea: this.actionPlanInfo.OpportunityArea,
+      Impact: this.actionPlanInfo.Impact,
+      RootCauseAnalysis: this.actionPlanInfo.RootCauseAnalysis,
       EndDate: this.actionPlanInfo.EndDate,
       ActionPlanStatus: this.actionPlanInfo.ActionPlanStatus,
       Strategies: this.actionPlanInfo.Strategies || '',

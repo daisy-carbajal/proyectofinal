@@ -122,12 +122,12 @@
           >
           </p-button>
           <p-button
-            icon="pi pi-eye-slash"
+            [icon]="user.Status ? 'pi pi-eye-slash' : 'pi pi-eye'"
             class="mr-2"
             [rounded]="true"
             [outlined]="true"
             severity="warning"
-            (onClick)="deactivateUser(user.UserID)"
+            (onClick)="user.Status ? deactivateUser(user.UserID) : enableUser(user.UserID)"
           >
           </p-button>
           <p-button

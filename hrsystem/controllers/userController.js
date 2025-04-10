@@ -374,6 +374,24 @@ const deactivateUser = async (req, res) => {
   }
 };
 
+const enableUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const RequesterID = req.userId;
+
+    await pool
+      .request()
+      .input("UserID", sql.Int, id)
+      .input("RequesterID", sql.Int, RequesterID)
+      .execute("EnableUser");
+
+    res.json({ message: "Usuario reactivado exitosamente" });
+  } catch (err) {
+    res.status(500).send("Error al reactivar el usuario");
+    console.error(err);
+  }
+};
+
 const requiredColumns = [
   "FirstName",
   "LastName",
@@ -635,6 +653,7 @@ module.exports = {
   updateUser,
   updateUserField,
   deactivateUser,
+  enableUser,
   deleteUser,
   importUsersFromCSV,
   getAllUsersWithoutLoggedUser,
