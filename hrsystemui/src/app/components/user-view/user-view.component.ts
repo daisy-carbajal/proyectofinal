@@ -274,25 +274,22 @@ export class UserViewComponent implements OnInit {
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        const deletedBy = this.loggedUserId;
 
-        this.userService
-          .enableUser(userID)
-          .subscribe(() => {
-            const index = this.findIndexById(userID);
-            if (index !== -1) {
-              this.users[index].status = false;
-            }
+        this.userService.enableUser(userID).subscribe(() => {
+          const index = this.findIndexById(userID);
+          if (index !== -1) {
+            this.users[index].status = false;
+          }
 
-            this.refreshUsers
+          this.refreshUsers;
 
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Usuario Reactivado.',
-              life: 3000,
-            });
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Usuario Reactivado.',
+            life: 3000,
           });
+        });
       },
     });
   }
