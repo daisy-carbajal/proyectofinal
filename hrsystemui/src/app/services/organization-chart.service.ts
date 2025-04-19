@@ -14,13 +14,18 @@ export class OrganizationChartService {
 
   // Método para configurar encabezados con autenticación y datos de usuario
   private getHeaders(): { headers: HttpHeaders } {
-    return {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${this.authService.getToken()}`,
-        'X-User-ID': this.authService.getUserId()?.toString() || '',
-        'X-Role-ID': this.authService.getRoleId()?.toString() || '',
-      }),
-    };
+    const headers = new HttpHeaders();
+
+    const token = this.authService.getToken();
+    const userId = this.authService.getUserId();
+    const roleId = this.authService.getRoleId();
+  
+    let finalHeaders = headers;
+    if (token) finalHeaders = finalHeaders.set('Authorization', `Bearer ${token}`);
+    if (userId) finalHeaders = finalHeaders.set('X-User-ID', userId.toString());
+    if (roleId) finalHeaders = finalHeaders.set('X-Role-ID', roleId.toString());
+  
+    return { headers: finalHeaders };
   }
 
   // Obtener todas las jerarquías de usuario

@@ -25,6 +25,10 @@ const createUserHierarchy = async (req, res) => {
 
 const getAllUserHierarchies = async (req, res) => {
   try {
+
+    console.log('Headers recibidos:', req.headers); // 👈
+    console.log('req.userId:', req.userId); 
+
     const pool = await poolPromise;
     const RequesterID = req.userId;
 
@@ -40,7 +44,8 @@ const getAllUserHierarchies = async (req, res) => {
     }
 
     const buildHierarchy = (data) => {
-      const map = new Map(); 
+      const map = new Map();
+      const tree = [];
 
       data.forEach((item) => {
         map.set(item.UserID, { ...item, children: [] });

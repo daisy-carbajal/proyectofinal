@@ -42,8 +42,8 @@ export class OrganizationChartComponent {
   ) {}
 
   ngOnInit(): void {
-    this.fetchUserHierarchies();
     this.loggedUserId = this.authService.getUserId();
+    this.fetchUserHierarchies();
   }
 
   fetchUserHierarchies(): void {
