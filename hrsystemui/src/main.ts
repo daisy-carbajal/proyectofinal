@@ -5,9 +5,9 @@ import { AppComponent } from './app/app.component';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
 import { importProvidersFrom, inject } from '@angular/core';
-import {} from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ThemeService } from './app/services/theme.service';
+import { HttpClientModule } from '@angular/common/http';
 
 Sentry.init({
   dsn: "https://c0f0ca155b0b2d9a3c884138e83643d8@o4508469580988416.ingest.us.sentry.io/4508473263652864",
@@ -18,7 +18,9 @@ Sentry.init({
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    importProvidersFrom(HttpClientModule, BrowserAnimationsModule),
+    importProvidersFrom(BrowserAnimationsModule),
+    importProvidersFrom(HttpClientModule),
+    ThemeService,
     {
       provide: 'APP_INITIALIZER',
       useFactory: () => {
