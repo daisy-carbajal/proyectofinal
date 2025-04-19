@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 // Mock de AuthService
 class MockAuthService {
@@ -25,16 +26,16 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
-        LoginComponent
-      ],
-      providers: [
+    imports: [RouterTestingModule,
+        LoginComponent],
+    providers: [
         { provide: AuthService, useClass: MockAuthService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute } // Mockeamos ActivatedRoute
-      ],
-    })
+        ,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
     
     fixture = TestBed.createComponent(LoginComponent);

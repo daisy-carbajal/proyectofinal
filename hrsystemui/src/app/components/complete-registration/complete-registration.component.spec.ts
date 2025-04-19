@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing'; // <-- Importa RouterTestingModule
 import { AuthService } from '../../services/auth.service';
 import { CompleteRegistrationComponent } from './complete-registration.component';
 import { of } from 'rxjs';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 // Mock de AuthService para evitar llamadas HTTP reales
 class MockAuthService {
@@ -18,15 +19,17 @@ describe('CompleteRegistrationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule, // Se usa en lugar de provideHttpClientTesting()
+    imports: [// Se usa en lugar de provideHttpClientTesting()
         RouterTestingModule,
         CompleteRegistrationComponent // <-- Debe ir en declarations, no en imports
-      ],
-      providers: [
+    ],
+    providers: [
         { provide: AuthService, useClass: MockAuthService } // Mock de AuthService
-      ]
-    })
+        ,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
     
     fixture = TestBed.createComponent(CompleteRegistrationComponent);
