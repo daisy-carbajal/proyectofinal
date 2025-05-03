@@ -30,7 +30,7 @@
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
     "node-schedule": "^2.1.1",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^7.0.0",
     "nodemon": "^3.1.9",
     "renovate": "^39.251.0",
     "sequelize": "^6.37.5",
